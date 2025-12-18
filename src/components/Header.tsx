@@ -4,8 +4,8 @@ import { Menu, X, Play } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { LanguageSwitch } from './LanguageSwitch';
 import { CTAButton } from './CTAButton';
+import { Logo } from './Logo';
 import { cn } from '@/lib/utils';
-
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, isEnglish } = useLanguage();
@@ -27,17 +27,9 @@ export function Header() {
           {/* Logo */}
           <Link
             to={isEnglish ? '/en' : '/'}
-            className="flex items-center gap-1.5 group transition-all"
+            className="transition-transform hover:scale-[1.02]"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-primary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-              <span className="text-primary-foreground font-bold text-sm sm:text-base">iF</span>
-            </div>
-            <div className="flex items-baseline">
-              <span className="font-bold text-lg sm:text-xl text-foreground group-hover:text-primary transition-colors">
-                its<span className="text-primary">Feierabend</span>
-              </span>
-              <span className="text-xs text-muted-foreground ml-0.5">.ch</span>
-            </div>
+            <Logo size="md" />
           </Link>
 
           {/* Desktop Navigation */}
