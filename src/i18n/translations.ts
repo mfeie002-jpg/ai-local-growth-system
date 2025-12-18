@@ -355,6 +355,25 @@ export const translations = {
         note: 'Bitte diese Angaben vor der Veröffentlichung ersetzen.',
       },
     },
+    
+    // Callback Request
+    callback: {
+      title: 'Rückruf anfragen',
+      description: 'Wenn du willst, rufen wir dich zurück. Du bestätigst kurz AI + optional Aufzeichnung.',
+      form: {
+        phone: 'Telefonnummer',
+        phonePlaceholder: '+41 ...',
+        preferredTime: 'Bevorzugte Zeit (optional)',
+        preferredTimePlaceholder: 'z.B. Nachmittags',
+        consentAiCall: 'Ich bin einverstanden, von einem KI-Assistenten angerufen zu werden.',
+        consentRecording: 'Ich bin einverstanden, dass das Gespräch aufgezeichnet wird (optional).',
+        submit: 'Rückruf anfragen',
+      },
+      microcopy: 'Kein Zeitversprechen. Wir melden uns so schnell wie möglich.',
+      success: 'Rückruf angefordert! Wir melden uns bald.',
+      error: 'Fehler beim Anfordern. Bitte versuche es später erneut.',
+      disabled: 'Rückruf-Funktion ist derzeit nicht verfügbar.',
+    },
   },
   
   en: {
@@ -708,6 +727,25 @@ export const translations = {
         placeholder: '[TODO: Privacy policy text according to nFADP, cookies, analytics, contact to be added here]',
         note: 'Please replace this information before publishing.',
       },
+    },
+    
+    // Callback Request
+    callback: {
+      title: 'Request a Callback',
+      description: 'If you\'d like, we can call you back. Just confirm AI call + optional recording consent.',
+      form: {
+        phone: 'Phone Number',
+        phonePlaceholder: '+41 ...',
+        preferredTime: 'Preferred Time (optional)',
+        preferredTimePlaceholder: 'e.g. Afternoons',
+        consentAiCall: 'I agree to be called by an AI assistant.',
+        consentRecording: 'I agree to the call being recorded (optional).',
+        submit: 'Request Callback',
+      },
+      microcopy: 'No time guarantee. We\'ll get back to you as soon as possible.',
+      success: 'Callback requested! We\'ll be in touch soon.',
+      error: 'Error requesting callback. Please try again later.',
+      disabled: 'Callback feature is currently not available.',
     },
   },
 } as const;
