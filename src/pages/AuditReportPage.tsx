@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Loader2, CheckCircle, AlertTriangle, XCircle, ArrowRight } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
+import { CallbackRequestForm } from '@/components/forms/CallbackRequestForm';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
+import { siteConfig } from '@/config/site';
 
 interface LeadReport {
   id: string;
@@ -273,6 +275,19 @@ export default function AuditReportPage() {
               ))}
             </ul>
           </div>
+
+          {/* Callback Request Section */}
+          {siteConfig.voiceCallbackEnabled && token && (
+            <div className="mb-12">
+              <h3 className="text-xl font-semibold text-foreground mb-6 text-center">
+                {isDE ? 'Rückruf vom AI-Assistenten' : 'AI Assistant Callback'}
+              </h3>
+              <CallbackRequestForm 
+                token={token} 
+                language={isDE ? 'de' : 'en'} 
+              />
+            </div>
+          )}
 
           {/* Transparency Note */}
           <div className="text-center text-sm text-muted-foreground">

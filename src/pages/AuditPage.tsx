@@ -13,7 +13,7 @@ export default function AuditPage() {
   const navigate = useNavigate();
 
   return (
-    <Layout>
+    <Layout showDemoTeaser>
       <SEOHead
         title={t.audit.heroTitle}
         description={t.audit.heroSubtitle}

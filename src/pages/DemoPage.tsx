@@ -95,7 +95,7 @@ export default function DemoPage() {
   const isDE = !isEnglish;
 
   return (
-    <Layout>
+    <Layout showPromo>
       <SEOHead
         title={isDE ? 'AI Lead Concierge Demo | itsFeierabend.ch' : 'AI Lead Concierge Demo | itsFeierabend.ch'}
         description={isDE 

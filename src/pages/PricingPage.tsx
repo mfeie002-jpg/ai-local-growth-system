@@ -10,7 +10,7 @@ export default function PricingPage() {
   const { t, isEnglish } = useLanguage();
 
   return (
-    <Layout>
+    <Layout showDemoTeaser>
       <SEOHead
         title={t.pricing.sectionTitle}
         description={t.pricing.disclaimer}
