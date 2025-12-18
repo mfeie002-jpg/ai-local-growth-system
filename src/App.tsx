@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -14,44 +15,62 @@ import PricingPage from "./pages/PricingPage";
 import FAQPage from "./pages/FAQPage";
 import ImprintPage from "./pages/ImprintPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import DemoPage from "./pages/DemoPage";
+import AuditReportPage from "./pages/AuditReportPage";
 import NotFound from "./pages/NotFound";
+
+// Admin Pages
+import AdminLoginPage from "./pages/admin/AdminLoginPage";
+import AdminLeadsPage from "./pages/admin/AdminLeadsPage";
+import AdminLeadDetailPage from "./pages/admin/AdminLeadDetailPage";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* DE Routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/gratis-audit" element={<AuditPage />} />
-            <Route path="/gratis-call" element={<CallPage />} />
-            <Route path="/system" element={<SystemPage />} />
-            <Route path="/pakete" element={<PricingPage />} />
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/impressum" element={<ImprintPage />} />
-            <Route path="/datenschutz" element={<PrivacyPage />} />
-            
-            {/* EN Routes */}
-            <Route path="/en" element={<HomePage />} />
-            <Route path="/en/free-audit" element={<AuditPage />} />
-            <Route path="/en/free-call" element={<CallPage />} />
-            <Route path="/en/system" element={<SystemPage />} />
-            <Route path="/en/pricing" element={<PricingPage />} />
-            <Route path="/en/faq" element={<FAQPage />} />
-            <Route path="/en/imprint" element={<ImprintPage />} />
-            <Route path="/en/privacy" element={<PrivacyPage />} />
-            
-            {/* Catch-all */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </LanguageProvider>
+    <AuthProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* DE Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/gratis-audit" element={<AuditPage />} />
+              <Route path="/gratis-audit/report/:token" element={<AuditReportPage />} />
+              <Route path="/gratis-call" element={<CallPage />} />
+              <Route path="/system" element={<SystemPage />} />
+              <Route path="/pakete" element={<PricingPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/impressum" element={<ImprintPage />} />
+              <Route path="/datenschutz" element={<PrivacyPage />} />
+              <Route path="/demo" element={<DemoPage />} />
+              
+              {/* EN Routes */}
+              <Route path="/en" element={<HomePage />} />
+              <Route path="/en/free-audit" element={<AuditPage />} />
+              <Route path="/en/free-audit/report/:token" element={<AuditReportPage />} />
+              <Route path="/en/free-call" element={<CallPage />} />
+              <Route path="/en/system" element={<SystemPage />} />
+              <Route path="/en/pricing" element={<PricingPage />} />
+              <Route path="/en/faq" element={<FAQPage />} />
+              <Route path="/en/imprint" element={<ImprintPage />} />
+              <Route path="/en/privacy" element={<PrivacyPage />} />
+              <Route path="/en/demo" element={<DemoPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/leads" element={<AdminLeadsPage />} />
+              <Route path="/admin/leads/:id" element={<AdminLeadDetailPage />} />
+              
+              {/* Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
