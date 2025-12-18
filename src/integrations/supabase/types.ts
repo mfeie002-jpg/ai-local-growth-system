@@ -19,11 +19,13 @@ export type Database = {
           budget_range: string | null
           capacity_range: string | null
           created_at: string
+          duplicate_of: string | null
           email: string
           gclid: string | null
           id: string
           industry: string
           ip_hash: string | null
+          is_duplicate: boolean | null
           language: string
           lead_type: string
           message: string | null
@@ -49,11 +51,13 @@ export type Database = {
           budget_range?: string | null
           capacity_range?: string | null
           created_at?: string
+          duplicate_of?: string | null
           email: string
           gclid?: string | null
           id?: string
           industry: string
           ip_hash?: string | null
+          is_duplicate?: boolean | null
           language: string
           lead_type: string
           message?: string | null
@@ -79,11 +83,13 @@ export type Database = {
           budget_range?: string | null
           capacity_range?: string | null
           created_at?: string
+          duplicate_of?: string | null
           email?: string
           gclid?: string | null
           id?: string
           industry?: string
           ip_hash?: string | null
+          is_duplicate?: boolean | null
           language?: string
           lead_type?: string
           message?: string | null
@@ -105,7 +111,15 @@ export type Database = {
           utm_term?: string | null
           website_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_duplicate_of_fkey"
+            columns: ["duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rate_limits: {
         Row: {

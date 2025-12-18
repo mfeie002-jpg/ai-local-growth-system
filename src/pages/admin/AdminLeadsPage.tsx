@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -11,14 +11,20 @@ import {
   PhoneCall,
   Filter,
   ChevronDown,
-  RefreshCw 
+  RefreshCw,
+  Search,
+  Download,
+  Copy,
+  Check
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Lead {
   id: string;
@@ -30,6 +36,10 @@ interface Lead {
   industry: string;
   service_area: string;
   status: string;
+  public_token: string | null;
+  pre_score_total: number | null;
+  pre_score_bucket: string | null;
+  is_duplicate: boolean | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -48,19 +58,27 @@ const statusLabels: Record<string, string> = {
   closed: 'Abgeschlossen',
 };
 
+const bucketColors: Record<string, string> = {
+  red: 'bg-red-100 text-red-800',
+  yellow: 'bg-yellow-100 text-yellow-800',
+  green: 'bg-green-100 text-green-800',
+};
+
 export default function AdminLeadsPage() {
   const { isAdmin, isLoading: authLoading, signOut } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchLeads = async () => {
     setIsLoading(true);
     try {
       let query = supabase
         .from('leads')
-        .select('id, created_at, lead_type, name, email, phone, industry, service_area, status')
+        .select('id, created_at, lead_type, name, email, phone, industry, service_area, status, public_token, pre_score_total, pre_score_bucket, is_duplicate')
         .order('created_at', { ascending: false });
 
       if (statusFilter !== 'all') {
@@ -88,6 +106,59 @@ export default function AdminLeadsPage() {
       fetchLeads();
     }
   }, [isAdmin, statusFilter, typeFilter]);
+
+  // Filter leads by search query
+  const filteredLeads = useMemo(() => {
+    if (!searchQuery.trim()) return leads;
+    
+    const query = searchQuery.toLowerCase();
+    return leads.filter(lead => 
+      lead.name.toLowerCase().includes(query) ||
+      lead.email.toLowerCase().includes(query) ||
+      lead.industry.toLowerCase().includes(query) ||
+      lead.service_area.toLowerCase().includes(query)
+    );
+  }, [leads, searchQuery]);
+
+  // Export to CSV
+  const exportCSV = () => {
+    const headers = ['Datum', 'Typ', 'Name', 'Email', 'Telefon', 'Branche', 'Ort', 'Status', 'Score', 'Bucket'];
+    const rows = filteredLeads.map(lead => [
+      format(new Date(lead.created_at), 'yyyy-MM-dd HH:mm'),
+      lead.lead_type === 'free_audit' ? 'Audit' : 'Call',
+      lead.name,
+      lead.email,
+      lead.phone || '',
+      lead.industry,
+      lead.service_area,
+      statusLabels[lead.status] || lead.status,
+      lead.pre_score_total?.toString() || '',
+      lead.pre_score_bucket || '',
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `leads-export-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast.success(`${filteredLeads.length} Leads exportiert`);
+  };
+
+  // Copy report link
+  const copyReportLink = async (token: string) => {
+    const url = `https://itsfeierabend.ch/gratis-audit/report/${token}`;
+    await navigator.clipboard.writeText(url);
+    setCopiedId(token);
+    setTimeout(() => setCopiedId(null), 2000);
+    toast.success('Link kopiert');
+  };
 
   if (authLoading) {
     return (
@@ -131,11 +202,23 @@ export default function AdminLeadsPage() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Leads</h1>
             <p className="text-muted-foreground">
-              {leads.length} Lead{leads.length !== 1 ? 's' : ''} gefunden
+              {filteredLeads.length} Lead{filteredLeads.length !== 1 ? 's' : ''} gefunden
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Suchen..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 w-[200px]"
+              />
+            </div>
+
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[160px]">
                 <Filter className="w-4 h-4 mr-2" />
@@ -165,6 +248,11 @@ export default function AdminLeadsPage() {
             <Button variant="outline" size="icon" onClick={fetchLeads} disabled={isLoading}>
               <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
             </Button>
+
+            <Button variant="outline" onClick={exportCSV} disabled={filteredLeads.length === 0}>
+              <Download className="w-4 h-4 mr-2" />
+              CSV
+            </Button>
           </div>
         </div>
 
@@ -172,7 +260,7 @@ export default function AdminLeadsPage() {
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : leads.length === 0 ? (
+        ) : filteredLeads.length === 0 ? (
           <div className="bg-background border border-border rounded-lg p-12 text-center">
             <p className="text-muted-foreground">Keine Leads gefunden.</p>
           </div>
@@ -188,13 +276,17 @@ export default function AdminLeadsPage() {
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Kontakt</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Branche</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Ort</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Score</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {leads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
+                  {filteredLeads.map((lead) => (
+                    <tr key={lead.id} className={cn(
+                      "hover:bg-muted/30 transition-colors",
+                      lead.is_duplicate && "opacity-60"
+                    )}>
                       <td className="px-4 py-3 text-sm text-muted-foreground whitespace-nowrap">
                         {format(new Date(lead.created_at), 'dd.MM.yyyy HH:mm', { locale: de })}
                       </td>
@@ -209,6 +301,9 @@ export default function AdminLeadsPage() {
                             <PhoneCall className="w-4 h-4 text-green-600" />
                             <span>Call</span>
                           </div>
+                        )}
+                        {lead.is_duplicate && (
+                          <span className="text-xs text-muted-foreground">(Duplikat)</span>
                         )}
                       </td>
                       <td className="px-4 py-3 font-medium text-foreground">
@@ -237,6 +332,31 @@ export default function AdminLeadsPage() {
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
                         {lead.service_area}
+                      </td>
+                      <td className="px-4 py-3">
+                        {lead.pre_score_bucket ? (
+                          <div className="flex items-center gap-2">
+                            <Badge className={cn('font-normal text-xs', bucketColors[lead.pre_score_bucket])}>
+                              {lead.pre_score_total}
+                            </Badge>
+                            {lead.public_token && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0"
+                                onClick={() => copyReportLink(lead.public_token!)}
+                              >
+                                {copiedId === lead.public_token ? (
+                                  <Check className="w-3 h-3 text-green-600" />
+                                ) : (
+                                  <Copy className="w-3 h-3" />
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">-</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <Badge className={cn('font-normal', statusColors[lead.status])}>

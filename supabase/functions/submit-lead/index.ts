@@ -123,6 +123,83 @@ function isValidUrl(url: string): boolean {
   }
 }
 
+// Send Slack notification
+async function sendSlackNotification(lead: any, adminUrl: string): Promise<void> {
+  const slackWebhookUrl = Deno.env.get("SLACK_WEBHOOK_URL");
+  if (!slackWebhookUrl) {
+    console.log("Slack notification disabled - SLACK_WEBHOOK_URL not set");
+    return;
+  }
+
+  try {
+    const leadType = lead.lead_type === 'free_audit' ? '📊 Audit' : '📞 Call';
+    const message = {
+      text: `${leadType} | ${lead.name} | ${lead.email} | ${lead.industry} | ${lead.service_area}`,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*[New Lead]* ${leadType}\n*Name:* ${lead.name}\n*Email:* ${lead.email}\n*Industry:* ${lead.industry}\n*Area:* ${lead.service_area}`
+          }
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "View in Admin"
+              },
+              url: adminUrl
+            }
+          ]
+        }
+      ]
+    };
+
+    const response = await fetch(slackWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(message),
+    });
+
+    if (response.ok) {
+      console.log("Slack notification sent successfully");
+    } else {
+      console.error("Slack notification failed:", await response.text());
+    }
+  } catch (err) {
+    console.error("Slack notification error:", err);
+  }
+}
+
+// Check for duplicate leads
+async function checkDuplicate(
+  supabase: any, 
+  email: string, 
+  leadType: string
+): Promise<{ isDuplicate: boolean; duplicateOf: string | null }> {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  
+  const { data: existingLead } = await supabase
+    .from("leads")
+    .select("id")
+    .eq("email", email.toLowerCase().trim())
+    .eq("lead_type", leadType)
+    .gte("created_at", thirtyDaysAgo)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existingLead) {
+    return { isDuplicate: true, duplicateOf: existingLead.id };
+  }
+  
+  return { isDuplicate: false, duplicateOf: null };
+}
+
 serve(async (req: Request): Promise<Response> => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -224,6 +301,17 @@ serve(async (req: Request): Promise<Response> => {
     // Record rate limit entry
     await supabase.from("rate_limits").insert({ ip_hash: ipHash });
 
+    // Check for duplicates
+    const { isDuplicate, duplicateOf } = await checkDuplicate(
+      supabase, 
+      body.email, 
+      body.lead_type
+    );
+
+    if (isDuplicate) {
+      console.log(`Duplicate lead detected for email: ${body.email}, duplicate of: ${duplicateOf}`);
+    }
+
     // Generate public token and pre-score for audits
     let publicToken: string | null = null;
     let preScoreTotal: number | null = null;
@@ -264,6 +352,8 @@ serve(async (req: Request): Promise<Response> => {
         public_token: publicToken,
         pre_score_total: preScoreTotal,
         pre_score_bucket: preScoreBucket,
+        is_duplicate: isDuplicate,
+        duplicate_of: duplicateOf,
       })
       .select()
       .single();
@@ -281,11 +371,15 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Lead created successfully: ${lead.id} (${body.lead_type})`);
+    console.log(`Lead created successfully: ${lead.id} (${body.lead_type})${isDuplicate ? ' [DUPLICATE]' : ''}`);
+
+    // Send Slack notification (fire and forget)
+    const adminUrl = `https://itsfeierabend.ch/admin/leads/${lead.id}`;
+    sendSlackNotification(lead, adminUrl).catch(err => console.error('Slack error:', err));
 
     // Optional: Send confirmation email via Resend
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (resendApiKey && body.lead_type === "free_audit") {
+    if (resendApiKey && body.lead_type === "free_audit" && !isDuplicate) {
       try {
         const emailSubject = isDE ? "Wir haben dein Audit erhalten" : "We got your audit";
         const reportUrl = isDE 
