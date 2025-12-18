@@ -33,7 +33,7 @@ export default function SystemPage() {
   ];
 
   return (
-    <Layout>
+    <Layout showDemoTeaser showPromo>
       <SEOHead
         title={t.system.heroTitle}
         description={t.system.heroSubtitle}

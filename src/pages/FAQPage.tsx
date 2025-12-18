@@ -13,7 +13,7 @@ export default function FAQPage() {
   const allFAQItems = [...t.faq.items, ...t.faq.auditItems];
 
   return (
-    <Layout>
+    <Layout showPromo>
       <SEOHead
         title={t.faq.sectionTitle}
         description={isEnglish 

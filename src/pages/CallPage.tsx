@@ -85,7 +85,7 @@ export default function CallPage() {
   const isDE = language === 'de';
 
   return (
-    <Layout>
+    <Layout showDemoTeaser>
       <SEOHead
         title={t.call.heroTitle}
         description={t.call.heroSubtitle}
