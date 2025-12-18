@@ -4,31 +4,45 @@ import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
-import { trackCallBook, trackFormStart } from '@/lib/analytics';
-import { useLocation } from 'react-router-dom';
+import { trackFormStart } from '@/lib/analytics';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Phone, Clock, CheckCircle } from 'lucide-react';
+import { useLeadSubmit } from '@/hooks/useLeadSubmit';
+import { Phone, Clock, CheckCircle, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { callFormSchema, type CallFormData, getErrorMessage } from '@/lib/validation';
 
 export default function CallPage() {
   const { t, language, isEnglish } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const { submitLead, isSubmitting } = useLeadSubmit();
   
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: '',
-    preferredTimes: '',
-  });
   const [formStarted, setFormStarted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<CallFormData>({
+    resolver: zodResolver(callFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      industry: '',
+      service_area: '',
+      message: '',
+      preferred_times: '',
+      honeypot: '',
+    },
+  });
+
+  const handleInputFocus = () => {
     if (!formStarted) {
       setFormStarted(true);
       trackFormStart('call', {
@@ -38,34 +52,37 @@ export default function CallPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const onSubmit = async (data: CallFormData) => {
+    setServerError(null);
 
-    trackCallBook({
-      language,
-      page_path: location.pathname,
-      cta_text: t.call.form.submit,
-      cta_location: 'call-form',
+    const result = await submitLead({
+      lead_type: 'free_call',
+      industry: data.industry || 'Nicht angegeben',
+      service_area: data.service_area || 'Nicht angegeben',
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      message: data.message,
+      preferred_times: data.preferred_times,
+      honeypot: data.honeypot,
     });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: isEnglish ? 'Call requested!' : 'Call angefragt!',
-      description: t.call.trustLine,
-    });
-
-    setIsSubmitting(false);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      company: '',
-      message: '',
-      preferredTimes: '',
-    });
+    if (result.success) {
+      toast({
+        title: isEnglish ? 'Call requested!' : 'Call angefragt!',
+        description: t.call.trustLine,
+      });
+      // Could navigate to a thank you page if needed
+    } else if (result.errors) {
+      Object.entries(result.errors).forEach(([field, message]) => {
+        setError(field as keyof CallFormData, { message });
+      });
+    } else if (result.error) {
+      setServerError(result.error);
+    }
   };
+
+  const isDE = language === 'de';
 
   return (
     <Layout>
@@ -94,8 +111,14 @@ export default function CallPage() {
       <SectionContainer background="muted">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
           {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-card rounded-xl border border-border p-6 sm:p-8 shadow-card">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-card rounded-xl border border-border p-6 sm:p-8 shadow-card">
             <h2 className="text-2xl font-bold mb-6">{t.cta.requestCall}</h2>
+            
+            {serverError && (
+              <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                {serverError}
+              </div>
+            )}
             
             <div className="space-y-5">
               {/* Name */}
@@ -104,15 +127,16 @@ export default function CallPage() {
                   {t.call.form.name} *
                 </label>
                 <input
+                  {...register('name')}
                   type="text"
                   id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
+                  onFocus={handleInputFocus}
                   placeholder={t.call.form.namePlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
+                {errors.name && (
+                  <p className="text-destructive text-sm mt-1">{getErrorMessage(errors.name.message || '', isDE)}</p>
+                )}
               </div>
 
               {/* Email */}
@@ -121,15 +145,16 @@ export default function CallPage() {
                   {t.call.form.email} *
                 </label>
                 <input
+                  {...register('email')}
                   type="email"
                   id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
+                  onFocus={handleInputFocus}
                   placeholder={t.call.form.emailPlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
+                {errors.email && (
+                  <p className="text-destructive text-sm mt-1">{getErrorMessage(errors.email.message || '', isDE)}</p>
+                )}
               </div>
 
               {/* Phone */}
@@ -138,43 +163,55 @@ export default function CallPage() {
                   {t.call.form.phone}
                 </label>
                 <input
+                  {...register('phone')}
                   type="tel"
                   id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
+                  onFocus={handleInputFocus}
                   placeholder={t.call.form.phonePlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
 
-              {/* Company */}
+              {/* Industry */}
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.call.form.company}
+                <label htmlFor="industry" className="block text-sm font-medium text-foreground mb-1.5">
+                  {isEnglish ? 'Industry' : 'Branche'}
                 </label>
                 <input
+                  {...register('industry')}
                   type="text"
-                  id="company"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  placeholder={t.call.form.companyPlaceholder}
+                  id="industry"
+                  onFocus={handleInputFocus}
+                  placeholder={isEnglish ? 'e.g. Painting, Plumbing, Cleaning...' : 'z.B. Maler, Sanitär, Reinigung...'}
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              {/* Service Area */}
+              <div>
+                <label htmlFor="service_area" className="block text-sm font-medium text-foreground mb-1.5">
+                  {isEnglish ? 'Service Area' : 'Einsatzgebiet'}
+                </label>
+                <input
+                  {...register('service_area')}
+                  type="text"
+                  id="service_area"
+                  onFocus={handleInputFocus}
+                  placeholder={isEnglish ? 'e.g. Zurich, Aargau...' : 'z.B. Zürich, Aargau...'}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
 
               {/* Preferred Times */}
               <div>
-                <label htmlFor="preferredTimes" className="block text-sm font-medium text-foreground mb-1.5">
+                <label htmlFor="preferred_times" className="block text-sm font-medium text-foreground mb-1.5">
                   {t.call.form.preferredTimes}
                 </label>
                 <input
+                  {...register('preferred_times')}
                   type="text"
-                  id="preferredTimes"
-                  name="preferredTimes"
-                  value={formData.preferredTimes}
-                  onChange={handleInputChange}
+                  id="preferred_times"
+                  onFocus={handleInputFocus}
                   placeholder={t.call.form.preferredTimesPlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
@@ -186,23 +223,39 @@ export default function CallPage() {
                   {t.call.form.message}
                 </label>
                 <textarea
+                  {...register('message')}
                   id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
+                  onFocus={handleInputFocus}
                   rows={4}
                   placeholder={t.call.form.messagePlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                 />
               </div>
 
+              {/* Honeypot */}
+              <input
+                {...register('honeypot')}
+                type="text"
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
               <CTAButton
                 variant="primary"
                 size="lg"
                 className="w-full"
                 location="call-form-submit"
+                disabled={isSubmitting}
               >
-                {isSubmitting ? (isEnglish ? 'Sending...' : 'Wird gesendet...') : t.call.form.submit}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {isEnglish ? 'Sending...' : 'Wird gesendet...'}
+                  </>
+                ) : (
+                  t.call.form.submit
+                )}
               </CTAButton>
             </div>
           </form>

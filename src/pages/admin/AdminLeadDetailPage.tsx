@@ -12,7 +12,8 @@ import {
   Copy,
   Check,
   ExternalLink,
-  Save
+  Save,
+  Link as LinkIcon
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,6 +46,11 @@ interface LeadDetail {
   utm_medium: string | null;
   utm_campaign: string | null;
   referrer: string | null;
+  public_token: string | null;
+  pre_score_total: number | null;
+  pre_score_bucket: string | null;
+  is_duplicate: boolean | null;
+  duplicate_of: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -61,6 +67,18 @@ const statusLabels: Record<string, string> = {
   scored: 'Bewertet',
   contacted: 'Kontaktiert',
   closed: 'Abgeschlossen',
+};
+
+const bucketColors: Record<string, string> = {
+  red: 'bg-red-100 text-red-800',
+  yellow: 'bg-yellow-100 text-yellow-800',
+  green: 'bg-green-100 text-green-800',
+};
+
+const bucketLabels: Record<string, string> = {
+  red: 'Rot – Fundament kritisch',
+  yellow: 'Gelb – Solide Basis, Hebel offen',
+  green: 'Grün – Starkes Fundament',
 };
 
 export default function AdminLeadDetailPage() {
@@ -131,9 +149,15 @@ export default function AdminLeadDetailPage() {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
       setTimeout(() => setCopiedField(null), 2000);
+      toast.success('Kopiert');
     } catch (err) {
       console.error('Copy failed:', err);
     }
+  };
+
+  const getReportUrl = () => {
+    if (!lead?.public_token) return null;
+    return `https://itsfeierabend.ch/gratis-audit/report/${lead.public_token}`;
   };
 
   if (authLoading) {
@@ -182,6 +206,8 @@ export default function AdminLeadDetailPage() {
     );
   };
 
+  const reportUrl = getReportUrl();
+
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Header */}
@@ -217,6 +243,11 @@ export default function AdminLeadDetailPage() {
                   <Badge className={cn('font-normal', statusColors[lead.status])}>
                     {statusLabels[lead.status] || lead.status}
                   </Badge>
+                  {lead.is_duplicate && (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Duplikat
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-muted-foreground">
                   {lead.lead_type === 'free_audit' ? 'Gratis Audit' : 'Gratis Call'} • {' '}
@@ -242,6 +273,45 @@ export default function AdminLeadDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Pre-Score Card (for audits) */}
+          {lead.lead_type === 'free_audit' && lead.pre_score_bucket && (
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h2 className="font-semibold text-foreground mb-4">Vorab-Score</h2>
+              
+              <div className="flex items-center gap-4 mb-4">
+                <div className="text-4xl font-bold text-foreground">{lead.pre_score_total}</div>
+                <div>
+                  <Badge className={cn('font-normal', bucketColors[lead.pre_score_bucket])}>
+                    {bucketLabels[lead.pre_score_bucket]}
+                  </Badge>
+                </div>
+              </div>
+
+              {reportUrl && (
+                <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                  <LinkIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground truncate flex-1">{reportUrl}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(reportUrl, 'report')}
+                  >
+                    {copiedField === 'report' ? (
+                      <Check className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </Button>
+                  <a href={reportUrl} target="_blank" rel="noopener noreferrer">
+                    <Button variant="ghost" size="sm">
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Contact Info */}
           <div className="bg-background border border-border rounded-lg p-6">
@@ -328,6 +398,21 @@ export default function AdminLeadDetailPage() {
                 <InfoRow label="UTM Campaign" value={lead.utm_campaign} />
                 <InfoRow label="Referrer" value={lead.referrer} />
               </dl>
+            </div>
+          )}
+
+          {/* Duplicate Info */}
+          {lead.is_duplicate && lead.duplicate_of && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <h2 className="font-semibold text-yellow-800 mb-2">Duplikat</h2>
+              <p className="text-yellow-700 text-sm">
+                Dieser Lead ist ein Duplikat eines früheren Leads.
+              </p>
+              <Link to={`/admin/leads/${lead.duplicate_of}`}>
+                <Button variant="outline" size="sm" className="mt-2">
+                  Original anzeigen
+                </Button>
+              </Link>
             </div>
           )}
 
