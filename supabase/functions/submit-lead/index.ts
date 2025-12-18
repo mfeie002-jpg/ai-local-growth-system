@@ -30,6 +30,62 @@ interface LeadSubmission {
   honeypot?: string;
 }
 
+// Generate random hex token
+function generateToken(bytes: number = 16): string {
+  const array = new Uint8Array(bytes);
+  crypto.getRandomValues(array);
+  return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Calculate pre-score from form data
+function calculatePreScore(data: LeadSubmission): { score: number; bucket: 'red' | 'yellow' | 'green' } {
+  let score = 50;
+
+  // Budget scoring
+  const budget = data.budget_range?.toLowerCase() || '';
+  if (budget.includes('7k') || budget.includes('7000') || budget.includes('10k') || budget.includes('10000')) {
+    score += 10;
+  } else if (budget.includes('3k') || budget.includes('3000') || budget.includes('5k') || budget.includes('5000')) {
+    score += 5;
+  } else if (budget.includes('<1k') || budget.includes('unter 1') || budget.includes('500') || budget === '') {
+    score -= 10;
+  }
+
+  // Capacity scoring
+  const capacity = data.capacity_range?.toLowerCase() || '';
+  if (capacity.includes('30') || capacity.includes('20') || capacity.includes('16')) {
+    score += 10;
+  } else if (capacity.includes('10') || capacity.includes('15')) {
+    score += 5;
+  } else if (capacity.includes('1-5') || capacity.includes('1 -') || capacity.includes('0-5')) {
+    score -= 10;
+  }
+
+  // Website scoring
+  if (data.website_url) {
+    if (data.website_url.startsWith('https://')) {
+      score += 5;
+    } else if (data.website_url.startsWith('http://')) {
+      score += 2;
+    }
+  }
+
+  // Clamp score
+  score = Math.max(0, Math.min(100, score));
+
+  // Determine bucket
+  let bucket: 'red' | 'yellow' | 'green';
+  if (score < 40) {
+    bucket = 'red';
+  } else if (score < 75) {
+    bucket = 'yellow';
+  } else {
+    bucket = 'green';
+  }
+
+  return { score, bucket };
+}
+
 // Hash IP for privacy
 async function hashIP(ip: string): Promise<string> {
   const salt = Deno.env.get("IP_HASH_SALT") || "itsfeierabend-default-salt";
@@ -168,6 +224,18 @@ serve(async (req: Request): Promise<Response> => {
     // Record rate limit entry
     await supabase.from("rate_limits").insert({ ip_hash: ipHash });
 
+    // Generate public token and pre-score for audits
+    let publicToken: string | null = null;
+    let preScoreTotal: number | null = null;
+    let preScoreBucket: string | null = null;
+
+    if (body.lead_type === "free_audit") {
+      publicToken = generateToken(16);
+      const preScore = calculatePreScore(body);
+      preScoreTotal = preScore.score;
+      preScoreBucket = preScore.bucket;
+    }
+
     // Insert lead
     const { data: lead, error: insertError } = await supabase
       .from("leads")
@@ -193,6 +261,9 @@ serve(async (req: Request): Promise<Response> => {
         referrer: body.referrer || null,
         user_agent: body.user_agent || null,
         ip_hash: ipHash,
+        public_token: publicToken,
+        pre_score_total: preScoreTotal,
+        pre_score_bucket: preScoreBucket,
       })
       .select()
       .single();
@@ -217,12 +288,17 @@ serve(async (req: Request): Promise<Response> => {
     if (resendApiKey && body.lead_type === "free_audit") {
       try {
         const emailSubject = isDE ? "Wir haben dein Audit erhalten" : "We got your audit";
+        const reportUrl = isDE 
+          ? `https://itsfeierabend.ch/gratis-audit/report/${publicToken}`
+          : `https://itsfeierabend.ch/en/free-audit/report/${publicToken}`;
         const callUrl = isDE ? "https://itsfeierabend.ch/gratis-call" : "https://itsfeierabend.ch/en/free-call";
         const privacyUrl = isDE ? "https://itsfeierabend.ch/datenschutz" : "https://itsfeierabend.ch/en/privacy";
         
         const emailHtml = isDE ? `
           <h2>Danke für deine Audit-Anfrage, ${body.name}!</h2>
-          <p>Wir haben deine Anfrage erhalten und melden uns innerhalb von 48 Stunden mit deiner Scorecard.</p>
+          <p>Wir haben deine Anfrage erhalten.</p>
+          <p><a href="${reportUrl}">Hier findest du deinen Vorab-Score</a></p>
+          <p>Das vollständige Audit mit manueller Prüfung erhältst du innerhalb von 48 Stunden.</p>
           <p>Wenn du willst, kannst du schon jetzt einen <a href="${callUrl}">Gratis Call buchen</a>.</p>
           <br>
           <p>Beste Grüsse,<br>Das itsFeierabend.ch Team</p>
@@ -230,7 +306,9 @@ serve(async (req: Request): Promise<Response> => {
           <p style="font-size: 12px; color: #666;"><a href="${privacyUrl}">Datenschutz</a></p>
         ` : `
           <h2>Thanks for your audit request, ${body.name}!</h2>
-          <p>We've received your request and will get back to you within 48 hours with your scorecard.</p>
+          <p>We've received your request.</p>
+          <p><a href="${reportUrl}">View your pre-score here</a></p>
+          <p>You'll receive the full audit with manual review within 48 hours.</p>
           <p>If you'd like, you can already <a href="${callUrl}">book a free call</a>.</p>
           <br>
           <p>Best regards,<br>The itsFeierabend.ch Team</p>
@@ -259,7 +337,6 @@ serve(async (req: Request): Promise<Response> => {
         }
       } catch (emailError) {
         console.error("Email error:", emailError);
-        // Don't fail the request if email fails
       }
     } else if (!resendApiKey) {
       console.log("Email disabled - RESEND_API_KEY not set");
@@ -269,8 +346,20 @@ serve(async (req: Request): Promise<Response> => {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     await supabase.from("rate_limits").delete().lt("created_at", oneHourAgo);
 
+    // Build response with report URL for audits
+    const response: Record<string, any> = { 
+      success: true, 
+      lead_id: lead.id,
+    };
+
+    if (body.lead_type === "free_audit" && publicToken) {
+      response.reportUrl = isDE 
+        ? `/gratis-audit/report/${publicToken}`
+        : `/en/free-audit/report/${publicToken}`;
+    }
+
     return new Response(
-      JSON.stringify({ success: true, lead_id: lead.id }),
+      JSON.stringify(response),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
 

@@ -30,7 +30,10 @@ export type Database = {
           name: string
           notes_internal: string | null
           phone: string | null
+          pre_score_bucket: string | null
+          pre_score_total: number | null
           preferred_times: string | null
+          public_token: string | null
           referrer: string | null
           service_area: string
           status: string
@@ -57,7 +60,10 @@ export type Database = {
           name: string
           notes_internal?: string | null
           phone?: string | null
+          pre_score_bucket?: string | null
+          pre_score_total?: number | null
           preferred_times?: string | null
+          public_token?: string | null
           referrer?: string | null
           service_area: string
           status?: string
@@ -84,7 +90,10 @@ export type Database = {
           name?: string
           notes_internal?: string | null
           phone?: string | null
+          pre_score_bucket?: string | null
+          pre_score_total?: number | null
           preferred_times?: string | null
+          public_token?: string | null
           referrer?: string | null
           service_area?: string
           status?: string

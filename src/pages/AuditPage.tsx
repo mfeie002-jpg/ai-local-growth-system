@@ -1,82 +1,16 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { FAQAccordion } from '@/components/FAQAccordion';
-import { trackAuditSubmit, trackFormStart } from '@/lib/analytics';
+import { AuditFormStepper } from '@/components/forms/AuditFormStepper';
 import { Check, Zap, Target, Settings, ArrowRight } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
 
 export default function AuditPage() {
-  const { t, language, isEnglish } = useLanguage();
-  const location = useLocation();
-  const { toast } = useToast();
-  
-  const [formData, setFormData] = useState({
-    industry: '',
-    location: '',
-    website: '',
-    budget: '',
-    capacity: '',
-    name: '',
-    email: '',
-    phone: '',
-  });
-  const [formStarted, setFormStarted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    if (!formStarted) {
-      setFormStarted(true);
-      trackFormStart('audit', {
-        language,
-        page_path: location.pathname,
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Track the submission
-    trackAuditSubmit({
-      language,
-      page_path: location.pathname,
-      cta_text: t.audit.form.submit,
-      cta_location: 'audit-form',
-    });
-
-    // Simulate form submission (backend will be added in Prompt 2)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: isEnglish ? 'Audit requested!' : 'Audit angefordert!',
-      description: isEnglish 
-        ? 'We\'ll get back to you within 48 hours.' 
-        : 'Wir melden uns innerhalb von 48 Stunden.',
-    });
-
-    setIsSubmitting(false);
-    setFormData({
-      industry: '',
-      location: '',
-      website: '',
-      budget: '',
-      capacity: '',
-      name: '',
-      email: '',
-      phone: '',
-    });
-  };
-
-  const industries = t.industries;
+  const { t, isEnglish } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <Layout>
@@ -117,165 +51,16 @@ export default function AuditPage() {
         </SectionContainer>
       </section>
 
-      {/* Audit Form */}
+      {/* Audit Form with Stepper */}
       <SectionContainer id="audit-form" background="muted">
         <div className="max-w-2xl mx-auto">
-          <form onSubmit={handleSubmit} className="bg-card rounded-xl border border-border p-6 sm:p-8 shadow-card">
-            <h2 className="text-2xl font-bold mb-6 text-center">{t.cta.startAudit}</h2>
-            
-            <div className="space-y-5">
-              {/* Industry */}
-              <div>
-                <label htmlFor="industry" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.industry} *
-                </label>
-                <select
-                  id="industry"
-                  name="industry"
-                  value={formData.industry}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">{t.audit.form.industryPlaceholder}</option>
-                  {industries.map((industry) => (
-                    <option key={industry} value={industry}>{industry}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Location */}
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.location} *
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.locationPlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-
-              {/* Website */}
-              <div>
-                <label htmlFor="website" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.website} *
-                </label>
-                <input
-                  type="url"
-                  id="website"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.websitePlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-
-              {/* Budget */}
-              <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.budget} *
-                </label>
-                <input
-                  type="text"
-                  id="budget"
-                  name="budget"
-                  value={formData.budget}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.budgetPlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-                <p className="mt-1 text-sm text-muted-foreground">{t.audit.form.budgetHelper}</p>
-              </div>
-
-              {/* Capacity */}
-              <div>
-                <label htmlFor="capacity" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.capacity} *
-                </label>
-                <input
-                  type="text"
-                  id="capacity"
-                  name="capacity"
-                  value={formData.capacity}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.capacityPlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-                <p className="mt-1 text-sm text-muted-foreground">{t.audit.form.capacityHelper}</p>
-              </div>
-
-              <hr className="border-border" />
-
-              {/* Name */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.name} *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.namePlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.email} *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder={t.audit.form.emailPlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1.5">
-                  {t.audit.form.phone}
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder={t.audit.form.phonePlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-
-              <CTAButton
-                variant="primary"
-                size="lg"
-                className="w-full"
-                location="audit-form-submit"
-              >
-                {isSubmitting ? (isEnglish ? 'Sending...' : 'Wird gesendet...') : t.audit.form.submit}
-              </CTAButton>
-            </div>
-          </form>
+          <div className="bg-card rounded-xl border border-border p-6 sm:p-8 shadow-card">
+            <h2 className="text-2xl font-bold mb-2 text-center">{t.cta.startAudit}</h2>
+            <p className="text-sm text-muted-foreground text-center mb-8">
+              {isEnglish ? 'Takes about 2-5 minutes' : 'Dauert ca. 2-5 Minuten'}
+            </p>
+            <AuditFormStepper />
+          </div>
         </div>
       </SectionContainer>
 
