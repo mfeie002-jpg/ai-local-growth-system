@@ -14,6 +14,175 @@ export type Database = {
   }
   public: {
     Tables: {
+      callback_requests: {
+        Row: {
+          consent_ai_call: boolean | null
+          consent_recording: boolean | null
+          created_at: string
+          error: string | null
+          id: string
+          language: string
+          lead_id: string | null
+          phone: string
+          preferred_time: string | null
+          report_token: string | null
+          retell_call_id: string | null
+          status: string
+        }
+        Insert: {
+          consent_ai_call?: boolean | null
+          consent_recording?: boolean | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          language: string
+          lead_id?: string | null
+          phone: string
+          preferred_time?: string | null
+          report_token?: string | null
+          retell_call_id?: string | null
+          status?: string
+        }
+        Update: {
+          consent_ai_call?: boolean | null
+          consent_recording?: boolean | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          language?: string
+          lead_id?: string | null
+          phone?: string
+          preferred_time?: string | null
+          report_token?: string | null
+          retell_call_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "callback_requests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          agent_id: string | null
+          call_analysis: Json | null
+          consent_recording: boolean | null
+          consent_transcript: boolean | null
+          created_at: string
+          data_storage_setting: string | null
+          direction: string | null
+          disconnection_reason: string | null
+          duration_ms: number | null
+          end_timestamp: number | null
+          from_number: string | null
+          id: string
+          lead_id: string | null
+          metadata: Json | null
+          public_log_url: string | null
+          recording_multi_channel_url: string | null
+          recording_url: string | null
+          retell_call_id: string
+          start_timestamp: number | null
+          status: string | null
+          to_number: string | null
+          transcript: string | null
+          transcript_object: Json | null
+          transcript_with_tool_calls: Json | null
+          transfer_destination: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          call_analysis?: Json | null
+          consent_recording?: boolean | null
+          consent_transcript?: boolean | null
+          created_at?: string
+          data_storage_setting?: string | null
+          direction?: string | null
+          disconnection_reason?: string | null
+          duration_ms?: number | null
+          end_timestamp?: number | null
+          from_number?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          public_log_url?: string | null
+          recording_multi_channel_url?: string | null
+          recording_url?: string | null
+          retell_call_id: string
+          start_timestamp?: number | null
+          status?: string | null
+          to_number?: string | null
+          transcript?: string | null
+          transcript_object?: Json | null
+          transcript_with_tool_calls?: Json | null
+          transfer_destination?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          call_analysis?: Json | null
+          consent_recording?: boolean | null
+          consent_transcript?: boolean | null
+          created_at?: string
+          data_storage_setting?: string | null
+          direction?: string | null
+          disconnection_reason?: string | null
+          duration_ms?: number | null
+          end_timestamp?: number | null
+          from_number?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          public_log_url?: string | null
+          recording_multi_channel_url?: string | null
+          recording_url?: string | null
+          retell_call_id?: string
+          start_timestamp?: number | null
+          status?: string | null
+          to_number?: string | null
+          transcript?: string | null
+          transcript_object?: Json | null
+          transcript_with_tool_calls?: Json | null
+          transfer_destination?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      do_not_call: {
+        Row: {
+          created_at: string
+          id: string
+          phone: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          phone: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           budget_range: string | null
