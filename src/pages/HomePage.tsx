@@ -109,43 +109,106 @@ export default function HomePage() {
       <OrganizationSchema description={t.siteDescription} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden hero-pattern">
+      <section className="relative overflow-hidden hero-pattern min-h-[85vh] flex items-center">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-primary/3 rounded-full blur-3xl" />
+        </div>
+        
         <SectionContainer padding="large" className="relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium rounded-full bg-accent text-accent-foreground animate-fade-in">
-              {isEnglish 
-                ? 'Swiss precision + AI efficiency → more time back.'
-                : 'Swiss precision + AI efficiency → mehr Feierabend.'}
-            </span>
-            <h1 className="text-balance mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-              {isEnglish 
-                ? 'More jobs, less admin — AI gives you time back.'
-                : 'Mehr Aufträge, weniger Büro – Feierabend dank AI.'}
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-              {isEnglish 
-                ? 'We combine high-intent traffic, high-converting funnels and automations so clicks turn into booked jobs.'
-                : 'Wir kombinieren High-Intent Traffic, High-Converting Funnels und Automationen. Damit aus Klicks gebuchte Jobs werden.'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-              <CTAButton
-                variant="primary"
-                size="lg"
-                href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                location="hero"
-              >
-                {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </CTAButton>
-              <CTAButton
-                variant="secondary"
-                size="lg"
-                href={isEnglish ? '/en/demo' : '/demo'}
-                location="hero"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                {isEnglish ? 'Listen to the demo' : 'Demo anhören'}
-              </CTAButton>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              {/* Trust badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-card border border-border shadow-sm animate-fade-in">
+                <div className="flex -space-x-1">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center">
+                    <CheckCircle className="w-3 h-3 text-primary" />
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-foreground">
+                  {isEnglish 
+                    ? 'Swiss precision + AI efficiency'
+                    : 'Schweizer Präzision + KI-Effizienz'}
+                </span>
+              </div>
+              
+              {/* Main headline */}
+              <h1 className="text-balance mb-6 animate-fade-in-up text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold" style={{ animationDelay: '100ms' }}>
+                {isEnglish ? (
+                  <>
+                    More <span className="text-primary">jobs</span>, less admin
+                    <br className="hidden sm:block" />
+                    <span className="text-muted-foreground">— AI gives you time back.</span>
+                  </>
+                ) : (
+                  <>
+                    Mehr <span className="text-primary">Aufträge</span>, weniger Büro
+                    <br className="hidden sm:block" />
+                    <span className="text-muted-foreground">– Feierabend dank AI.</span>
+                  </>
+                )}
+              </h1>
+              
+              {/* Subheadline */}
+              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in-up leading-relaxed" style={{ animationDelay: '200ms' }}>
+                {isEnglish 
+                  ? 'We combine high-intent traffic, converting funnels and smart automations. Clicks become booked jobs — automatically.'
+                  : 'Wir kombinieren High-Intent Traffic, konvertierende Funnels und smarte Automationen. Klicks werden zu gebuchten Jobs – automatisch.'}
+              </p>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                <CTAButton
+                  variant="primary"
+                  size="lg"
+                  href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+                  location="hero"
+                  className="text-base sm:text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </CTAButton>
+                <CTAButton
+                  variant="secondary"
+                  size="lg"
+                  href={isEnglish ? '/en/demo' : '/demo'}
+                  location="hero"
+                  className="text-base sm:text-lg px-8 py-4"
+                >
+                  <Play className="mr-2 w-5 h-5" />
+                  {isEnglish ? 'Listen to demo' : 'Demo anhören'}
+                </CTAButton>
+              </div>
+              
+              {/* Micro-copy */}
+              <p className="mt-6 text-sm text-muted-foreground animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                {isEnglish 
+                  ? '✓ No credit card required  ✓ 2 min setup  ✓ Personalized insights'
+                  : '✓ Keine Kreditkarte nötig  ✓ 2 Min. Setup  ✓ Personalisierte Insights'}
+              </p>
+            </div>
+            
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+              <div className="text-center p-4 rounded-xl bg-card/50 border border-border/50">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">50%</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">
+                  {isEnglish ? 'Less admin time' : 'Weniger Bürozeit'}
+                </div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-card/50 border border-border/50">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">
+                  {isEnglish ? 'Lead capture' : 'Lead-Erfassung'}
+                </div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-card/50 border border-border/50">
+                <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">&lt;1s</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">
+                  {isEnglish ? 'AI response' : 'KI-Antwort'}
+                </div>
+              </div>
             </div>
           </div>
         </SectionContainer>
