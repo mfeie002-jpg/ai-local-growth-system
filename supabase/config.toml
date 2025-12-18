@@ -1,1 +1,16 @@
 project_id = "akxdeuvxvhecvddxyqnd"
+
+[functions.submit-lead]
+verify_jwt = false
+
+[functions.get-audit-report]
+verify_jwt = false
+
+[functions.retell-webhook]
+verify_jwt = false
+
+[functions.voice-callback]
+verify_jwt = false
+
+[functions.voice-tools]
+verify_jwt = false
