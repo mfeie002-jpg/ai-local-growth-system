@@ -6,22 +6,99 @@ import { CTAButton } from '@/components/CTAButton';
 import { PillarCard, AutomationCard } from '@/components/PillarCard';
 import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
+import { siteConfig } from '@/config/site';
 import { 
   Zap, 
   Target, 
   Bot, 
-  MessageSquare, 
-  Mail, 
-  Star, 
-  BarChart3,
-  ArrowRight 
+  ArrowRight,
+  Play,
+  Phone,
+  AlertTriangle,
+  Clock,
+  DollarSign,
+  ShieldCheck,
+  CheckCircle
 } from 'lucide-react';
-
-// Trust section config - set to true when you have proof elements
-const TRUST_ENABLED = false;
+import { useState, useRef, useEffect } from 'react';
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
+  const [audioState, setAudioState] = useState<'idle' | 'playing' | 'paused'>('idle');
+  const [audioExists, setAudioExists] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Check if audio file exists
+  useEffect(() => {
+    const audio = new Audio('/audio/lead-concierge-demo.mp3');
+    audio.addEventListener('error', () => setAudioExists(false));
+    audio.addEventListener('canplaythrough', () => setAudioExists(true));
+    audioRef.current = audio;
+    
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+  }, []);
+
+  const handlePlayDemo = () => {
+    if (!audioRef.current || !audioExists) return;
+    
+    if (audioState === 'playing') {
+      audioRef.current.pause();
+      setAudioState('paused');
+    } else {
+      audioRef.current.play();
+      setAudioState('playing');
+    }
+  };
+
+  // Problem cards data
+  const problemCards = isEnglish ? [
+    { icon: Phone, title: 'Missed calls', description: 'When no one answers, your competitor wins.' },
+    { icon: Clock, title: 'Admin chaos', description: 'Leads come in, but follow-ups happen too late.' },
+    { icon: DollarSign, title: 'Expensive ads', description: 'Without funnel and tracking, you pay for noise, not jobs.' },
+  ] : [
+    { icon: Phone, title: 'Verlorene Anrufe', description: 'Wenn niemand abnimmt, gewinnt die Konkurrenz.' },
+    { icon: Clock, title: 'Admin-Chaos', description: 'Leads kommen rein, aber Follow-ups passieren zu spät.' },
+    { icon: DollarSign, title: 'Teure Werbung', description: 'Ohne Funnel und Tracking zahlst du für Lärm statt Jobs.' },
+  ];
+
+  // Objection handling data
+  const objections = isEnglish ? [
+    { q: 'Ads are too expensive.', a: 'That\'s why we optimize for lead quality and measure properly.' },
+    { q: 'I have no time for follow-ups.', a: 'Exactly: automations + clear pipeline.' },
+    { q: 'AI is complicated.', a: 'We set it up. You don\'t need a new tool collection.' },
+    { q: 'We don\'t need more leads.', a: 'Then we filter for better jobs, not more.' },
+    { q: 'Long-term contracts are suspicious.', a: 'Start with a sprint or 90 days. Flexible after.' },
+  ] : [
+    { q: 'Ads sind zu teuer.', a: 'Darum optimieren wir auf Lead-Qualität und messen sauber.' },
+    { q: 'Ich habe keine Zeit für Follow-ups.', a: 'Genau darum: Automationen + klare Pipeline.' },
+    { q: 'KI ist kompliziert.', a: 'Wir richten es ein. Du brauchst keine neue Tool-Sammlung.' },
+    { q: 'Wir brauchen keine Leads.', a: 'Dann filtern wir auf bessere Aufträge statt mehr.' },
+    { q: 'Langzeitverträge sind suspekt.', a: 'Start mit Sprint oder 90 Tagen. Danach flexibel.' },
+  ];
+
+  // Compliance/transparency bullets
+  const complianceBullets = isEnglish ? [
+    'Analytics only after consent (cookie banner).',
+    'Transparent disclosure for voice assistance.',
+  ] : [
+    'Analytics erst nach Zustimmung (Cookie Banner).',
+    'Transparente Hinweise bei Voice-Assistenz.',
+  ];
+
+  // FAQ items with new additions
+  const faqItems = [
+    ...t.faq.items,
+    ...(isEnglish ? [
+      { question: 'Is the demo recorded?', answer: 'The demo is an example. With real voice assistance, there are transparent disclosures.' },
+      { question: 'How does consent/tracking work?', answer: 'Analytics only after consent.' },
+    ] : [
+      { question: 'Wird die Demo aufgezeichnet?', answer: 'Die Demo ist ein Beispiel. Bei echter Voice-Assistenz gibt es transparente Hinweise.' },
+      { question: 'Wie läuft Consent/Tracking?', answer: 'Analytics nur nach Zustimmung.' },
+    ]),
+  ];
 
   return (
     <Layout>
@@ -36,13 +113,19 @@ export default function HomePage() {
         <SectionContainer padding="large" className="relative">
           <div className="max-w-4xl mx-auto text-center">
             <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium rounded-full bg-accent text-accent-foreground animate-fade-in">
-              {t.hero.trustLine}
+              {isEnglish 
+                ? 'Swiss precision + AI efficiency → more time back.'
+                : 'Swiss precision + AI efficiency → mehr Feierabend.'}
             </span>
             <h1 className="text-balance mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-              {t.hero.title}
+              {isEnglish 
+                ? 'More jobs, less admin — AI gives you time back.'
+                : 'Mehr Aufträge, weniger Büro – Feierabend dank AI.'}
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-              {t.hero.subtitle}
+              {isEnglish 
+                ? 'We combine high-intent traffic, high-converting funnels and automations so clicks turn into booked jobs.'
+                : 'Wir kombinieren High-Intent Traffic, High-Converting Funnels und Automationen. Damit aus Klicks gebuchte Jobs werden.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '300ms' }}>
               <CTAButton
@@ -51,83 +134,161 @@ export default function HomePage() {
                 href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
                 location="hero"
               >
-                {t.cta.getAudit}
+                {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </CTAButton>
               <CTAButton
                 variant="secondary"
                 size="lg"
-                href={isEnglish ? '/en/free-call' : '/gratis-call'}
+                href={isEnglish ? '/en/demo' : '/demo'}
                 location="hero"
               >
-                {t.cta.bookCall}
+                <Play className="mr-2 w-5 h-5" />
+                {isEnglish ? 'Listen to the demo' : 'Demo anhören'}
               </CTAButton>
             </div>
           </div>
         </SectionContainer>
       </section>
 
-      {/* Trust/Proof Section - Only shown if enabled */}
-      {TRUST_ENABLED && (
-        <SectionContainer background="muted" padding="small">
-          <div className="grid grid-cols-2 gap-8">
-            <div className="text-center">
-              <h4 className="font-semibold text-foreground mb-2">Awards</h4>
-              {/* Award logos would go here */}
+      {/* Problem Agitation Grid */}
+      <SectionContainer background="muted">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {problemCards.map((card, i) => (
+            <div 
+              key={i} 
+              className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-all"
+            >
+              <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center mb-4">
+                <card.icon className="w-6 h-6 text-destructive" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
+              <p className="text-muted-foreground">{card.description}</p>
             </div>
-            <div className="text-center">
-              <h4 className="font-semibold text-foreground mb-2">Brands</h4>
-              {/* Brand logos would go here */}
+          ))}
+        </div>
+      </SectionContainer>
+
+      {/* 3 Pillars Section */}
+      <SectionContainer id="system">
+        <SectionHeader title={t.pillars.sectionTitle} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <PillarCard
+            icon={Zap}
+            title={t.pillars.traffic.title}
+            description={isEnglish 
+              ? 'Google Ads + Local SEO (high-intent, no vanity metrics).'
+              : 'Google Ads + Local SEO (High-Intent, keine Vanity-Metrics).'}
+          />
+          <PillarCard
+            icon={Target}
+            title={t.pillars.conversion.title}
+            description={isEnglish 
+              ? 'Landing pages, multi-step forms, tracking, call routing, offer & copy.'
+              : 'Landingpages, Multi-Step Forms, Tracking, Call-Routing, Offer & Copy.'}
+          />
+          <PillarCard
+            icon={Bot}
+            title={t.pillars.aiOps.title}
+            description={isEnglish 
+              ? 'Lead routing, follow-ups, reviews, reporting. Less chaos.'
+              : 'Lead-Routing, Follow-ups, Reviews, Reporting. Weniger Chaos.'}
+          />
+        </div>
+        <div className="text-center">
+          <CTAButton
+            variant="primary"
+            href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+            location="pillars"
+          >
+            {t.cta.freeAudit}
+          </CTAButton>
+        </div>
+      </SectionContainer>
+
+      {/* Audio Demo Section */}
+      {siteConfig.audioDemoEnabled && (
+        <SectionContainer background="accent">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="mb-4">
+              {isEnglish ? 'Listen: AI Lead Concierge Demo' : 'Demo anhören: AI Lead Concierge'}
+            </h2>
+            <p className="text-lg text-muted-foreground mb-6">
+              {isEnglish 
+                ? 'Example call. The agent clearly identifies as AI and mentions call recording.'
+                : 'Beispiel-Gespräch. Der Agent stellt sich transparent als digitaler Assistent vor und erwähnt die Aufzeichnung.'}
+            </p>
+            
+            {siteConfig.voiceSpeedClaimsEnabled && (
+              <p className="text-sm text-muted-foreground mb-6">
+                {isEnglish ? 'Responds in <1 second.' : 'Reagiert in <1 Sekunde.'}
+              </p>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <CTAButton
+                variant="primary"
+                size="lg"
+                onClick={audioExists ? handlePlayDemo : undefined}
+                location="audio-demo"
+                disabled={!audioExists}
+              >
+                <Play className="mr-2 w-5 h-5" />
+                {!audioExists 
+                  ? (isEnglish ? 'Demo is being prepared' : 'Demo wird vorbereitet')
+                  : audioState === 'playing' 
+                    ? (isEnglish ? 'Pause' : 'Pause') 
+                    : (isEnglish ? 'Play demo' : 'Demo abspielen')}
+              </CTAButton>
+              <CTAButton
+                variant="secondary"
+                size="lg"
+                href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+                location="audio-demo"
+              >
+                {t.cta.freeAudit}
+              </CTAButton>
             </div>
           </div>
         </SectionContainer>
       )}
 
-      {/* 3 Pillars Section */}
-      <SectionContainer id="system">
-        <SectionHeader title={t.pillars.sectionTitle} />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <PillarCard
-            icon={Zap}
-            title={t.pillars.traffic.title}
-            description={t.pillars.traffic.description}
-          />
-          <PillarCard
-            icon={Target}
-            title={t.pillars.conversion.title}
-            description={t.pillars.conversion.description}
-          />
-          <PillarCard
-            icon={Bot}
-            title={t.pillars.aiOps.title}
-            description={t.pillars.aiOps.description}
-          />
-        </div>
-      </SectionContainer>
-
-      {/* Gratis Audit Teaser */}
-      <SectionContainer background="accent">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="mb-4">{isEnglish ? 'Start with a Free Audit' : 'Starte mit einem Gratis Audit'}</h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            {isEnglish
-              ? 'Get a comprehensive scorecard of your digital presence. No strings attached.'
-              : 'Erhalte eine umfassende Scorecard deiner digitalen Präsenz. Ohne Verpflichtung.'}
-          </p>
-          <CTAButton
-            variant="primary"
-            size="lg"
-            href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-            location="audit-teaser"
-          >
-            {t.cta.getAudit}
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </CTAButton>
+      {/* Proof Bar - Compliance Only */}
+      <SectionContainer>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {siteConfig.trustAwardsEnabled && (
+            <div className="text-center">
+              <h4 className="font-semibold text-foreground mb-4">Awards</h4>
+              <p className="text-muted-foreground text-sm">[Awards placeholder]</p>
+            </div>
+          )}
+          {siteConfig.trustBrandsEnabled && (
+            <div className="text-center">
+              <h4 className="font-semibold text-foreground mb-4">Brands</h4>
+              <p className="text-muted-foreground text-sm">[Brands placeholder]</p>
+            </div>
+          )}
+          <div className={`text-center ${!siteConfig.trustAwardsEnabled && !siteConfig.trustBrandsEnabled ? 'md:col-span-3' : ''}`}>
+            <div className="inline-flex items-center gap-2 mb-4">
+              <ShieldCheck className="w-5 h-5 text-primary" />
+              <h4 className="font-semibold text-foreground">
+                {isEnglish ? 'Compliance & Transparency' : 'Compliance & Transparenz'}
+              </h4>
+            </div>
+            <ul className="space-y-2">
+              {complianceBullets.map((bullet, i) => (
+                <li key={i} className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
+                  <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </SectionContainer>
 
       {/* Pricing Section */}
-      <SectionContainer id="pricing">
+      <SectionContainer id="pricing" background="muted">
         <SectionHeader 
           title={t.pricing.sectionTitle}
           subtitle={t.pricing.disclaimer}
@@ -143,55 +304,51 @@ export default function HomePage() {
           />
           <PricingCard
             name={t.pricing.growth.name}
-            duration={t.pricing.growth.duration}
+            duration={isEnglish ? '90 days (then monthly cancellable)' : '90 Tage (danach monatlich kündbar)'}
             forWhom={t.pricing.growth.forWhom}
             price={t.pricing.growth.price}
             features={t.pricing.growth.features}
             highlighted
+            highlightLabel={isEnglish ? 'Recommended' : 'Empfohlen'}
           />
           <PricingCard
             name={t.pricing.leader.name}
             duration={t.pricing.leader.duration}
             forWhom={t.pricing.leader.forWhom}
             price={t.pricing.leader.price}
-            priceNote={t.pricing.leader.priceNote}
+            priceNote={isEnglish ? '(Ad budget extra)' : '(Ad-Budget extra)'}
             features={t.pricing.leader.features}
           />
         </div>
-        <p className="text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-          {t.pricing.templateNote}
-        </p>
+        
+        {/* Anti-Knebel + Template note */}
+        <div className="max-w-2xl mx-auto space-y-3 text-center text-sm text-muted-foreground">
+          <p className="font-medium text-foreground">
+            {isEnglish 
+              ? 'Domains, ad accounts and data stay with the client.'
+              : 'Domains, Ads-Konten und Daten bleiben im Besitz des Kunden.'}
+          </p>
+          <p>{t.pricing.templateNote}</p>
+        </div>
       </SectionContainer>
 
-      {/* Automations Section */}
-      <SectionContainer background="muted" id="automations">
-        <SectionHeader title={t.automations.sectionTitle} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-          <AutomationCard
-            icon={MessageSquare}
-            title={t.automations.leadConcierge.title}
-            description={t.automations.leadConcierge.description}
-          />
-          <AutomationCard
-            icon={Mail}
-            title={t.automations.followUp.title}
-            description={t.automations.followUp.description}
-          />
-          <AutomationCard
-            icon={Star}
-            title={t.automations.reviewHunter.title}
-            description={t.automations.reviewHunter.description}
-          />
-          <AutomationCard
-            icon={BarChart3}
-            title={t.automations.reporting.title}
-            description={t.automations.reporting.description}
-          />
+      {/* Objection Handling */}
+      <SectionContainer>
+        <SectionHeader 
+          title={isEnglish ? 'Common objections (answered)' : 'Häufige Einwände (kurz beantwortet)'}
+        />
+        <div className="max-w-3xl mx-auto grid grid-cols-1 gap-4">
+          {objections.map((obj, i) => (
+            <div key={i} className="p-4 rounded-lg border border-border bg-card">
+              <p className="font-medium text-foreground mb-1">"{obj.q}"</p>
+              <p className="text-muted-foreground">→ {obj.a}</p>
+            </div>
+          ))}
         </div>
       </SectionContainer>
 
       {/* Case Studies Section */}
-      <SectionContainer>
+      <SectionContainer background="muted">
         <SectionHeader title={t.caseStudies.sectionTitle} />
         <div className="max-w-xl mx-auto text-center py-12 px-8 rounded-xl border border-border bg-card">
           <p className="text-muted-foreground">{t.caseStudies.noData}</p>
@@ -207,10 +364,10 @@ export default function HomePage() {
       </SectionContainer>
 
       {/* FAQ Section */}
-      <SectionContainer background="muted" id="faq">
+      <SectionContainer id="faq">
         <SectionHeader title={t.faq.sectionTitle} />
         <div className="max-w-3xl mx-auto">
-          <FAQAccordion items={t.faq.items} />
+          <FAQAccordion items={faqItems} />
         </div>
       </SectionContainer>
 

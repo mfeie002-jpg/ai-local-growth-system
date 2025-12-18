@@ -12,6 +12,7 @@ interface CTAButtonProps {
   className?: string;
   location?: string;
   external?: boolean;
+  disabled?: boolean;
 }
 
 export function CTAButton({
@@ -23,6 +24,7 @@ export function CTAButton({
   className,
   location: ctaLocation = 'unknown',
   external = false,
+  disabled = false,
 }: CTAButtonProps) {
   const { language } = useLanguage();
   const pageLocation = useLocation();
@@ -74,7 +76,7 @@ export function CTAButton({
   }
 
   return (
-    <button onClick={handleClick} className={baseStyles}>
+    <button onClick={handleClick} className={baseStyles} disabled={disabled}>
       {children}
     </button>
   );
