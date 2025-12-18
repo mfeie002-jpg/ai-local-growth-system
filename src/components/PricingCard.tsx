@@ -12,6 +12,7 @@ interface PricingCardProps {
   isMonthly?: boolean;
   features: readonly string[];
   highlighted?: boolean;
+  highlightLabel?: string;
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export function PricingCard({
   isMonthly = true,
   features,
   highlighted = false,
+  highlightLabel,
   className,
 }: PricingCardProps) {
   const { t, isEnglish } = useLanguage();
@@ -39,6 +41,13 @@ export function PricingCard({
         className
       )}
     >
+      {highlighted && highlightLabel && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="px-4 py-1 text-xs font-semibold rounded-full bg-primary text-primary-foreground">
+            {highlightLabel}
+          </span>
+        </div>
+      )}
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">

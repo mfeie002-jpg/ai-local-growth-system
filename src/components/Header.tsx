@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { useLanguage, getLocalizedPath } from '@/i18n/LanguageContext';
+import { Menu, X, Play } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { LanguageSwitch } from './LanguageSwitch';
 import { CTAButton } from './CTAButton';
 import { cn } from '@/lib/utils';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { t, language, isEnglish } = useLanguage();
+  const { t, isEnglish } = useLanguage();
   const location = useLocation();
 
   const navLinks = [
@@ -56,12 +56,13 @@ export function Header() {
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitch />
             <CTAButton
-              variant="secondary"
+              variant="ghost"
               size="sm"
-              href={isEnglish ? '/en/free-call' : '/gratis-call'}
+              href={isEnglish ? '/en/demo' : '/demo'}
               location="header"
             >
-              {t.cta.freeCall}
+              <Play className="w-4 h-4 mr-1" />
+              {isEnglish ? 'Demo' : 'Demo'}
             </CTAButton>
             <CTAButton
               variant="primary"
@@ -109,11 +110,12 @@ export function Header() {
               </div>
               <CTAButton
                 variant="secondary"
-                href={isEnglish ? '/en/free-call' : '/gratis-call'}
+                href={isEnglish ? '/en/demo' : '/demo'}
                 location="header-mobile"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t.cta.freeCall}
+                <Play className="w-4 h-4 mr-1" />
+                {isEnglish ? 'Listen to Demo' : 'Demo anhören'}
               </CTAButton>
               <CTAButton
                 variant="primary"
