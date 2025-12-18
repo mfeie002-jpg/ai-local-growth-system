@@ -264,6 +264,34 @@ export const translations = {
           question: 'Ist Ad Spend inklusive?',
           answer: 'Nein. Ad Spend zahlst du direkt.',
         },
+        {
+          question: 'Welche Branchen bedient ihr?',
+          answer: 'Lokale Dienstleister: Reinigung, Handwerk, Umzug, Sanitär, Gartenbau, und mehr.',
+        },
+        {
+          question: 'Wie lange dauert es, bis ich Resultate sehe?',
+          answer: 'Google Ads: oft erste Leads in 1-2 Wochen. SEO: 3-6 Monate für nachhaltige Rankings.',
+        },
+        {
+          question: 'Muss ich einen langen Vertrag unterschreiben?',
+          answer: 'Nein. Der Launch Sprint ist einmalig, Retainer sind monatlich kündbar.',
+        },
+        {
+          question: 'Was passiert nach dem Audit?',
+          answer: 'Du bekommst die Scorecard per E-Mail. Dann kannst du einen Call buchen — oder nicht.',
+        },
+        {
+          question: 'Kann ich nur einen Teil des Systems buchen?',
+          answer: 'Ja. Wir passen das Angebot an deine Prioritäten und dein Budget an.',
+        },
+        {
+          question: 'Arbeitet ihr mit Konkurrenten in derselben Region?',
+          answer: 'Wir limitieren die Anzahl Kunden pro Branche/Region, um Interessenkonflikte zu vermeiden.',
+        },
+        {
+          question: 'Brauche ich technisches Wissen?',
+          answer: 'Nein. Wir kümmern uns um alles Technische — du konzentrierst dich auf dein Kerngeschäft.',
+        },
       ],
       auditItems: [
         {
@@ -589,6 +617,34 @@ export const translations = {
         {
           question: 'Is ad spend included?',
           answer: 'No. You pay ad spend directly.',
+        },
+        {
+          question: 'Which industries do you serve?',
+          answer: 'Local service providers: cleaning, trades, moving, plumbing, landscaping, and more.',
+        },
+        {
+          question: 'How long until I see results?',
+          answer: 'Google Ads: often first leads in 1-2 weeks. SEO: 3-6 months for sustainable rankings.',
+        },
+        {
+          question: 'Do I have to sign a long contract?',
+          answer: 'No. Launch Sprint is one-time, retainers are monthly cancellable.',
+        },
+        {
+          question: 'What happens after the audit?',
+          answer: 'You receive the scorecard by email. Then you can book a call — or not.',
+        },
+        {
+          question: 'Can I book only part of the system?',
+          answer: 'Yes. We adapt the offer to your priorities and budget.',
+        },
+        {
+          question: 'Do you work with competitors in the same region?',
+          answer: 'We limit the number of clients per industry/region to avoid conflicts of interest.',
+        },
+        {
+          question: 'Do I need technical knowledge?',
+          answer: 'No. We handle all the technical stuff — you focus on your core business.',
         },
       ],
       auditItems: [
