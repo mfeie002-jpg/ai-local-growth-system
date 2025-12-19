@@ -17,6 +17,7 @@ import ImprintPage from "./pages/ImprintPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import DemoPage from "./pages/DemoPage";
 import AuditReportPage from "./pages/AuditReportPage";
+import CaseStudiesPage from "./pages/CaseStudiesPage";
 import NotFound from "./pages/NotFound";
 
 // Service Pages
@@ -58,6 +59,7 @@ const App = () => (
               <Route path="/impressum" element={<ImprintPage />} />
               <Route path="/datenschutz" element={<PrivacyPage />} />
               <Route path="/demo" element={<DemoPage />} />
+              <Route path="/fallstudien" element={<CaseStudiesPage />} />
               
               {/* DE Service Routes */}
               <Route path="/services/ki-implementierung" element={<AIImplementationPage />} />
@@ -79,6 +81,7 @@ const App = () => (
               <Route path="/en/imprint" element={<ImprintPage />} />
               <Route path="/en/privacy" element={<PrivacyPage />} />
               <Route path="/en/demo" element={<DemoPage />} />
+              <Route path="/en/case-studies" element={<CaseStudiesPage />} />
               
               {/* EN Service Routes */}
               <Route path="/en/services/ai-implementation" element={<AIImplementationPage />} />

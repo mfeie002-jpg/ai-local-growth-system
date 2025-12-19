@@ -8,6 +8,7 @@ import { AIChatbotDemo } from '@/components/AIChatbotDemo';
 import { SocialProofSection } from '@/components/SocialProofSection';
 import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
 import { siteConfig } from '@/config/site';
 import { 
   ArrowRight,
@@ -256,36 +257,36 @@ export default function HomePage() {
 
       {/* How We Work Section */}
       <SectionContainer id="process">
-        <SectionHeader 
-          title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
-          subtitle={isEnglish 
-            ? 'A proven process that delivers results faster with AI acceleration.'
-            : 'Ein bewährter Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ScrollReveal>
+          <SectionHeader 
+            title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
+            subtitle={isEnglish 
+              ? 'A proven process that delivers results faster with AI acceleration.'
+              : 'Ein bewährter Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
+          />
+        </ScrollReveal>
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" staggerDelay={0.15}>
           {processSteps.map((step, index) => (
-            <div 
-              key={index} 
-              className="relative animate-fade-in-up"
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              {/* Connector line */}
-              {index < processSteps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
-              )}
-              
-              <div className="relative z-10 text-center">
-                {/* Step number */}
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/10 border border-primary/30 mb-6 mx-auto">
-                  <step.icon className="w-8 h-8 text-primary" />
-                </div>
+            <StaggerItem key={index}>
+              <div className="relative">
+                {/* Connector line */}
+                {index < processSteps.length - 1 && (
+                  <div className="hidden lg:block absolute top-10 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+                )}
                 
-                <h3 className="text-xl font-bold font-display mb-3">{step.title}</h3>
-                <p className="text-muted-foreground text-sm">{step.description}</p>
+                <div className="relative z-10 text-center">
+                  {/* Step number */}
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/10 border border-primary/30 mb-6 mx-auto">
+                    <step.icon className="w-8 h-8 text-primary" />
+                  </div>
+                  
+                  <h3 className="text-xl font-bold font-display mb-3">{step.title}</h3>
+                  <p className="text-muted-foreground text-sm">{step.description}</p>
+                </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </SectionContainer>
 
       {/* Why Choose Us */}
@@ -293,27 +294,29 @@ export default function HomePage() {
         <div className="absolute inset-0 gradient-mesh opacity-50" />
         
         <div className="relative">
-          <SectionHeader 
-            title={isEnglish ? 'Why Choose Us' : 'Warum uns wählen'}
-            subtitle={isEnglish 
-              ? 'We\'re not just another agency. We\'re your AI-powered growth partner.'
-              : 'Wir sind nicht nur eine weitere Agentur. Wir sind Ihr KI-gestützter Wachstumspartner.'}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ScrollReveal>
+            <SectionHeader 
+              title={isEnglish ? 'Why Choose Us' : 'Warum uns wählen'}
+              subtitle={isEnglish 
+                ? 'We\'re not just another agency. We\'re your AI-powered growth partner.'
+                : 'Wir sind nicht nur eine weitere Agentur. Wir sind Ihr KI-gestützter Wachstumspartner.'}
+            />
+          </ScrollReveal>
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
             {whyUs.map((item, index) => (
-              <div 
-                key={index}
-                className="p-6 rounded-2xl bg-card/30 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-primary" />
+              <StaggerItem key={index}>
+                <div 
+                  className="p-6 rounded-2xl bg-card/30 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                    <item.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h4 className="text-lg font-bold font-display mb-2">{item.title}</h4>
+                  <p className="text-muted-foreground text-sm">{item.description}</p>
                 </div>
-                <h4 className="text-lg font-bold font-display mb-2">{item.title}</h4>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </SectionContainer>
 
