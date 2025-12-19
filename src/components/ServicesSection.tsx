@@ -12,6 +12,15 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Import service images
+import aiImplementationImg from '@/assets/services/ai-implementation.jpg';
+import seoServiceImg from '@/assets/services/seo-service.jpg';
+import ppcServiceImg from '@/assets/services/ppc-service.jpg';
+import reputationServiceImg from '@/assets/services/reputation-service.jpg';
+import designServiceImg from '@/assets/services/design-service.jpg';
+import brandServiceImg from '@/assets/services/brand-service.jpg';
+import socialMediaServiceImg from '@/assets/services/social-media-service.jpg';
+
 interface ServiceCardProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -19,20 +28,36 @@ interface ServiceCardProps {
   features: string[];
   isAI?: boolean;
   delay?: number;
+  image?: string;
 }
 
-function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0 }: ServiceCardProps) {
+function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0, image }: ServiceCardProps) {
   return (
     <div 
       className={cn(
-        "service-card group animate-fade-in-up",
+        "service-card group animate-fade-in-up overflow-hidden",
         isAI && "border-ai/30 hover:border-ai/60"
       )}
       style={{ animationDelay: `${delay}ms` }}
     >
+      {/* Service Image */}
+      {image && (
+        <div className="relative -mx-6 -mt-6 mb-5 h-40 overflow-hidden">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+        </div>
+      )}
+
       {/* AI Badge */}
       {isAI && (
-        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-ai/10 border border-ai/30">
+        <div className={cn(
+          "absolute right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-ai/10 border border-ai/30",
+          image ? "top-4" : "top-4"
+        )}>
           <Sparkles className="w-3 h-3 text-ai" />
           <span className="text-xs font-medium text-ai">AI-Powered</span>
         </div>
@@ -78,42 +103,49 @@ export function ServicesSection() {
       description: 'Our core specialty. We integrate AI into your business processes to maximize efficiency and results.',
       features: ['AI Chatbots & Assistants', 'Process Automation', 'Predictive Analytics', 'Custom AI Solutions'],
       isAI: true,
+      image: aiImplementationImg,
     },
     {
       icon: Search,
       title: 'SEO',
       description: 'Organic visibility that drives qualified traffic. Rank for keywords that convert.',
       features: ['Technical SEO', 'Content Strategy', 'Local SEO', 'Link Building'],
+      image: seoServiceImg,
     },
     {
       icon: MousePointerClick,
       title: 'SEA / PPC',
       description: 'Paid advertising that delivers ROI. Every click is optimized for conversions.',
       features: ['Google Ads', 'Social Ads', 'Retargeting', 'Conversion Tracking'],
+      image: ppcServiceImg,
     },
     {
       icon: Shield,
       title: 'Reputation Management',
       description: 'Protect and enhance your brand\'s online presence. Build trust at scale.',
       features: ['Review Management', 'Crisis Response', 'Brand Monitoring', 'PR Strategy'],
+      image: reputationServiceImg,
     },
     {
       icon: Palette,
       title: 'Design & Development',
       description: 'Beautiful, conversion-optimized websites and digital products that perform.',
       features: ['Web Design', 'UX/UI Design', 'Development', 'Landing Pages'],
+      image: designServiceImg,
     },
     {
       icon: Rocket,
       title: 'Brand Deployment',
       description: 'Launch your brand across all channels with consistency and impact.',
       features: ['Brand Strategy', 'Visual Identity', 'Brand Guidelines', 'Multi-Channel Launch'],
+      image: brandServiceImg,
     },
     {
       icon: Share2,
       title: 'Social Media',
       description: 'Build community and drive engagement with strategic social presence.',
       features: ['Content Creation', 'Community Management', 'Influencer Marketing', 'Analytics'],
+      image: socialMediaServiceImg,
     },
   ] : [
     {
@@ -122,42 +154,49 @@ export function ServicesSection() {
       description: 'Unser Kerngeschäft. Wir integrieren KI in Ihre Geschäftsprozesse für maximale Effizienz und Ergebnisse.',
       features: ['KI-Chatbots & Assistenten', 'Prozessautomatisierung', 'Predictive Analytics', 'Individuelle KI-Lösungen'],
       isAI: true,
+      image: aiImplementationImg,
     },
     {
       icon: Search,
       title: 'SEO',
       description: 'Organische Sichtbarkeit, die qualifizierten Traffic bringt. Rankings für Keywords, die konvertieren.',
       features: ['Technisches SEO', 'Content-Strategie', 'Local SEO', 'Linkbuilding'],
+      image: seoServiceImg,
     },
     {
       icon: MousePointerClick,
       title: 'SEA / PPC',
       description: 'Bezahlte Werbung mit ROI. Jeder Klick ist auf Conversions optimiert.',
       features: ['Google Ads', 'Social Ads', 'Retargeting', 'Conversion Tracking'],
+      image: ppcServiceImg,
     },
     {
       icon: Shield,
       title: 'Reputation Management',
       description: 'Schützen und verbessern Sie Ihre Online-Präsenz. Vertrauen skalierbar aufbauen.',
       features: ['Bewertungsmanagement', 'Krisenreaktion', 'Brand Monitoring', 'PR-Strategie'],
+      image: reputationServiceImg,
     },
     {
       icon: Palette,
       title: 'Design & Entwicklung',
       description: 'Schöne, conversion-optimierte Websites und digitale Produkte, die performen.',
       features: ['Webdesign', 'UX/UI Design', 'Entwicklung', 'Landing Pages'],
+      image: designServiceImg,
     },
     {
       icon: Rocket,
       title: 'Brand Deployment',
       description: 'Lancieren Sie Ihre Marke konsistent und wirkungsvoll über alle Kanäle.',
       features: ['Markenstrategie', 'Visuelle Identität', 'Brand Guidelines', 'Multi-Channel Launch'],
+      image: brandServiceImg,
     },
     {
       icon: Share2,
       title: 'Social Media',
       description: 'Community aufbauen und Engagement steigern mit strategischer sozialer Präsenz.',
       features: ['Content-Erstellung', 'Community Management', 'Influencer Marketing', 'Analytics'],
+      image: socialMediaServiceImg,
     },
   ];
 
