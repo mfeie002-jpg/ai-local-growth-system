@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import seoServiceImg from '@/assets/seo-service.jpg';
+import seoServiceImg from '@/assets/services/seo-service.jpg';
 
 export default function SEOPage() {
   const { isEnglish } = useLanguage();

@@ -1,7 +1,7 @@
 import { Rocket } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import brandServiceImg from '@/assets/brand-service.jpg';
+import brandServiceImg from '@/assets/services/brand-service.jpg';
 
 export default function BrandDeploymentPage() {
   const { isEnglish } = useLanguage();
@@ -72,6 +72,7 @@ export default function BrandDeploymentPage() {
       benefits={benefits}
       caseStudies={caseStudies}
       relatedServices={relatedServices}
+      heroImage={brandServiceImg}
     />
   );
 }

@@ -1,7 +1,7 @@
 import { Bot } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import aiServiceImg from '@/assets/ai-service.jpg';
+import aiServiceImg from '@/assets/services/ai-implementation.jpg';
 
 export default function AIImplementationPage() {
   const { isEnglish } = useLanguage();
@@ -77,6 +77,7 @@ export default function AIImplementationPage() {
       caseStudies={caseStudies}
       relatedServices={relatedServices}
       isAI
+      heroImage={aiServiceImg}
     />
   );
 }
