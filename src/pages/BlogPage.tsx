@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
 
 function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
   const { isEnglish } = useLanguage();
@@ -211,6 +212,15 @@ export default function BlogPage() {
             </p>
           </div>
         )}
+      </SectionContainer>
+
+      {/* Newsletter Section */}
+      <SectionContainer>
+        <ScrollReveal>
+          <div className="max-w-2xl mx-auto">
+            <NewsletterSignup />
+          </div>
+        </ScrollReveal>
       </SectionContainer>
 
       {/* CTA Section */}
