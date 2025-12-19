@@ -5,6 +5,7 @@ import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { ServicesSection } from '@/components/ServicesSection';
 import { AIChatbotDemo } from '@/components/AIChatbotDemo';
+import { SocialProofSection } from '@/components/SocialProofSection';
 import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { siteConfig } from '@/config/site';
@@ -265,6 +266,9 @@ export default function HomePage() {
       {/* Services Section */}
       <ServicesSection />
 
+      {/* Social Proof - Logos & Testimonials */}
+      <SocialProofSection />
+
       {/* How We Work Section */}
       <SectionContainer id="process">
         <SectionHeader 
@@ -328,46 +332,51 @@ export default function HomePage() {
         </div>
       </SectionContainer>
 
-      {/* Audio Demo Section */}
-      {siteConfig.audioDemoEnabled && (
-        <SectionContainer>
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 border border-ai/30">
-              <Bot className="w-4 h-4 text-ai" />
-              <span className="text-sm font-medium text-ai">
-                {isEnglish ? 'AI Voice Demo' : 'KI-Sprach-Demo'}
-              </span>
+      {/* AI Chatbot Demo Section */}
+      <SectionContainer className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-mesh opacity-30" />
+        
+        <div className="relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Content */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 border border-ai/30">
+                <Bot className="w-4 h-4 text-ai" />
+                <span className="text-sm font-medium text-ai">
+                  {isEnglish ? 'Live AI Demo' : 'Live KI-Demo'}
+                </span>
+              </div>
+              
+              <h2 className="mb-4 font-display">
+                {isEnglish ? 'See Our AI in Action' : 'Sehen Sie unsere KI in Aktion'}
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                {isEnglish 
+                  ? 'Watch how our AI assistant handles customer inquiries, qualifies leads, and provides instant support — all with natural, human-like conversation.'
+                  : 'Sehen Sie, wie unser KI-Assistent Kundenanfragen bearbeitet, Leads qualifiziert und sofortigen Support bietet — alles mit natürlicher, menschlicher Konversation.'}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <CTAButton
+                  variant="primary"
+                  size="lg"
+                  href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+                  location="chatbot-demo"
+                  className="glow-ai"
+                >
+                  {isEnglish ? 'Get AI for Your Business' : 'KI für Ihr Geschäft'}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </CTAButton>
+              </div>
             </div>
             
-            <h2 className="mb-4 font-display">
-              {isEnglish ? 'Hear Our AI in Action' : 'Hören Sie unsere KI in Aktion'}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              {isEnglish 
-                ? 'Experience how our AI assistant handles customer inquiries with natural conversation.'
-                : 'Erleben Sie, wie unser KI-Assistent Kundenanfragen mit natürlicher Konversation bearbeitet.'}
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <CTAButton
-                variant="primary"
-                size="lg"
-                onClick={audioExists ? handlePlayDemo : undefined}
-                location="audio-demo"
-                disabled={!audioExists}
-                className="glow-primary"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                {!audioExists 
-                  ? (isEnglish ? 'Demo being prepared' : 'Demo wird vorbereitet')
-                  : audioState === 'playing' 
-                    ? (isEnglish ? 'Pause' : 'Pause') 
-                    : (isEnglish ? 'Play AI Demo' : 'KI-Demo abspielen')}
-              </CTAButton>
+            {/* Right - Chatbot Demo */}
+            <div>
+              <AIChatbotDemo />
             </div>
           </div>
-        </SectionContainer>
-      )}
+        </div>
+      </SectionContainer>
 
       {/* Pricing Section */}
       <SectionContainer id="pricing" background="muted">
