@@ -1,6 +1,7 @@
 import { Shield } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import reputationServiceImg from '@/assets/reputation-service.jpg';
 
 export default function ReputationPage() {
   const { isEnglish } = useLanguage();

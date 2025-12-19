@@ -1,6 +1,7 @@
 import { Palette } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import designServiceImg from '@/assets/design-service.jpg';
 
 export default function DesignDevelopmentPage() {
   const { isEnglish } = useLanguage();

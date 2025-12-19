@@ -1,6 +1,7 @@
 import { Share2 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import socialMediaServiceImg from '@/assets/social-media-service.jpg';
 
 export default function SocialMediaPage() {
   const { isEnglish } = useLanguage();
