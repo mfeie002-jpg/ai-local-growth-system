@@ -26,17 +26,17 @@ export function Logo({ className, size = 'md', showText = true }: LogoProps) {
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full"
         >
-          {/* Outer glow ring */}
+          {/* Outer glow ring with pulse effect */}
           <circle
             cx="24"
             cy="24"
             r="22"
-            className="stroke-primary/20"
-            strokeWidth="2"
+            className="stroke-primary/30"
+            strokeWidth="1.5"
             fill="none"
           />
           
-          {/* Main circle - gradient feel with solid color */}
+          {/* Main circle background */}
           <circle
             cx="24"
             cy="24"
@@ -44,48 +44,84 @@ export function Logo({ className, size = 'md', showText = true }: LogoProps) {
             className="fill-primary"
           />
           
-          {/* Horizon line - the "Feierabend" sunset line */}
-          <path
-            d="M8 26 H40"
-            stroke="hsl(0 0% 100% / 0.4)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+          {/* Neural network nodes - outer ring */}
+          <circle cx="24" cy="8" r="2.5" className="fill-primary-foreground" />
+          <circle cx="38" cy="18" r="2.5" className="fill-primary-foreground" />
+          <circle cx="38" cy="32" r="2.5" className="fill-primary-foreground" />
+          <circle cx="24" cy="40" r="2.5" className="fill-primary-foreground" />
+          <circle cx="10" cy="32" r="2.5" className="fill-primary-foreground" />
+          <circle cx="10" cy="18" r="2.5" className="fill-primary-foreground" />
           
-          {/* Setting sun - larger, more prominent */}
+          {/* Central AI brain/core */}
           <circle
             cx="24"
-            cy="20"
+            cy="24"
             r="8"
             className="fill-primary-foreground"
           />
           
-          {/* Clock hands - representing "Feierabend" (end of work day) */}
+          {/* AI brain icon inside */}
           <path
-            d="M24 15 L24 20 L28 23"
+            d="M20 22 Q20 20 22 20 L26 20 Q28 20 28 22 L28 26 Q28 28 26 28 L22 28 Q20 28 20 26 Z"
             stroke="hsl(var(--primary))"
-            strokeWidth="2.5"
+            strokeWidth="1.5"
+            fill="none"
+          />
+          <circle cx="22" cy="23" r="1" className="fill-primary" />
+          <circle cx="26" cy="23" r="1" className="fill-primary" />
+          <path
+            d="M22 26 Q24 27.5 26 26"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1"
             strokeLinecap="round"
-            strokeLinejoin="round"
+            fill="none"
           />
           
-          {/* AI network dots below horizon */}
-          <circle cx="14" cy="34" r="2.5" className="fill-primary-foreground" />
-          <circle cx="24" cy="36" r="2.5" className="fill-primary-foreground" />
-          <circle cx="34" cy="34" r="2.5" className="fill-primary-foreground" />
-          
-          {/* Connection lines - representing AI network */}
+          {/* Neural connection lines from center to outer nodes */}
           <path
-            d="M17 28 L14 34 M24 28 L24 36 M31 28 L34 34"
-            stroke="hsl(0 0% 100% / 0.6)"
+            d="M24 16 L24 8"
+            stroke="hsl(0 0% 100% / 0.5)"
             strokeWidth="1.5"
             strokeLinecap="round"
           />
           <path
-            d="M14 34 L24 36 L34 34"
-            stroke="hsl(0 0% 100% / 0.3)"
+            d="M30 19 L38 18"
+            stroke="hsl(0 0% 100% / 0.5)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M30 29 L38 32"
+            stroke="hsl(0 0% 100% / 0.5)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M24 32 L24 40"
+            stroke="hsl(0 0% 100% / 0.5)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M18 29 L10 32"
+            stroke="hsl(0 0% 100% / 0.5)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M18 19 L10 18"
+            stroke="hsl(0 0% 100% / 0.5)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          
+          {/* Interconnecting outer nodes */}
+          <path
+            d="M24 8 L38 18 L38 32 L24 40 L10 32 L10 18 Z"
+            stroke="hsl(0 0% 100% / 0.2)"
             strokeWidth="1"
             strokeLinecap="round"
+            fill="none"
           />
         </svg>
         
@@ -121,13 +157,16 @@ export function LogoMark({ className }: { className?: string }) {
       className={cn('w-10 h-10', className)}
     >
       <circle cx="24" cy="24" r="20" className="fill-primary" />
-      <path d="M8 26 H40" stroke="hsl(0 0% 100% / 0.4)" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="24" cy="20" r="8" className="fill-primary-foreground" />
-      <path d="M24 15 L24 20 L28 23" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="14" cy="34" r="2.5" className="fill-primary-foreground" />
-      <circle cx="24" cy="36" r="2.5" className="fill-primary-foreground" />
-      <circle cx="34" cy="34" r="2.5" className="fill-primary-foreground" />
-      <path d="M17 28 L14 34 M24 28 L24 36 M31 28 L34 34" stroke="hsl(0 0% 100% / 0.6)" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="24" cy="8" r="2" className="fill-primary-foreground" />
+      <circle cx="38" cy="18" r="2" className="fill-primary-foreground" />
+      <circle cx="38" cy="32" r="2" className="fill-primary-foreground" />
+      <circle cx="24" cy="40" r="2" className="fill-primary-foreground" />
+      <circle cx="10" cy="32" r="2" className="fill-primary-foreground" />
+      <circle cx="10" cy="18" r="2" className="fill-primary-foreground" />
+      <circle cx="24" cy="24" r="7" className="fill-primary-foreground" />
+      <circle cx="22" cy="23" r="1" className="fill-primary" />
+      <circle cx="26" cy="23" r="1" className="fill-primary" />
+      <path d="M24 16 L24 8 M30 19 L38 18 M30 29 L38 32 M24 32 L24 40 M18 29 L10 32 M18 19 L10 18" stroke="hsl(0 0% 100% / 0.5)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
