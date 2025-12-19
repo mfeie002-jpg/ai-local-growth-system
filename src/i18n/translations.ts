@@ -6,10 +6,11 @@ export const translations = {
   de: {
     // Meta
     siteName: 'itsFeierabend.ch',
-    siteDescription: 'AI Full Growth System für Local Services in der Schweiz. Mehr Anfragen, weniger Chaos.',
+    siteDescription: 'KI-gestützte Digital Marketing Agentur. SEO, SEA, Social Media, Brand Management und KI-Implementierung für Ihr Wachstum.',
     
     // Navigation
     nav: {
+      services: 'Services',
       system: 'System',
       audit: 'Gratis Audit',
       pricing: 'Pakete',
@@ -379,10 +380,11 @@ export const translations = {
   en: {
     // Meta
     siteName: 'itsFeierabend.ch',
-    siteDescription: 'AI-first full growth system for local services in Switzerland. More leads, less chaos.',
+    siteDescription: 'AI-powered digital marketing agency. SEO, SEA, social media, brand management and AI implementation for your growth.',
     
     // Navigation
     nav: {
+      services: 'Services',
       system: 'System',
       audit: 'Free Audit',
       pricing: 'Pricing',
