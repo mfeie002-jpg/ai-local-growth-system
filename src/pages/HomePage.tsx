@@ -3,24 +3,23 @@ import { Layout } from '@/components/Layout';
 import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
-import { PillarCard, AutomationCard } from '@/components/PillarCard';
+import { ServicesSection } from '@/components/ServicesSection';
 import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { siteConfig } from '@/config/site';
 import { 
-  Zap, 
-  Target, 
-  Bot, 
   ArrowRight,
   Play,
-  Phone,
-  AlertTriangle,
-  Clock,
-  DollarSign,
-  ShieldCheck,
-  CheckCircle
+  Bot,
+  Zap,
+  Target,
+  TrendingUp,
+  Users,
+  Award,
+  CheckCircle,
+  Sparkles
 } from 'lucide-react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import heroImage1 from '@/assets/hero-image.jpg';
 import heroImage2 from '@/assets/hero-image-2.jpg';
 
@@ -39,9 +38,9 @@ export default function HomePage() {
     }, 6000);
     return () => clearInterval(interval);
   }, []);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Check if audio file exists
   useEffect(() => {
     const audio = new Audio('/audio/lead-concierge-demo.mp3');
     audio.addEventListener('error', () => setAudioExists(false));
@@ -66,132 +65,140 @@ export default function HomePage() {
     }
   };
 
-  // Problem cards data
-  const problemCards = isEnglish ? [
-    { icon: Phone, title: 'Missed calls', description: 'When no one answers, your competitor wins.' },
-    { icon: Clock, title: 'Admin chaos', description: 'Leads come in, but follow-ups happen too late.' },
-    { icon: DollarSign, title: 'Expensive ads', description: 'Without funnel and tracking, you pay for noise, not jobs.' },
+  // Stats data
+  const stats = isEnglish ? [
+    { value: '200+', label: 'AI Integrations' },
+    { value: '3x', label: 'Avg. ROI Increase' },
+    { value: '50%', label: 'Time Saved' },
+    { value: '24/7', label: 'AI Operations' },
   ] : [
-    { icon: Phone, title: 'Verlorene Anrufe', description: 'Wenn niemand abnimmt, gewinnt die Konkurrenz.' },
-    { icon: Clock, title: 'Admin-Chaos', description: 'Leads kommen rein, aber Follow-ups passieren zu spät.' },
-    { icon: DollarSign, title: 'Teure Werbung', description: 'Ohne Funnel und Tracking zahlst du für Lärm statt Jobs.' },
+    { value: '200+', label: 'KI-Integrationen' },
+    { value: '3x', label: 'Durchschn. ROI-Steigerung' },
+    { value: '50%', label: 'Zeitersparnis' },
+    { value: '24/7', label: 'KI-Betrieb' },
   ];
 
-  // Objection handling data
-  const objections = isEnglish ? [
-    { q: 'Ads are too expensive.', a: 'That\'s why we optimize for lead quality and measure properly.' },
-    { q: 'I have no time for follow-ups.', a: 'Exactly: automations + clear pipeline.' },
-    { q: 'AI is complicated.', a: 'We set it up. You don\'t need a new tool collection.' },
-    { q: 'We don\'t need more leads.', a: 'Then we filter for better jobs, not more.' },
-    { q: 'Long-term contracts are suspicious.', a: 'Start with a sprint or 90 days. Flexible after.' },
+  // Process steps
+  const processSteps = isEnglish ? [
+    { icon: Target, title: 'Discovery', description: 'We analyze your business, goals, and current digital presence.' },
+    { icon: Bot, title: 'AI Strategy', description: 'We design AI-powered solutions tailored to your specific needs.' },
+    { icon: Zap, title: 'Implementation', description: 'Rapid deployment of your digital marketing and AI systems.' },
+    { icon: TrendingUp, title: 'Optimization', description: 'Continuous improvement driven by data and machine learning.' },
   ] : [
-    { q: 'Ads sind zu teuer.', a: 'Darum optimieren wir auf Lead-Qualität und messen sauber.' },
-    { q: 'Ich habe keine Zeit für Follow-ups.', a: 'Genau darum: Automationen + klare Pipeline.' },
-    { q: 'KI ist kompliziert.', a: 'Wir richten es ein. Du brauchst keine neue Tool-Sammlung.' },
-    { q: 'Wir brauchen keine Leads.', a: 'Dann filtern wir auf bessere Aufträge statt mehr.' },
-    { q: 'Langzeitverträge sind suspekt.', a: 'Start mit Sprint oder 90 Tagen. Danach flexibel.' },
+    { icon: Target, title: 'Discovery', description: 'Wir analysieren Ihr Geschäft, Ihre Ziele und digitale Präsenz.' },
+    { icon: Bot, title: 'KI-Strategie', description: 'Wir entwickeln KI-gestützte Lösungen für Ihre spezifischen Bedürfnisse.' },
+    { icon: Zap, title: 'Implementierung', description: 'Schnelle Bereitstellung Ihrer digitalen Marketing- und KI-Systeme.' },
+    { icon: TrendingUp, title: 'Optimierung', description: 'Kontinuierliche Verbesserung durch Daten und Machine Learning.' },
   ];
 
-  // Compliance/transparency bullets
-  const complianceBullets = isEnglish ? [
-    'Analytics only after consent (cookie banner).',
-    'Transparent disclosure for voice assistance.',
+  // Why choose us
+  const whyUs = isEnglish ? [
+    { icon: Bot, title: 'AI-First Expertise', description: 'AI isn\'t an afterthought — it\'s our foundation.' },
+    { icon: Award, title: 'Proven Results', description: 'Data-driven strategies that deliver measurable ROI.' },
+    { icon: Users, title: 'Dedicated Team', description: 'Your success is powered by specialists, not generalists.' },
+    { icon: Zap, title: 'Fast Execution', description: 'From strategy to launch in weeks, not months.' },
   ] : [
-    'Analytics erst nach Zustimmung (Cookie Banner).',
-    'Transparente Hinweise bei Voice-Assistenz.',
+    { icon: Bot, title: 'KI-First Expertise', description: 'KI ist kein Nachgedanke — sie ist unser Fundament.' },
+    { icon: Award, title: 'Bewiesene Ergebnisse', description: 'Datengetriebene Strategien mit messbarem ROI.' },
+    { icon: Users, title: 'Dediziertes Team', description: 'Ihr Erfolg wird von Spezialisten angetrieben.' },
+    { icon: Zap, title: 'Schnelle Umsetzung', description: 'Von Strategie bis Launch in Wochen, nicht Monaten.' },
   ];
 
-  // FAQ items with new additions
+  // FAQ items
   const faqItems = [
     ...t.faq.items,
     ...(isEnglish ? [
-      { question: 'Is the demo recorded?', answer: 'The demo is an example. With real voice assistance, there are transparent disclosures.' },
-      { question: 'How does consent/tracking work?', answer: 'Analytics only after consent.' },
+      { question: 'How is AI integrated into your services?', answer: 'AI powers everything we do — from automated campaign optimization to intelligent chatbots and predictive analytics.' },
+      { question: 'Do I need technical knowledge?', answer: 'Absolutely not. We handle all the technical complexity. You focus on your business.' },
     ] : [
-      { question: 'Wird die Demo aufgezeichnet?', answer: 'Die Demo ist ein Beispiel. Bei echter Voice-Assistenz gibt es transparente Hinweise.' },
-      { question: 'Wie läuft Consent/Tracking?', answer: 'Analytics nur nach Zustimmung.' },
+      { question: 'Wie wird KI in Ihre Dienste integriert?', answer: 'KI treibt alles an — von automatisierter Kampagnenoptimierung bis hin zu intelligenten Chatbots und Predictive Analytics.' },
+      { question: 'Brauche ich technisches Wissen?', answer: 'Absolut nicht. Wir kümmern uns um die gesamte technische Komplexität. Sie konzentrieren sich auf Ihr Geschäft.' },
     ]),
   ];
 
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'AI Growth System for Local Services' : 'AI Growth System für Local Services'}
-        description={t.siteDescription}
+        title={isEnglish ? 'AI-Powered Digital Marketing Agency' : 'KI-gestützte Digital Marketing Agentur'}
+        description={isEnglish 
+          ? 'We help businesses grow with AI-powered digital marketing. SEO, SEA, brand management, design, and more — all enhanced by artificial intelligence.'
+          : 'Wir helfen Unternehmen mit KI-gestütztem digitalem Marketing zu wachsen. SEO, SEA, Markenmanagement, Design und mehr — alles verstärkt durch künstliche Intelligenz.'}
       />
       <OrganizationSchema description={t.siteDescription} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[95vh] flex items-center">
+      <section className="relative overflow-hidden min-h-screen flex items-center">
+        {/* Mesh gradient background */}
+        <div className="absolute inset-0 gradient-mesh" />
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 grid-pattern opacity-20" />
+        
         {/* Hero background images with crossfade */}
         <div className="absolute inset-0 z-0">
           {heroImages.map((img, index) => (
             <img 
               key={index}
               src={img} 
-              alt={isEnglish ? "Happy business owner enjoying free time" : "Zufriedener Unternehmer geniesst seine Freizeit"} 
+              alt={isEnglish ? "Business growth through AI" : "Geschäftswachstum durch KI"} 
               className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
-                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                index === currentImageIndex ? 'opacity-20' : 'opacity-0'
               }`}
             />
           ))}
-          {/* Subtle gradient overlay for text readability - only on left side */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent lg:via-transparent" />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
         </div>
         
+        {/* Animated orbs */}
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-ai/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        
         <SectionContainer padding="large" background="none" className="relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left side - Content */}
             <div className="max-w-2xl">
-              {/* Trust badge */}
-              <div className="inline-flex items-center gap-3 px-5 py-2.5 mb-8 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg animate-fade-in">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-sm font-semibold text-primary">
-                  {isEnglish 
-                    ? 'Swiss precision + AI efficiency'
-                    : 'Schweizer Präzision + KI-Effizienz'}
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 animate-fade-in">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-primary">
+                  {isEnglish ? 'AI-Powered Growth Partner' : 'KI-gestützter Wachstumspartner'}
                 </span>
               </div>
               
               {/* Main headline */}
-              <h1 className="mb-6 animate-fade-in text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1] tracking-tight" style={{ animationDelay: '100ms' }}>
+              <h1 className="mb-6 animate-fade-in font-display" style={{ animationDelay: '100ms' }}>
                 {isEnglish ? (
                   <>
-                    <span className="block text-foreground">More <span className="text-primary">jobs</span>,</span>
-                    <span className="block text-foreground">less admin.</span>
+                    <span className="block text-foreground">Digital Marketing</span>
+                    <span className="block text-gradient-ai">Supercharged by AI</span>
                   </>
                 ) : (
                   <>
-                    <span className="block text-foreground">Mehr <span className="text-primary">Aufträge</span>,</span>
-                    <span className="block text-foreground">weniger Büro.</span>
+                    <span className="block text-foreground">Digital Marketing</span>
+                    <span className="block text-gradient-ai">verstärkt durch KI</span>
                   </>
                 )}
               </h1>
               
-              {/* Tagline */}
-              <p className="text-2xl sm:text-3xl md:text-4xl text-primary font-bold mb-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
-                {isEnglish 
-                  ? 'AI gives you time back.'
-                  : 'Feierabend dank AI.'}
-              </p>
-              
               {/* Subheadline */}
-              <p className="text-lg md:text-xl text-muted-foreground mb-10 animate-fade-in leading-relaxed" style={{ animationDelay: '200ms' }}>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-10 animate-fade-in leading-relaxed" style={{ animationDelay: '200ms' }}>
                 {isEnglish 
-                  ? 'We combine high-intent traffic, converting funnels and smart automations. Clicks become booked jobs — automatically.'
-                  : 'Wir kombinieren High-Intent Traffic, konvertierende Funnels und smarte Automationen. Klicks werden zu gebuchten Jobs – automatisch.'}
+                  ? 'We combine SEO, SEA, social media, and brand management with cutting-edge AI to deliver results that matter.'
+                  : 'Wir kombinieren SEO, SEA, Social Media und Markenmanagement mit modernster KI für Ergebnisse, die zählen.'}
               </p>
               
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-8" style={{ animationDelay: '300ms' }}>
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-10" style={{ animationDelay: '300ms' }}>
                 <CTAButton
                   variant="primary"
                   size="lg"
                   href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
                   location="hero"
-                  className="text-lg px-10 py-5 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all"
+                  className="text-lg px-8 py-4 glow-primary hover:-translate-y-0.5 transition-all"
                 >
-                  {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
+                  {isEnglish ? 'Get Free AI Audit' : 'Gratis KI-Audit'}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </CTAButton>
                 <CTAButton
@@ -199,151 +206,147 @@ export default function HomePage() {
                   size="lg"
                   href={isEnglish ? '/en/demo' : '/demo'}
                   location="hero"
-                  className="text-lg px-10 py-5 backdrop-blur-sm hover:-translate-y-0.5 transition-all"
+                  className="text-lg px-8 py-4 bg-secondary/50 backdrop-blur-sm hover:-translate-y-0.5 transition-all"
                 >
                   <Play className="mr-2 w-5 h-5" />
-                  {isEnglish ? 'Listen to demo' : 'Demo anhören'}
+                  {isEnglish ? 'See AI in Action' : 'KI in Aktion sehen'}
                 </CTAButton>
               </div>
               
-              {/* Micro-copy */}
+              {/* Trust signals */}
               <div className="flex items-center gap-6 flex-wrap text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '400ms' }}>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? 'No credit card' : 'Keine Kreditkarte'}
+                  {isEnglish ? 'No commitment' : 'Keine Verpflichtung'}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? '2 min setup' : '2 Min. Setup'}
+                  {isEnglish ? 'Results in 48h' : 'Ergebnisse in 48h'}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? 'Personalized insights' : 'Personalisierte Insights'}
+                  {isEnglish ? 'AI-powered insights' : 'KI-gestützte Insights'}
                 </span>
               </div>
             </div>
             
-            {/* Right side - Stats floating cards */}
-            <div className="hidden lg:flex flex-col gap-4 items-end animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform">
-                <div className="text-5xl font-black text-primary mb-1">50%</div>
-                <div className="text-base text-muted-foreground font-medium">
-                  {isEnglish ? 'Less admin time' : 'Weniger Bürozeit'}
-                </div>
-              </div>
-              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform mr-12">
-                <div className="text-5xl font-black text-primary mb-1">24/7</div>
-                <div className="text-base text-muted-foreground font-medium">
-                  {isEnglish ? 'Lead capture' : 'Lead-Erfassung'}
-                </div>
-              </div>
-              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform">
-                <div className="text-5xl font-black text-primary mb-1">&lt;1s</div>
-                <div className="text-base text-muted-foreground font-medium">
-                  {isEnglish ? 'AI response' : 'KI-Antwort'}
-                </div>
+            {/* Right side - Stats */}
+            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '500ms' }}>
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((stat, index) => (
+                  <div 
+                    key={index}
+                    className="p-6 rounded-2xl bg-card/50 backdrop-blur-md border border-border/50 hover:border-primary/30 transition-all duration-300 group"
+                    style={{ animationDelay: `${500 + index * 100}ms` }}
+                  >
+                    <div className="text-4xl font-bold font-display text-gradient mb-2 group-hover:scale-105 transition-transform">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
           
-          {/* Mobile stats row */}
-          <div className="grid grid-cols-3 gap-4 mt-12 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
-            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
-              <div className="text-3xl font-black text-primary mb-1">50%</div>
-              <div className="text-xs text-muted-foreground font-medium">
-                {isEnglish ? 'Less admin' : 'Weniger Büro'}
+          {/* Mobile stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50">
+                <div className="text-2xl font-bold font-display text-gradient mb-1">{stat.value}</div>
+                <div className="text-xs text-muted-foreground">{stat.label}</div>
               </div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
-              <div className="text-3xl font-black text-primary mb-1">24/7</div>
-              <div className="text-xs text-muted-foreground font-medium">
-                {isEnglish ? 'Lead capture' : 'Lead-Erfassung'}
-              </div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
-              <div className="text-3xl font-black text-primary mb-1">&lt;1s</div>
-              <div className="text-xs text-muted-foreground font-medium">
-                {isEnglish ? 'AI response' : 'KI-Antwort'}
-              </div>
-            </div>
+            ))}
           </div>
         </SectionContainer>
       </section>
 
-      {/* Problem Agitation Grid */}
-      <SectionContainer background="muted">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {problemCards.map((card, i) => (
+      {/* Services Section */}
+      <ServicesSection />
+
+      {/* How We Work Section */}
+      <SectionContainer id="process">
+        <SectionHeader 
+          title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
+          subtitle={isEnglish 
+            ? 'A proven process that delivers results faster with AI acceleration.'
+            : 'Ein bewährter Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {processSteps.map((step, index) => (
             <div 
-              key={i} 
-              className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-all"
+              key={index} 
+              className="relative animate-fade-in-up"
+              style={{ animationDelay: `${index * 150}ms` }}
             >
-              <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center mb-4">
-                <card.icon className="w-6 h-6 text-destructive" />
+              {/* Connector line */}
+              {index < processSteps.length - 1 && (
+                <div className="hidden lg:block absolute top-10 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+              )}
+              
+              <div className="relative z-10 text-center">
+                {/* Step number */}
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/10 border border-primary/30 mb-6 mx-auto">
+                  <step.icon className="w-8 h-8 text-primary" />
+                </div>
+                
+                <h3 className="text-xl font-bold font-display mb-3">{step.title}</h3>
+                <p className="text-muted-foreground text-sm">{step.description}</p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-              <p className="text-muted-foreground">{card.description}</p>
             </div>
           ))}
         </div>
       </SectionContainer>
 
-      {/* 3 Pillars Section */}
-      <SectionContainer id="system">
-        <SectionHeader title={t.pillars.sectionTitle} />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <PillarCard
-            icon={Zap}
-            title={t.pillars.traffic.title}
-            description={isEnglish 
-              ? 'Google Ads + Local SEO (high-intent, no vanity metrics).'
-              : 'Google Ads + Local SEO (High-Intent, keine Vanity-Metrics).'}
+      {/* Why Choose Us */}
+      <SectionContainer background="muted" className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-mesh opacity-50" />
+        
+        <div className="relative">
+          <SectionHeader 
+            title={isEnglish ? 'Why Choose Us' : 'Warum uns wählen'}
+            subtitle={isEnglish 
+              ? 'We\'re not just another agency. We\'re your AI-powered growth partner.'
+              : 'Wir sind nicht nur eine weitere Agentur. Wir sind Ihr KI-gestützter Wachstumspartner.'}
           />
-          <PillarCard
-            icon={Target}
-            title={t.pillars.conversion.title}
-            description={isEnglish 
-              ? 'Landing pages, multi-step forms, tracking, call routing, offer & copy.'
-              : 'Landingpages, Multi-Step Forms, Tracking, Call-Routing, Offer & Copy.'}
-          />
-          <PillarCard
-            icon={Bot}
-            title={t.pillars.aiOps.title}
-            description={isEnglish 
-              ? 'Lead routing, follow-ups, reviews, reporting. Less chaos.'
-              : 'Lead-Routing, Follow-ups, Reviews, Reporting. Weniger Chaos.'}
-          />
-        </div>
-        <div className="text-center">
-          <CTAButton
-            variant="primary"
-            href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-            location="pillars"
-          >
-            {t.cta.freeAudit}
-          </CTAButton>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {whyUs.map((item, index) => (
+              <div 
+                key={index}
+                className="p-6 rounded-2xl bg-card/30 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="text-lg font-bold font-display mb-2">{item.title}</h4>
+                <p className="text-muted-foreground text-sm">{item.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </SectionContainer>
 
       {/* Audio Demo Section */}
       {siteConfig.audioDemoEnabled && (
-        <SectionContainer background="accent">
+        <SectionContainer>
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="mb-4">
-              {isEnglish ? 'Listen: AI Lead Concierge Demo' : 'Demo anhören: AI Lead Concierge'}
+            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 border border-ai/30">
+              <Bot className="w-4 h-4 text-ai" />
+              <span className="text-sm font-medium text-ai">
+                {isEnglish ? 'AI Voice Demo' : 'KI-Sprach-Demo'}
+              </span>
+            </div>
+            
+            <h2 className="mb-4 font-display">
+              {isEnglish ? 'Hear Our AI in Action' : 'Hören Sie unsere KI in Aktion'}
             </h2>
-            <p className="text-lg text-muted-foreground mb-6">
+            <p className="text-lg text-muted-foreground mb-8">
               {isEnglish 
-                ? 'Example call. The agent clearly identifies as AI and mentions call recording.'
-                : 'Beispiel-Gespräch. Der Agent stellt sich transparent als digitaler Assistent vor und erwähnt die Aufzeichnung.'}
+                ? 'Experience how our AI assistant handles customer inquiries with natural conversation.'
+                : 'Erleben Sie, wie unser KI-Assistent Kundenanfragen mit natürlicher Konversation bearbeitet.'}
             </p>
             
-            {siteConfig.voiceSpeedClaimsEnabled && (
-              <p className="text-sm text-muted-foreground mb-6">
-                {isEnglish ? 'Responds in <1 second.' : 'Reagiert in <1 Sekunde.'}
-              </p>
-            )}
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <CTAButton
                 variant="primary"
@@ -351,66 +354,27 @@ export default function HomePage() {
                 onClick={audioExists ? handlePlayDemo : undefined}
                 location="audio-demo"
                 disabled={!audioExists}
+                className="glow-primary"
               >
                 <Play className="mr-2 w-5 h-5" />
                 {!audioExists 
-                  ? (isEnglish ? 'Demo is being prepared' : 'Demo wird vorbereitet')
+                  ? (isEnglish ? 'Demo being prepared' : 'Demo wird vorbereitet')
                   : audioState === 'playing' 
                     ? (isEnglish ? 'Pause' : 'Pause') 
-                    : (isEnglish ? 'Play demo' : 'Demo abspielen')}
-              </CTAButton>
-              <CTAButton
-                variant="secondary"
-                size="lg"
-                href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                location="audio-demo"
-              >
-                {t.cta.freeAudit}
+                    : (isEnglish ? 'Play AI Demo' : 'KI-Demo abspielen')}
               </CTAButton>
             </div>
           </div>
         </SectionContainer>
       )}
 
-      {/* Proof Bar - Compliance Only */}
-      <SectionContainer>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {siteConfig.trustAwardsEnabled && (
-            <div className="text-center">
-              <h4 className="font-semibold text-foreground mb-4">Awards</h4>
-              <p className="text-muted-foreground text-sm">[Awards placeholder]</p>
-            </div>
-          )}
-          {siteConfig.trustBrandsEnabled && (
-            <div className="text-center">
-              <h4 className="font-semibold text-foreground mb-4">Brands</h4>
-              <p className="text-muted-foreground text-sm">[Brands placeholder]</p>
-            </div>
-          )}
-          <div className={`text-center ${!siteConfig.trustAwardsEnabled && !siteConfig.trustBrandsEnabled ? 'md:col-span-3' : ''}`}>
-            <div className="inline-flex items-center gap-2 mb-4">
-              <ShieldCheck className="w-5 h-5 text-primary" />
-              <h4 className="font-semibold text-foreground">
-                {isEnglish ? 'Compliance & Transparency' : 'Compliance & Transparenz'}
-              </h4>
-            </div>
-            <ul className="space-y-2">
-              {complianceBullets.map((bullet, i) => (
-                <li key={i} className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
-                  <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </SectionContainer>
-
       {/* Pricing Section */}
       <SectionContainer id="pricing" background="muted">
         <SectionHeader 
           title={t.pricing.sectionTitle}
-          subtitle={t.pricing.disclaimer}
+          subtitle={isEnglish 
+            ? 'Flexible packages designed for businesses of all sizes.'
+            : 'Flexible Pakete für Unternehmen jeder Grösse.'}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8">
           <PricingCard
@@ -423,62 +387,25 @@ export default function HomePage() {
           />
           <PricingCard
             name={t.pricing.growth.name}
-            duration={isEnglish ? '90 days (then monthly cancellable)' : '90 Tage (danach monatlich kündbar)'}
+            duration={isEnglish ? '90 days (then monthly)' : '90 Tage (danach monatlich)'}
             forWhom={t.pricing.growth.forWhom}
             price={t.pricing.growth.price}
             features={t.pricing.growth.features}
             highlighted
-            highlightLabel={isEnglish ? 'Recommended' : 'Empfohlen'}
+            highlightLabel={isEnglish ? 'Most Popular' : 'Am beliebtesten'}
           />
           <PricingCard
             name={t.pricing.leader.name}
             duration={t.pricing.leader.duration}
             forWhom={t.pricing.leader.forWhom}
             price={t.pricing.leader.price}
-            priceNote={isEnglish ? '(Ad budget extra)' : '(Ad-Budget extra)'}
+            priceNote={isEnglish ? '(+ performance bonus)' : '(+ Performance-Bonus)'}
             features={t.pricing.leader.features}
           />
         </div>
         
-        {/* Anti-Knebel + Template note */}
-        <div className="max-w-2xl mx-auto space-y-3 text-center text-sm text-muted-foreground">
-          <p className="font-medium text-foreground">
-            {isEnglish 
-              ? 'Domains, ad accounts and data stay with the client.'
-              : 'Domains, Ads-Konten und Daten bleiben im Besitz des Kunden.'}
-          </p>
+        <div className="max-w-2xl mx-auto text-center text-sm text-muted-foreground">
           <p>{t.pricing.templateNote}</p>
-        </div>
-      </SectionContainer>
-
-      {/* Objection Handling */}
-      <SectionContainer>
-        <SectionHeader 
-          title={isEnglish ? 'Common objections (answered)' : 'Häufige Einwände (kurz beantwortet)'}
-        />
-        <div className="max-w-3xl mx-auto grid grid-cols-1 gap-4">
-          {objections.map((obj, i) => (
-            <div key={i} className="p-4 rounded-lg border border-border bg-card">
-              <p className="font-medium text-foreground mb-1">"{obj.q}"</p>
-              <p className="text-muted-foreground">→ {obj.a}</p>
-            </div>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Case Studies Section */}
-      <SectionContainer background="muted">
-        <SectionHeader title={t.caseStudies.sectionTitle} />
-        <div className="max-w-xl mx-auto text-center py-12 px-8 rounded-xl border border-border bg-card">
-          <p className="text-muted-foreground">{t.caseStudies.noData}</p>
-          <CTAButton
-            variant="primary"
-            href={isEnglish ? '/en/free-call' : '/gratis-call'}
-            location="case-studies"
-            className="mt-6"
-          >
-            {t.cta.bookCall}
-          </CTAButton>
         </div>
       </SectionContainer>
 
@@ -491,15 +418,28 @@ export default function HomePage() {
       </SectionContainer>
 
       {/* Final CTA */}
-      <SectionContainer className="gradient-primary text-primary-foreground">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-primary-foreground mb-4">
-            {isEnglish ? 'Ready to grow?' : 'Bereit zu wachsen?'}
+      <SectionContainer className="gradient-primary text-primary-foreground relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="relative max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-white/10 border border-white/20">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {isEnglish ? 'Start Your AI Journey' : 'Starten Sie Ihre KI-Reise'}
+            </span>
+          </div>
+          
+          <h2 className="text-primary-foreground mb-4 font-display">
+            {isEnglish ? 'Ready to Transform Your Business?' : 'Bereit, Ihr Geschäft zu transformieren?'}
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8">
+          <p className="text-primary-foreground/80 text-xl mb-10">
             {isEnglish
-              ? 'Get your free audit and discover your growth potential.'
-              : 'Hol dir dein Gratis Audit und entdecke dein Wachstumspotential.'}
+              ? 'Get a free AI-powered audit and discover your growth potential.'
+              : 'Erhalten Sie ein kostenloses KI-gestütztes Audit und entdecken Sie Ihr Wachstumspotenzial.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <CTAButton
@@ -507,16 +447,17 @@ export default function HomePage() {
               size="lg"
               href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
               location="footer-cta"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+              className="bg-white text-primary hover:bg-white/90 shadow-xl"
             >
               {t.cta.getAudit}
+              <ArrowRight className="ml-2 w-5 h-5" />
             </CTAButton>
             <CTAButton
               variant="ghost"
               size="lg"
               href={isEnglish ? '/en/free-call' : '/gratis-call'}
               location="footer-cta"
-              className="text-primary-foreground hover:bg-primary-foreground/10"
+              className="text-primary-foreground border-white/30 hover:bg-white/10"
             >
               {t.cta.bookCall}
             </CTAButton>
