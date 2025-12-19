@@ -18,6 +18,8 @@ import PrivacyPage from "./pages/PrivacyPage";
 import DemoPage from "./pages/DemoPage";
 import AuditReportPage from "./pages/AuditReportPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
 import NotFound from "./pages/NotFound";
 
 // Service Pages
@@ -60,6 +62,8 @@ const App = () => (
               <Route path="/datenschutz" element={<PrivacyPage />} />
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/fallstudien" element={<CaseStudiesPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
               
               {/* DE Service Routes */}
               <Route path="/services/ki-implementierung" element={<AIImplementationPage />} />
@@ -82,6 +86,8 @@ const App = () => (
               <Route path="/en/privacy" element={<PrivacyPage />} />
               <Route path="/en/demo" element={<DemoPage />} />
               <Route path="/en/case-studies" element={<CaseStudiesPage />} />
+              <Route path="/en/blog" element={<BlogPage />} />
+              <Route path="/en/blog/:slug" element={<BlogPostPage />} />
               
               {/* EN Service Routes */}
               <Route path="/en/services/ai-implementation" element={<AIImplementationPage />} />
