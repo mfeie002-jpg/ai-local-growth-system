@@ -22,24 +22,12 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import heroImage1 from '@/assets/hero-image.jpg';
-import heroImage2 from '@/assets/hero-image-2.jpg';
-
-const heroImages = [heroImage1, heroImage2];
+import heroHumanAI from '@/assets/hero-human-ai.jpg';
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
   const [audioState, setAudioState] = useState<'idle' | 'playing' | 'paused'>('idle');
   const [audioExists, setAudioExists] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // Hero image rotation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -136,20 +124,15 @@ export default function HomePage() {
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 grid-pattern opacity-20" />
         
-        {/* Hero background images with crossfade */}
+        {/* Hero background image */}
         <div className="absolute inset-0 z-0">
-          {heroImages.map((img, index) => (
-            <img 
-              key={index}
-              src={img} 
-              alt={isEnglish ? "Business growth through AI" : "Geschäftswachstum durch KI"} 
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
-                index === currentImageIndex ? 'opacity-20' : 'opacity-0'
-              }`}
-            />
-          ))}
+          <img 
+            src={heroHumanAI} 
+            alt={isEnglish ? "Human-AI connection" : "Mensch-KI-Verbindung"} 
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+          />
           {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
         </div>
         
