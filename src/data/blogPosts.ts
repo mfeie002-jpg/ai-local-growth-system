@@ -1,3 +1,10 @@
+import localSeoThumb from '@/assets/blog/local-seo-thumb.jpg';
+import googleAdsThumb from '@/assets/blog/google-ads-thumb.jpg';
+import aiAutomationThumb from '@/assets/blog/ai-automation-thumb.jpg';
+import conversionThumb from '@/assets/blog/conversion-thumb.jpg';
+import reviewsThumb from '@/assets/blog/reviews-thumb.jpg';
+import socialMediaThumb from '@/assets/blog/social-media-thumb.jpg';
+
 export interface BlogPost {
   slug: string;
   slugEn: string;
@@ -17,11 +24,23 @@ export interface BlogPost {
     de: string;
     en: string;
   };
+  categoryKey: string;
   author: string;
   date: string;
   readTime: number;
   featured?: boolean;
+  thumbnail: string;
 }
+
+export const categories = [
+  { key: 'all', de: 'Alle', en: 'All' },
+  { key: 'seo', de: 'SEO', en: 'SEO' },
+  { key: 'google-ads', de: 'Google Ads', en: 'Google Ads' },
+  { key: 'ai-automation', de: 'KI & Automatisierung', en: 'AI & Automation' },
+  { key: 'conversion', de: 'Conversion', en: 'Conversion' },
+  { key: 'reputation', de: 'Reputation', en: 'Reputation' },
+  { key: 'social-media', de: 'Social Media', en: 'Social Media' },
+];
 
 export const blogPosts: BlogPost[] = [
   {
@@ -106,10 +125,12 @@ Local SEO isn't rocket science. With the right fundamentals and consistency, you
       `,
     },
     category: { de: 'SEO', en: 'SEO' },
+    categoryKey: 'seo',
     author: 'itsFeierabend Team',
     date: '2024-12-15',
     readTime: 5,
     featured: true,
+    thumbnail: localSeoThumb,
   },
   {
     slug: 'google-ads-fuer-handwerker',
@@ -189,10 +210,12 @@ Start with CHF 50-100/day and optimize based on data.
       `,
     },
     category: { de: 'Google Ads', en: 'Google Ads' },
+    categoryKey: 'google-ads',
     author: 'itsFeierabend Team',
     date: '2024-12-10',
     readTime: 6,
     featured: true,
+    thumbnail: googleAdsThumb,
   },
   {
     slug: 'ki-automatisierung-lokale-unternehmen',
@@ -276,10 +299,12 @@ AI automation isn't rocket science. Start with one use case and expand.
       `,
     },
     category: { de: 'KI & Automatisierung', en: 'AI & Automation' },
+    categoryKey: 'ai-automation',
     author: 'itsFeierabend Team',
     date: '2024-12-05',
     readTime: 4,
     featured: true,
+    thumbnail: aiAutomationThumb,
   },
   {
     slug: 'conversion-rate-optimierung-landingpages',
@@ -377,9 +402,11 @@ Small changes can make big differences. Measure, test, optimize.
       `,
     },
     category: { de: 'Conversion', en: 'Conversion' },
+    categoryKey: 'conversion',
     author: 'itsFeierabend Team',
     date: '2024-11-28',
     readTime: 5,
+    thumbnail: conversionThumb,
   },
   {
     slug: 'bewertungen-sammeln-strategie',
@@ -463,9 +490,11 @@ Consistent review management brings more customers than any other marketing meas
       `,
     },
     category: { de: 'Reputation', en: 'Reputation' },
+    categoryKey: 'reputation',
     author: 'itsFeierabend Team',
     date: '2024-11-20',
     readTime: 4,
+    thumbnail: reviewsThumb,
   },
   {
     slug: 'social-media-fuer-handwerker',
@@ -563,9 +592,11 @@ Quality beats quantity. Show your work authentically.
       `,
     },
     category: { de: 'Social Media', en: 'Social Media' },
+    categoryKey: 'social-media',
     author: 'itsFeierabend Team',
     date: '2024-11-15',
     readTime: 4,
+    thumbnail: socialMediaThumb,
   },
 ];
 
@@ -581,4 +612,9 @@ export function getAllBlogPosts(): BlogPost[] {
 
 export function getFeaturedPosts(): BlogPost[] {
   return blogPosts.filter(post => post.featured);
+}
+
+export function getPostsByCategory(categoryKey: string): BlogPost[] {
+  if (categoryKey === 'all') return blogPosts;
+  return blogPosts.filter(post => post.categoryKey === categoryKey);
 }

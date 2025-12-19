@@ -16,7 +16,16 @@ function RelatedPostCard({ post }: { post: BlogPost }) {
 
   return (
     <Link to={path} className="group block">
-      <Card className="h-full transition-all duration-300 hover:shadow-md hover:border-primary/30">
+      <Card className="h-full transition-all duration-300 hover:shadow-md hover:border-primary/30 overflow-hidden">
+        {/* Thumbnail */}
+        <div className="relative h-32 overflow-hidden">
+          <img
+            src={post.thumbnail}
+            alt={isEnglish ? post.title.en : post.title.de}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+        </div>
         <CardHeader className="pb-2">
           <Badge variant="secondary" className="w-fit text-xs mb-2">
             {isEnglish ? post.category.en : post.category.de}
@@ -48,7 +57,7 @@ export default function BlogPostPage() {
 
   const allPosts = getAllBlogPosts();
   const relatedPosts = allPosts
-    .filter(p => p.slug !== post.slug && p.category.en === post.category.en)
+    .filter(p => p.slug !== post.slug && p.categoryKey === post.categoryKey)
     .slice(0, 3);
 
   const title = isEnglish ? post.title.en : post.title.de;

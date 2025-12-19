@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, ArrowRight, BookOpen } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, BookOpen, Filter } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { getAllBlogPosts, getFeaturedPosts, BlogPost } from '@/data/blogPosts';
+import { getAllBlogPosts, getFeaturedPosts, getPostsByCategory, categories, BlogPost } from '@/data/blogPosts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
   const { isEnglish } = useLanguage();
@@ -16,10 +19,17 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
 
   return (
     <Link to={path} className="group block">
-      <Card className={`h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 ${featured ? 'bg-gradient-to-br from-card to-primary/5' : ''}`}>
-        <CardHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="secondary" className="text-xs">
+      <Card className={`h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden ${featured ? 'bg-gradient-to-br from-card to-primary/5' : ''}`}>
+        {/* Thumbnail */}
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={post.thumbnail}
+            alt={isEnglish ? post.title.en : post.title.de}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+          <div className="absolute bottom-3 left-3 flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-background/80">
               {isEnglish ? post.category.en : post.category.de}
             </Badge>
             {featured && (
@@ -28,6 +38,8 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
               </Badge>
             )}
           </div>
+        </div>
+        <CardHeader className="pb-2">
           <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
             {isEnglish ? post.title.en : post.title.de}
           </CardTitle>
@@ -59,10 +71,47 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
   );
 }
 
+function CategoryFilter({ 
+  selectedCategory, 
+  onCategoryChange 
+}: { 
+  selectedCategory: string; 
+  onCategoryChange: (key: string) => void;
+}) {
+  const { isEnglish } = useLanguage();
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 justify-center">
+      <div className="flex items-center gap-2 text-muted-foreground mr-2">
+        <Filter className="w-4 h-4" />
+        <span className="text-sm font-medium hidden sm:inline">
+          {isEnglish ? 'Filter:' : 'Filter:'}
+        </span>
+      </div>
+      {categories.map((category) => (
+        <Button
+          key={category.key}
+          variant={selectedCategory === category.key ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => onCategoryChange(category.key)}
+          className={cn(
+            'transition-all',
+            selectedCategory === category.key && 'shadow-md'
+          )}
+        >
+          {isEnglish ? category.en : category.de}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
 export default function BlogPage() {
   const { isEnglish } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  
   const featuredPosts = getFeaturedPosts();
-  const allPosts = getAllBlogPosts();
+  const filteredPosts = getPostsByCategory(selectedCategory);
 
   return (
     <Layout>
@@ -98,37 +147,70 @@ export default function BlogPage() {
       </section>
 
       {/* Featured Posts */}
-      <SectionContainer background="muted">
-        <SectionHeader
-          title={isEnglish ? 'Featured Articles' : 'Empfohlene Artikel'}
-          subtitle={isEnglish
-            ? 'Our most popular and impactful content'
-            : 'Unsere beliebtesten und wirkungsvollsten Inhalte'}
-        />
-        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {featuredPosts.map((post) => (
-            <StaggerItem key={post.slug}>
-              <BlogCard post={post} featured />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </SectionContainer>
+      {selectedCategory === 'all' && (
+        <SectionContainer background="muted">
+          <SectionHeader
+            title={isEnglish ? 'Featured Articles' : 'Empfohlene Artikel'}
+            subtitle={isEnglish
+              ? 'Our most popular and impactful content'
+              : 'Unsere beliebtesten und wirkungsvollsten Inhalte'}
+          />
+          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {featuredPosts.map((post) => (
+              <StaggerItem key={post.slug}>
+                <BlogCard post={post} featured />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </SectionContainer>
+      )}
 
-      {/* All Posts */}
+      {/* Category Filter & All Posts */}
       <SectionContainer>
+        <div className="mb-10">
+          <ScrollReveal>
+            <CategoryFilter 
+              selectedCategory={selectedCategory} 
+              onCategoryChange={setSelectedCategory} 
+            />
+          </ScrollReveal>
+        </div>
+
         <SectionHeader
-          title={isEnglish ? 'All Articles' : 'Alle Artikel'}
-          subtitle={isEnglish
-            ? 'Browse our complete collection of guides and insights'
-            : 'Durchstöbere unsere komplette Sammlung an Guides und Insights'}
+          title={selectedCategory === 'all' 
+            ? (isEnglish ? 'All Articles' : 'Alle Artikel')
+            : (isEnglish 
+                ? categories.find(c => c.key === selectedCategory)?.en || 'Articles'
+                : categories.find(c => c.key === selectedCategory)?.de || 'Artikel'
+              )
+          }
+          subtitle={selectedCategory === 'all'
+            ? (isEnglish
+                ? 'Browse our complete collection of guides and insights'
+                : 'Durchstöbere unsere komplette Sammlung an Guides und Insights')
+            : (isEnglish
+                ? `${filteredPosts.length} article${filteredPosts.length !== 1 ? 's' : ''} in this category`
+                : `${filteredPosts.length} Artikel in dieser Kategorie`)
+          }
         />
-        <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {allPosts.map((post) => (
-            <StaggerItem key={post.slug}>
-              <BlogCard post={post} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        
+        {filteredPosts.length > 0 ? (
+          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredPosts.map((post) => (
+              <StaggerItem key={post.slug}>
+                <BlogCard post={post} />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              {isEnglish 
+                ? 'No articles found in this category.' 
+                : 'Keine Artikel in dieser Kategorie gefunden.'}
+            </p>
+          </div>
+        )}
       </SectionContainer>
 
       {/* CTA Section */}
