@@ -21,6 +21,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import heroImage from '@/assets/hero-image.jpg';
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
@@ -109,21 +110,25 @@ export default function HomePage() {
       <OrganizationSchema description={t.siteDescription} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[90vh] flex items-center bg-gradient-to-b from-background via-background to-muted/30">
-        {/* Background decoration - more dramatic */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/8 rounded-full blur-[120px]" />
-          <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 -right-20 w-72 h-72 bg-primary/3 rounded-full blur-3xl" />
-          {/* Subtle grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.3)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black_70%,transparent_100%)]" />
+      <section className="relative overflow-hidden min-h-[95vh] flex items-center">
+        {/* Hero background image */}
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt={isEnglish ? "Happy business owner enjoying free time" : "Zufriedener Unternehmer geniesst seine Freizeit"} 
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
         </div>
         
         <SectionContainer padding="large" className="relative">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              {/* Trust badge - more prominent */}
-              <div className="inline-flex items-center gap-3 px-5 py-2.5 mb-10 rounded-full bg-primary/10 border border-primary/20 shadow-lg shadow-primary/5 animate-fade-in">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Content */}
+            <div className="max-w-2xl">
+              {/* Trust badge */}
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 mb-8 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 shadow-lg animate-fade-in">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <span className="text-sm font-semibold text-primary">
                   {isEnglish 
@@ -132,45 +137,37 @@ export default function HomePage() {
                 </span>
               </div>
               
-              {/* Main headline - bigger, bolder */}
-              <h1 className="text-balance mb-8 animate-fade-in text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[0.95] tracking-tight" style={{ animationDelay: '100ms' }}>
+              {/* Main headline */}
+              <h1 className="mb-6 animate-fade-in text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1] tracking-tight" style={{ animationDelay: '100ms' }}>
                 {isEnglish ? (
                   <>
-                    <span className="block">More <span className="text-primary relative">jobs
-                      <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/30" viewBox="0 0 100 12" preserveAspectRatio="none">
-                        <path d="M0 6 Q 25 0, 50 6 T 100 6" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                      </svg>
-                    </span>,</span>
-                    <span className="block text-muted-foreground/80">less admin.</span>
+                    <span className="block text-foreground">More <span className="text-primary">jobs</span>,</span>
+                    <span className="block text-foreground">less admin.</span>
                   </>
                 ) : (
                   <>
-                    <span className="block">Mehr <span className="text-primary relative">Aufträge
-                      <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/30" viewBox="0 0 100 12" preserveAspectRatio="none">
-                        <path d="M0 6 Q 25 0, 50 6 T 100 6" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                      </svg>
-                    </span>,</span>
-                    <span className="block text-muted-foreground/80">weniger Büro.</span>
+                    <span className="block text-foreground">Mehr <span className="text-primary">Aufträge</span>,</span>
+                    <span className="block text-foreground">weniger Büro.</span>
                   </>
                 )}
               </h1>
               
-              {/* Tagline - punchier */}
-              <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-medium mb-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
+              {/* Tagline */}
+              <p className="text-2xl sm:text-3xl md:text-4xl text-primary font-bold mb-4 animate-fade-in" style={{ animationDelay: '150ms' }}>
                 {isEnglish 
                   ? 'AI gives you time back.'
                   : 'Feierabend dank AI.'}
               </p>
               
               {/* Subheadline */}
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-in leading-relaxed" style={{ animationDelay: '200ms' }}>
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 animate-fade-in leading-relaxed" style={{ animationDelay: '200ms' }}>
                 {isEnglish 
-                  ? 'We combine high-intent traffic, converting funnels and smart automations. Clicks become booked jobs.'
-                  : 'Wir kombinieren High-Intent Traffic, konvertierende Funnels und smarte Automationen. Klicks werden zu gebuchten Jobs.'}
+                  ? 'We combine high-intent traffic, converting funnels and smart automations. Clicks become booked jobs — automatically.'
+                  : 'Wir kombinieren High-Intent Traffic, konvertierende Funnels und smarte Automationen. Klicks werden zu gebuchten Jobs – automatisch.'}
               </p>
               
-              {/* CTA Buttons - more prominent */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '300ms' }}>
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-8" style={{ animationDelay: '300ms' }}>
                 <CTAButton
                   variant="primary"
                   size="lg"
@@ -186,7 +183,7 @@ export default function HomePage() {
                   size="lg"
                   href={isEnglish ? '/en/demo' : '/demo'}
                   location="hero"
-                  className="text-lg px-10 py-5 hover:-translate-y-0.5 transition-all"
+                  className="text-lg px-10 py-5 backdrop-blur-sm hover:-translate-y-0.5 transition-all"
                 >
                   <Play className="mr-2 w-5 h-5" />
                   {isEnglish ? 'Listen to demo' : 'Demo anhören'}
@@ -194,7 +191,7 @@ export default function HomePage() {
               </div>
               
               {/* Micro-copy */}
-              <p className="mt-8 text-sm text-muted-foreground animate-fade-in flex items-center justify-center gap-6 flex-wrap" style={{ animationDelay: '400ms' }}>
+              <div className="flex items-center gap-6 flex-wrap text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '400ms' }}>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle className="w-4 h-4 text-primary" />
                   {isEnglish ? 'No credit card' : 'Keine Kreditkarte'}
@@ -207,28 +204,50 @@ export default function HomePage() {
                   <CheckCircle className="w-4 h-4 text-primary" />
                   {isEnglish ? 'Personalized insights' : 'Personalisierte Insights'}
                 </span>
-              </p>
+              </div>
             </div>
             
-            {/* Stats row - bolder design */}
-            <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <div className="text-center p-6 rounded-2xl bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-4xl sm:text-5xl font-black text-primary mb-2">50%</div>
-                <div className="text-sm sm:text-base text-muted-foreground font-medium">
+            {/* Right side - Stats floating cards */}
+            <div className="hidden lg:flex flex-col gap-4 items-end animate-fade-in" style={{ animationDelay: '500ms' }}>
+              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform">
+                <div className="text-5xl font-black text-primary mb-1">50%</div>
+                <div className="text-base text-muted-foreground font-medium">
                   {isEnglish ? 'Less admin time' : 'Weniger Bürozeit'}
                 </div>
               </div>
-              <div className="text-center p-6 rounded-2xl bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-4xl sm:text-5xl font-black text-primary mb-2">24/7</div>
-                <div className="text-sm sm:text-base text-muted-foreground font-medium">
+              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform mr-12">
+                <div className="text-5xl font-black text-primary mb-1">24/7</div>
+                <div className="text-base text-muted-foreground font-medium">
                   {isEnglish ? 'Lead capture' : 'Lead-Erfassung'}
                 </div>
               </div>
-              <div className="text-center p-6 rounded-2xl bg-card border border-border shadow-lg hover:shadow-xl transition-shadow">
-                <div className="text-4xl sm:text-5xl font-black text-primary mb-2">&lt;1s</div>
-                <div className="text-sm sm:text-base text-muted-foreground font-medium">
+              <div className="p-6 rounded-2xl bg-card/90 backdrop-blur-md border border-border shadow-2xl transform hover:scale-105 transition-transform">
+                <div className="text-5xl font-black text-primary mb-1">&lt;1s</div>
+                <div className="text-base text-muted-foreground font-medium">
                   {isEnglish ? 'AI response' : 'KI-Antwort'}
                 </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile stats row */}
+          <div className="grid grid-cols-3 gap-4 mt-12 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
+            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
+              <div className="text-3xl font-black text-primary mb-1">50%</div>
+              <div className="text-xs text-muted-foreground font-medium">
+                {isEnglish ? 'Less admin' : 'Weniger Büro'}
+              </div>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
+              <div className="text-3xl font-black text-primary mb-1">24/7</div>
+              <div className="text-xs text-muted-foreground font-medium">
+                {isEnglish ? 'Lead capture' : 'Lead-Erfassung'}
+              </div>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-card/90 backdrop-blur-sm border border-border shadow-lg">
+              <div className="text-3xl font-black text-primary mb-1">&lt;1s</div>
+              <div className="text-xs text-muted-foreground font-medium">
+                {isEnglish ? 'AI response' : 'KI-Antwort'}
               </div>
             </div>
           </div>
