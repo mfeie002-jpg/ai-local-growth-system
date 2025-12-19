@@ -4,6 +4,7 @@ import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { ServicesSection } from '@/components/ServicesSection';
+import { AIChatbotDemo } from '@/components/AIChatbotDemo';
 import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { siteConfig } from '@/config/site';

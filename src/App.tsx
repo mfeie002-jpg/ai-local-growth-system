@@ -19,6 +19,15 @@ import DemoPage from "./pages/DemoPage";
 import AuditReportPage from "./pages/AuditReportPage";
 import NotFound from "./pages/NotFound";
 
+// Service Pages
+import AIImplementationPage from "./pages/services/AIImplementationPage";
+import SEOPage from "./pages/services/SEOPage";
+import SEAPage from "./pages/services/SEAPage";
+import ReputationPage from "./pages/services/ReputationPage";
+import DesignDevelopmentPage from "./pages/services/DesignDevelopmentPage";
+import BrandDeploymentPage from "./pages/services/BrandDeploymentPage";
+import SocialMediaPage from "./pages/services/SocialMediaPage";
+
 // Admin Pages
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminLeadsPage from "./pages/admin/AdminLeadsPage";
@@ -50,6 +59,15 @@ const App = () => (
               <Route path="/datenschutz" element={<PrivacyPage />} />
               <Route path="/demo" element={<DemoPage />} />
               
+              {/* DE Service Routes */}
+              <Route path="/services/ki-implementierung" element={<AIImplementationPage />} />
+              <Route path="/services/seo" element={<SEOPage />} />
+              <Route path="/services/sea" element={<SEAPage />} />
+              <Route path="/services/reputation" element={<ReputationPage />} />
+              <Route path="/services/design-entwicklung" element={<DesignDevelopmentPage />} />
+              <Route path="/services/brand-deployment" element={<BrandDeploymentPage />} />
+              <Route path="/services/social-media" element={<SocialMediaPage />} />
+              
               {/* EN Routes */}
               <Route path="/en" element={<HomePage />} />
               <Route path="/en/free-audit" element={<AuditPage />} />
@@ -61,6 +79,15 @@ const App = () => (
               <Route path="/en/imprint" element={<ImprintPage />} />
               <Route path="/en/privacy" element={<PrivacyPage />} />
               <Route path="/en/demo" element={<DemoPage />} />
+              
+              {/* EN Service Routes */}
+              <Route path="/en/services/ai-implementation" element={<AIImplementationPage />} />
+              <Route path="/en/services/seo" element={<SEOPage />} />
+              <Route path="/en/services/sea" element={<SEAPage />} />
+              <Route path="/en/services/reputation" element={<ReputationPage />} />
+              <Route path="/en/services/design-development" element={<DesignDevelopmentPage />} />
+              <Route path="/en/services/brand-deployment" element={<BrandDeploymentPage />} />
+              <Route path="/en/services/social-media" element={<SocialMediaPage />} />
               
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
