@@ -8,9 +8,11 @@ import {
   Rocket, 
   Share2,
   Bot,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 // Import service images
 import aiImplementationImg from '@/assets/services/ai-implementation.jpg';
@@ -29,13 +31,16 @@ interface ServiceCardProps {
   isAI?: boolean;
   delay?: number;
   image?: string;
+  href: string;
+  learnMoreText: string;
 }
 
-function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0, image }: ServiceCardProps) {
+function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0, image, href, learnMoreText }: ServiceCardProps) {
   return (
-    <div 
+    <Link 
+      to={href}
       className={cn(
-        "service-card group animate-fade-in-up overflow-hidden",
+        "service-card group animate-fade-in-up overflow-hidden block relative",
         isAI && "border-ai/30 hover:border-ai/60"
       )}
       style={{ animationDelay: `${delay}ms` }}
@@ -54,10 +59,7 @@ function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0
 
       {/* AI Badge */}
       {isAI && (
-        <div className={cn(
-          "absolute right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-ai/10 border border-ai/30",
-          image ? "top-4" : "top-4"
-        )}>
+        <div className="absolute right-4 top-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-ai/10 border border-ai/30 backdrop-blur-sm">
           <Sparkles className="w-3 h-3 text-ai" />
           <span className="text-xs font-medium text-ai">AI-Powered</span>
         </div>
@@ -74,27 +76,35 @@ function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0
       </div>
       
       {/* Content */}
-      <h3 className="text-xl font-bold mb-3 font-display">{title}</h3>
+      <h3 className="text-xl font-bold mb-3 font-display group-hover:text-primary transition-colors">{title}</h3>
       <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>
       
       {/* Features */}
-      <ul className="space-y-2">
+      <ul className="space-y-2 mb-6">
         {features.map((feature, i) => (
           <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className={cn(
-              "w-1.5 h-1.5 rounded-full",
+              "w-1.5 h-1.5 rounded-full flex-shrink-0",
               isAI ? "bg-ai" : "bg-primary"
             )} />
             {feature}
           </li>
         ))}
       </ul>
-    </div>
+
+      {/* Learn More Link */}
+      <div className="flex items-center gap-2 text-sm font-medium text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 mt-auto">
+        <span>{learnMoreText}</span>
+        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+      </div>
+    </Link>
   );
 }
 
 export function ServicesSection() {
   const { isEnglish } = useLanguage();
+
+  const learnMoreText = isEnglish ? 'Learn More' : 'Mehr erfahren';
 
   const services = isEnglish ? [
     {
@@ -104,6 +114,7 @@ export function ServicesSection() {
       features: ['AI Chatbots & Assistants', 'Process Automation', 'Predictive Analytics', 'Custom AI Solutions'],
       isAI: true,
       image: aiImplementationImg,
+      href: '/en/services/ai-implementation',
     },
     {
       icon: Search,
@@ -111,6 +122,7 @@ export function ServicesSection() {
       description: 'Organic visibility that drives qualified traffic. Rank for keywords that convert.',
       features: ['Technical SEO', 'Content Strategy', 'Local SEO', 'Link Building'],
       image: seoServiceImg,
+      href: '/en/services/seo',
     },
     {
       icon: MousePointerClick,
@@ -118,6 +130,7 @@ export function ServicesSection() {
       description: 'Paid advertising that delivers ROI. Every click is optimized for conversions.',
       features: ['Google Ads', 'Social Ads', 'Retargeting', 'Conversion Tracking'],
       image: ppcServiceImg,
+      href: '/en/services/sea',
     },
     {
       icon: Shield,
@@ -125,6 +138,7 @@ export function ServicesSection() {
       description: 'Protect and enhance your brand\'s online presence. Build trust at scale.',
       features: ['Review Management', 'Crisis Response', 'Brand Monitoring', 'PR Strategy'],
       image: reputationServiceImg,
+      href: '/en/services/reputation',
     },
     {
       icon: Palette,
@@ -132,6 +146,7 @@ export function ServicesSection() {
       description: 'Beautiful, conversion-optimized websites and digital products that perform.',
       features: ['Web Design', 'UX/UI Design', 'Development', 'Landing Pages'],
       image: designServiceImg,
+      href: '/en/services/design-development',
     },
     {
       icon: Rocket,
@@ -139,6 +154,7 @@ export function ServicesSection() {
       description: 'Launch your brand across all channels with consistency and impact.',
       features: ['Brand Strategy', 'Visual Identity', 'Brand Guidelines', 'Multi-Channel Launch'],
       image: brandServiceImg,
+      href: '/en/services/brand-deployment',
     },
     {
       icon: Share2,
@@ -146,6 +162,7 @@ export function ServicesSection() {
       description: 'Build community and drive engagement with strategic social presence.',
       features: ['Content Creation', 'Community Management', 'Influencer Marketing', 'Analytics'],
       image: socialMediaServiceImg,
+      href: '/en/services/social-media',
     },
   ] : [
     {
@@ -155,6 +172,7 @@ export function ServicesSection() {
       features: ['KI-Chatbots & Assistenten', 'Prozessautomatisierung', 'Predictive Analytics', 'Individuelle KI-Lösungen'],
       isAI: true,
       image: aiImplementationImg,
+      href: '/services/ki-implementierung',
     },
     {
       icon: Search,
@@ -162,6 +180,7 @@ export function ServicesSection() {
       description: 'Organische Sichtbarkeit, die qualifizierten Traffic bringt. Rankings für Keywords, die konvertieren.',
       features: ['Technisches SEO', 'Content-Strategie', 'Local SEO', 'Linkbuilding'],
       image: seoServiceImg,
+      href: '/services/seo',
     },
     {
       icon: MousePointerClick,
@@ -169,6 +188,7 @@ export function ServicesSection() {
       description: 'Bezahlte Werbung mit ROI. Jeder Klick ist auf Conversions optimiert.',
       features: ['Google Ads', 'Social Ads', 'Retargeting', 'Conversion Tracking'],
       image: ppcServiceImg,
+      href: '/services/sea',
     },
     {
       icon: Shield,
@@ -176,6 +196,7 @@ export function ServicesSection() {
       description: 'Schützen und verbessern Sie Ihre Online-Präsenz. Vertrauen skalierbar aufbauen.',
       features: ['Bewertungsmanagement', 'Krisenreaktion', 'Brand Monitoring', 'PR-Strategie'],
       image: reputationServiceImg,
+      href: '/services/reputation',
     },
     {
       icon: Palette,
@@ -183,6 +204,7 @@ export function ServicesSection() {
       description: 'Schöne, conversion-optimierte Websites und digitale Produkte, die performen.',
       features: ['Webdesign', 'UX/UI Design', 'Entwicklung', 'Landing Pages'],
       image: designServiceImg,
+      href: '/services/design-entwicklung',
     },
     {
       icon: Rocket,
@@ -190,6 +212,7 @@ export function ServicesSection() {
       description: 'Lancieren Sie Ihre Marke konsistent und wirkungsvoll über alle Kanäle.',
       features: ['Markenstrategie', 'Visuelle Identität', 'Brand Guidelines', 'Multi-Channel Launch'],
       image: brandServiceImg,
+      href: '/services/brand-deployment',
     },
     {
       icon: Share2,
@@ -197,6 +220,7 @@ export function ServicesSection() {
       description: 'Community aufbauen und Engagement steigern mit strategischer sozialer Präsenz.',
       features: ['Content-Erstellung', 'Community Management', 'Influencer Marketing', 'Analytics'],
       image: socialMediaServiceImg,
+      href: '/services/social-media',
     },
   ];
 
@@ -241,6 +265,7 @@ export function ServicesSection() {
               key={index} 
               {...service} 
               delay={index * 100}
+              learnMoreText={learnMoreText}
             />
           ))}
         </div>
