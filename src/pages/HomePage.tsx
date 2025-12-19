@@ -124,23 +124,22 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden min-h-[95vh] flex items-center">
         {/* Hero background images with crossfade */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           {heroImages.map((img, index) => (
             <img 
               key={index}
               src={img} 
               alt={isEnglish ? "Happy business owner enjoying free time" : "Zufriedener Unternehmer geniesst seine Freizeit"} 
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
                 index === currentImageIndex ? 'opacity-100' : 'opacity-0'
               }`}
             />
           ))}
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent" />
+          {/* Subtle gradient overlay for text readability - only on left side */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent lg:via-transparent" />
         </div>
         
-        <SectionContainer padding="large" className="relative">
+        <SectionContainer padding="large" background="none" className="relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Content */}
             <div className="max-w-2xl">

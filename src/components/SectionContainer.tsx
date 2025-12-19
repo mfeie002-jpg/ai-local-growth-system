@@ -5,7 +5,7 @@ interface SectionContainerProps {
   children: ReactNode;
   className?: string;
   id?: string;
-  background?: 'default' | 'muted' | 'accent';
+  background?: 'default' | 'muted' | 'accent' | 'none';
   padding?: 'default' | 'large' | 'small' | 'none';
 }
 
@@ -25,6 +25,7 @@ export function SectionContainer({
           'bg-background': background === 'default',
           'bg-muted': background === 'muted',
           'bg-accent': background === 'accent',
+          'bg-transparent': background === 'none',
           'py-16 sm:py-20 md:py-24': padding === 'default',
           'py-20 sm:py-28 md:py-32': padding === 'large',
           'py-8 sm:py-12': padding === 'small',
