@@ -20,13 +20,25 @@ import {
   ShieldCheck,
   CheckCircle
 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import heroImage from '@/assets/hero-image.jpg';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import heroImage1 from '@/assets/hero-image.jpg';
+import heroImage2 from '@/assets/hero-image-2.jpg';
+
+const heroImages = [heroImage1, heroImage2];
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
   const [audioState, setAudioState] = useState<'idle' | 'playing' | 'paused'>('idle');
   const [audioExists, setAudioExists] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Hero image rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Check if audio file exists
@@ -111,13 +123,18 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden min-h-[95vh] flex items-center">
-        {/* Hero background image */}
+        {/* Hero background images with crossfade */}
         <div className="absolute inset-0">
-          <img 
-            src={heroImage} 
-            alt={isEnglish ? "Happy business owner enjoying free time" : "Zufriedener Unternehmer geniesst seine Freizeit"} 
-            className="w-full h-full object-cover"
-          />
+          {heroImages.map((img, index) => (
+            <img 
+              key={index}
+              src={img} 
+              alt={isEnglish ? "Happy business owner enjoying free time" : "Zufriedener Unternehmer geniesst seine Freizeit"} 
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
           {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
