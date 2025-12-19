@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Mail } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { Logo } from '@/components/Logo';
 
 export function Footer() {
   const { t, isEnglish } = useLanguage();
@@ -18,13 +19,8 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link
-              to={isEnglish ? '/en' : '/'}
-              className="inline-flex items-center gap-1 font-bold text-xl text-foreground hover:text-primary transition-colors mb-4"
-            >
-              <span className="text-primary">its</span>
-              <span>Feierabend</span>
-              <span className="text-primary">.ch</span>
+            <Link to={isEnglish ? '/en' : '/'} className="inline-block mb-4">
+              <Logo size="md" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {t.siteDescription}
