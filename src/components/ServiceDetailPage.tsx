@@ -35,6 +35,7 @@ interface ServicePageProps {
   caseStudies: CaseStudy[];
   isAI?: boolean;
   relatedServices?: { title: string; path: string }[];
+  heroImage?: string;
 }
 
 export function ServiceDetailPage({
@@ -46,7 +47,8 @@ export function ServiceDetailPage({
   benefits,
   caseStudies,
   isAI,
-  relatedServices = []
+  relatedServices = [],
+  heroImage
 }: ServicePageProps) {
   const { t, isEnglish } = useLanguage();
 
@@ -58,6 +60,18 @@ export function ServiceDetailPage({
       <section className="relative overflow-hidden py-20 md:py-32">
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 grid-pattern opacity-20" />
+        
+        {/* Hero background image */}
+        {heroImage && (
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={heroImage} 
+              alt={title}
+              className="absolute inset-0 w-full h-full object-cover object-center opacity-25"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" />
+          </div>
+        )}
         
         {/* Decorative orbs */}
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />

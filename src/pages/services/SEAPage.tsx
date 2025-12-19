@@ -1,6 +1,7 @@
 import { MousePointerClick } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import seaServiceImg from '@/assets/sea-service.jpg';
 
 export default function SEAPage() {
   const { isEnglish } = useLanguage();

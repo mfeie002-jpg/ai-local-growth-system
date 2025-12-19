@@ -1,6 +1,7 @@
 import { Rocket } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import brandServiceImg from '@/assets/brand-service.jpg';
 
 export default function BrandDeploymentPage() {
   const { isEnglish } = useLanguage();

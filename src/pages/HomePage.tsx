@@ -22,7 +22,9 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import heroHumanAI from '@/assets/hero-human-ai.jpg';
+import heroHumanAI from '@/assets/hero-human-ai-enhanced.jpg';
+import aiCollaborationImg from '@/assets/ai-collaboration.jpg';
+import servicesOverviewImg from '@/assets/services-overview.jpg';
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
@@ -124,16 +126,16 @@ export default function HomePage() {
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 grid-pattern opacity-20" />
         
-        {/* Hero background image */}
+        {/* Hero background image - enhanced visibility */}
         <div className="absolute inset-0 z-0">
           <img 
             src={heroHumanAI} 
             alt={isEnglish ? "Human-AI connection" : "Mensch-KI-Verbindung"} 
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
           />
-          {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
+          {/* Gradient overlays - lighter for better visibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
         </div>
         
         {/* Animated orbs */}

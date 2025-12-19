@@ -1,6 +1,7 @@
 import { Bot } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
+import aiServiceImg from '@/assets/ai-service.jpg';
 
 export default function AIImplementationPage() {
   const { isEnglish } = useLanguage();
