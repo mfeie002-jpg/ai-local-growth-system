@@ -10,6 +10,7 @@ import { PricingCard } from '@/components/PricingCard';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
 import { siteConfig } from '@/config/site';
+import { Link } from 'react-router-dom';
 import { 
   ArrowRight,
   Play,
@@ -26,6 +27,12 @@ import { useState, useRef, useEffect } from 'react';
 import heroHumanAI from '@/assets/hero-human-ai-enhanced.jpg';
 import aiCollaborationImg from '@/assets/ai-collaboration.jpg';
 import servicesOverviewImg from '@/assets/services-overview.jpg';
+
+// Process step images
+import discoveryImg from '@/assets/process/discovery.jpg';
+import aiStrategyImg from '@/assets/process/ai-strategy.jpg';
+import implementationImg from '@/assets/process/implementation.jpg';
+import optimizationImg from '@/assets/process/optimization.jpg';
 
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
@@ -71,17 +78,65 @@ export default function HomePage() {
     { value: '24/7', label: 'KI-Betrieb' },
   ];
 
-  // Process steps
+  // Process steps with images
   const processSteps = isEnglish ? [
-    { icon: Target, title: 'Discovery', description: 'We analyze your business, goals, and current digital presence.' },
-    { icon: Bot, title: 'AI Strategy', description: 'We design AI-powered solutions tailored to your specific needs.' },
-    { icon: Zap, title: 'Implementation', description: 'Rapid deployment of your digital marketing and AI systems.' },
-    { icon: TrendingUp, title: 'Optimization', description: 'Continuous improvement driven by data and machine learning.' },
+    { 
+      image: discoveryImg, 
+      title: 'Discovery & Analysis', 
+      description: 'We dive deep into your business, analyzing your current digital presence, competitors, and market opportunities.',
+      details: ['Complete website & SEO audit', 'Competitor analysis', 'Market opportunity mapping', 'Goal definition workshop'],
+      href: '/en/free-audit'
+    },
+    { 
+      image: aiStrategyImg, 
+      title: 'AI Strategy', 
+      description: 'We design custom AI-powered solutions tailored to your specific business needs and growth objectives.',
+      details: ['Custom AI solution design', 'Technology stack selection', 'Integration planning', 'ROI projections'],
+      href: '/en/services/ai-implementation'
+    },
+    { 
+      image: implementationImg, 
+      title: 'Rapid Implementation', 
+      description: 'Our expert team deploys your digital marketing and AI systems with speed and precision.',
+      details: ['Agile development sprints', 'Quality assurance testing', 'Staff training & onboarding', 'Go-live support'],
+      href: '/en/services/design-development'
+    },
+    { 
+      image: optimizationImg, 
+      title: 'Continuous Optimization', 
+      description: 'We continuously improve performance using data analytics and machine learning insights.',
+      details: ['A/B testing campaigns', 'Performance monitoring', 'Monthly strategy reviews', 'Scaling recommendations'],
+      href: '/en/services/seo'
+    },
   ] : [
-    { icon: Target, title: 'Discovery', description: 'Wir analysieren Ihr Geschäft, Ihre Ziele und digitale Präsenz.' },
-    { icon: Bot, title: 'KI-Strategie', description: 'Wir entwickeln KI-gestützte Lösungen für Ihre spezifischen Bedürfnisse.' },
-    { icon: Zap, title: 'Implementierung', description: 'Schnelle Bereitstellung Ihrer digitalen Marketing- und KI-Systeme.' },
-    { icon: TrendingUp, title: 'Optimierung', description: 'Kontinuierliche Verbesserung durch Daten und Machine Learning.' },
+    { 
+      image: discoveryImg, 
+      title: 'Discovery & Analyse', 
+      description: 'Wir tauchen tief in Ihr Geschäft ein und analysieren Ihre digitale Präsenz, Wettbewerber und Marktchancen.',
+      details: ['Komplettes Website- & SEO-Audit', 'Wettbewerbsanalyse', 'Marktchancen-Mapping', 'Zieldefinitions-Workshop'],
+      href: '/gratis-audit'
+    },
+    { 
+      image: aiStrategyImg, 
+      title: 'KI-Strategie', 
+      description: 'Wir entwickeln maßgeschneiderte KI-gestützte Lösungen für Ihre spezifischen Geschäftsanforderungen.',
+      details: ['Individuelle KI-Lösungsgestaltung', 'Technologie-Stack Auswahl', 'Integrationsplanung', 'ROI-Prognosen'],
+      href: '/services/ki-implementierung'
+    },
+    { 
+      image: implementationImg, 
+      title: 'Schnelle Implementierung', 
+      description: 'Unser Expertenteam setzt Ihre digitalen Marketing- und KI-Systeme schnell und präzise um.',
+      details: ['Agile Entwicklungssprints', 'Qualitätssicherungstests', 'Mitarbeiterschulung', 'Go-Live Support'],
+      href: '/services/design-entwicklung'
+    },
+    { 
+      image: optimizationImg, 
+      title: 'Kontinuierliche Optimierung', 
+      description: 'Wir verbessern kontinuierlich die Leistung durch Datenanalyse und Machine-Learning-Erkenntnisse.',
+      details: ['A/B-Testing Kampagnen', 'Performance-Monitoring', 'Monatliche Strategie-Reviews', 'Skalierungsempfehlungen'],
+      href: '/services/seo'
+    },
   ];
 
   // Why choose us
@@ -256,37 +311,71 @@ export default function HomePage() {
       <SocialProofSection />
 
       {/* How We Work Section */}
-      <SectionContainer id="process">
-        <ScrollReveal>
-          <SectionHeader 
-            title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
-            subtitle={isEnglish 
-              ? 'A proven process that delivers results faster with AI acceleration.'
-              : 'Ein bewährter Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
-          />
-        </ScrollReveal>
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" staggerDelay={0.15}>
-          {processSteps.map((step, index) => (
-            <StaggerItem key={index}>
-              <div className="relative">
-                {/* Connector line */}
-                {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
-                )}
-                
-                <div className="relative z-10 text-center">
-                  {/* Step number */}
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/10 border border-primary/30 mb-6 mx-auto">
-                    <step.icon className="w-8 h-8 text-primary" />
+      <SectionContainer id="process" background="muted" className="relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-20" />
+        
+        <div className="relative">
+          <ScrollReveal>
+            <SectionHeader 
+              title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
+              subtitle={isEnglish 
+                ? 'A proven 4-step process that delivers results faster with AI acceleration.'
+                : 'Ein bewährter 4-Schritte-Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
+            />
+          </ScrollReveal>
+          
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8" staggerDelay={0.15}>
+            {processSteps.map((step, index) => (
+              <StaggerItem key={index}>
+                <Link 
+                  to={step.href}
+                  className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
+                >
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={step.image} 
+                      alt={step.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                    
+                    {/* Step number badge */}
+                    <div className="absolute top-4 left-4 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold font-display text-lg">
+                      {index + 1}
+                    </div>
                   </div>
                   
-                  <h3 className="text-xl font-bold font-display mb-3">{step.title}</h3>
-                  <p className="text-muted-foreground text-sm">{step.description}</p>
-                </div>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold font-display mb-3 group-hover:text-primary transition-colors">
+                      {step.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                      {step.description}
+                    </p>
+                    
+                    {/* Details list */}
+                    <ul className="space-y-2 mb-4">
+                      {step.details.map((detail, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    {/* Learn more link */}
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                      <span>{isEnglish ? 'Learn More' : 'Mehr erfahren'}</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
       </SectionContainer>
 
       {/* Why Choose Us */}
