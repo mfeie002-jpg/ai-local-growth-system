@@ -33,6 +33,7 @@ export function Header() {
 
   const navLinks = [
     { label: t.nav.audit, path: isEnglish ? '/en/free-audit' : '/gratis-audit' },
+    { label: isEnglish ? 'Case Studies' : 'Fallstudien', path: isEnglish ? '/en/case-studies' : '/fallstudien' },
     { label: t.nav.pricing, path: isEnglish ? '/en/pricing' : '/pakete' },
     { label: t.nav.faq, path: isEnglish ? '/en/faq' : '/faq' },
   ];

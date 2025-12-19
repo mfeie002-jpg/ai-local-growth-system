@@ -1,5 +1,6 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { SectionContainer } from '@/components/SectionContainer';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
 import { Star, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -74,23 +75,25 @@ export function SocialProofSection() {
     <>
       {/* Client Logos */}
       <SectionContainer className="py-12 border-y border-border/50">
-        <div className="text-center mb-8">
-          <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
-            {isEnglish ? 'Trusted by leading companies' : 'Vertraut von führenden Unternehmen'}
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+        <ScrollReveal>
+          <div className="text-center mb-8">
+            <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
+              {isEnglish ? 'Trusted by leading companies' : 'Vertraut von führenden Unternehmen'}
+            </p>
+          </div>
+        </ScrollReveal>
+        <StaggerContainer className="flex flex-wrap justify-center items-center gap-8 md:gap-12" staggerDelay={0.08}>
           {clientLogos.map((logo, index) => (
-            <div 
-              key={index}
-              className="flex items-center justify-center w-20 h-12 rounded-lg bg-card/50 border border-border/30 text-muted-foreground font-bold text-lg opacity-60 hover:opacity-100 transition-opacity animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-              title={logo.name}
-            >
-              {logo.initial}
-            </div>
+            <StaggerItem key={index}>
+              <div 
+                className="flex items-center justify-center w-20 h-12 rounded-lg bg-card/50 border border-border/30 text-muted-foreground font-bold text-lg opacity-60 hover:opacity-100 transition-opacity"
+                title={logo.name}
+              >
+                {logo.initial}
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </SectionContainer>
 
       {/* Testimonials */}
@@ -98,56 +101,58 @@ export function SocialProofSection() {
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
         <div className="relative">
-          <div className="text-center mb-12">
-            <h2 className="font-display mb-4">
-              {isEnglish ? 'What Our Clients Say' : 'Was unsere Kunden sagen'}
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              {isEnglish 
-                ? 'Real results from real businesses. See why companies trust us with their growth.'
-                : 'Echte Ergebnisse von echten Unternehmen. Sehen Sie, warum uns Firmen ihr Wachstum anvertrauen.'}
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <h2 className="font-display mb-4">
+                {isEnglish ? 'What Our Clients Say' : 'Was unsere Kunden sagen'}
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                {isEnglish 
+                  ? 'Real results from real businesses. See why companies trust us with their growth.'
+                  : 'Echte Ergebnisse von echten Unternehmen. Sehen Sie, warum uns Firmen ihr Wachstum anvertrauen.'}
+              </p>
+            </div>
+          </ScrollReveal>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6" staggerDelay={0.15}>
             {testimonials.map((testimonial, index) => (
-              <div 
-                key={index}
-                className="relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-in-up"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                {/* Quote icon */}
-                <div className="absolute -top-3 -left-2 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Quote className="w-4 h-4 text-primary" />
-                </div>
-                
-                {/* Rating */}
-                <div className="flex gap-0.5 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                
-                {/* Quote */}
-                <p className="text-foreground mb-6 leading-relaxed">
-                  "{testimonial.quote}"
-                </p>
-                
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-ai/20 flex items-center justify-center text-sm font-bold text-primary">
-                    {testimonial.author.charAt(0)}
+              <StaggerItem key={index}>
+                <div 
+                  className="relative p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300 h-full"
+                >
+                  {/* Quote icon */}
+                  <div className="absolute -top-3 -left-2 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Quote className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <p className="font-semibold text-sm">{testimonial.author}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {testimonial.role}, {testimonial.company}
-                    </p>
+                  
+                  {/* Rating */}
+                  <div className="flex gap-0.5 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  
+                  {/* Quote */}
+                  <p className="text-foreground mb-6 leading-relaxed">
+                    "{testimonial.quote}"
+                  </p>
+                  
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-ai/20 flex items-center justify-center text-sm font-bold text-primary">
+                      {testimonial.author.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{testimonial.author}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {testimonial.role}, {testimonial.company}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </SectionContainer>
     </>
