@@ -8,6 +8,7 @@ import { getBlogPost, getAllBlogPosts, BlogPost } from '@/data/blogPosts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ReadingProgress } from '@/components/ReadingProgress';
 
 function RelatedPostCard({ post }: { post: BlogPost }) {
   const { isEnglish } = useLanguage();
@@ -67,6 +68,7 @@ export default function BlogPostPage() {
 
   return (
     <Layout>
+      <ReadingProgress />
       <SEOHead
         title={`${title} | itsFeierabend Blog`}
         description={excerpt}
