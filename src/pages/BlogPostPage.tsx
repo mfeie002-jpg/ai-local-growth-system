@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Calendar, Clock, ArrowLeft, ArrowRight, User, Tag } from 'lucide-react';
 import { Layout } from '@/components/Layout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOHead, ArticleSchema, BreadcrumbSchema } from '@/components/SEOHead';
 import { ScrollReveal } from '@/components/motion/ScrollReveal';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { getBlogPost, getAllBlogPosts, BlogPost } from '@/data/blogPosts';
@@ -65,14 +65,33 @@ export default function BlogPostPage() {
   const content = isEnglish ? post.content.en : post.content.de;
   const excerpt = isEnglish ? post.excerpt.en : post.excerpt.de;
   const category = isEnglish ? post.category.en : post.category.de;
+  
+  const baseUrl = 'https://itsfeierabend.ch';
+  const blogPath = isEnglish ? '/en/blog' : '/blog';
+  const currentPath = `${blogPath}/${isEnglish ? post.slugEn : post.slug}`;
+
+  const breadcrumbItems = [
+    { name: isEnglish ? 'Home' : 'Startseite', url: isEnglish ? `${baseUrl}/en` : baseUrl },
+    { name: 'Blog', url: `${baseUrl}${blogPath}` },
+    { name: title, url: `${baseUrl}${currentPath}` },
+  ];
 
   return (
     <Layout>
       <ReadingProgress />
       <SEOHead
-        title={`${title} | itsFeierabend Blog`}
+        title={`${title} | Blog`}
         description={excerpt}
+        ogImage={post.thumbnail}
       />
+      <ArticleSchema
+        headline={title}
+        description={excerpt}
+        datePublished={post.date}
+        author={post.author}
+        image={post.thumbnail}
+      />
+      <BreadcrumbSchema items={breadcrumbItems} />
 
       {/* Hero */}
       <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">

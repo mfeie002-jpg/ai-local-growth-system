@@ -1,6 +1,6 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOHead, FAQSchema } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { CTAButton } from '@/components/CTAButton';
@@ -15,11 +15,12 @@ export default function FAQPage() {
   return (
     <Layout showPromo>
       <SEOHead
-        title={t.faq.sectionTitle}
+        title={isEnglish ? 'FAQ | Frequently Asked Questions' : 'FAQ | Häufig gestellte Fragen'}
         description={isEnglish 
-          ? 'Frequently asked questions about our AI growth system for local services in Switzerland.'
-          : 'Häufig gestellte Fragen zu unserem AI Growth System für Local Services in der Schweiz.'}
+          ? 'Frequently asked questions about our AI growth system for local services in Switzerland. Learn about pricing, process, and results.'
+          : 'Häufig gestellte Fragen zu unserem AI Growth System für Local Services in der Schweiz. Erfahren Sie mehr über Preise, Prozesse und Ergebnisse.'}
       />
+      <FAQSchema items={allFAQItems} />
 
       {/* Hero */}
       <section className="relative hero-pattern">
