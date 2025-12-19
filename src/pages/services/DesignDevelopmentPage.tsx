@@ -1,7 +1,7 @@
 import { Palette } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import designServiceImg from '@/assets/design-service.jpg';
+import designServiceImg from '@/assets/services/design-service.jpg';
 
 export default function DesignDevelopmentPage() {
   const { isEnglish } = useLanguage();
@@ -72,6 +72,7 @@ export default function DesignDevelopmentPage() {
       benefits={benefits}
       caseStudies={caseStudies}
       relatedServices={relatedServices}
+      heroImage={designServiceImg}
     />
   );
 }

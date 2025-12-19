@@ -1,7 +1,7 @@
 import { Share2 } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import socialMediaServiceImg from '@/assets/social-media-service.jpg';
+import socialMediaServiceImg from '@/assets/services/social-media-service.jpg';
 
 export default function SocialMediaPage() {
   const { isEnglish } = useLanguage();
@@ -72,6 +72,7 @@ export default function SocialMediaPage() {
       benefits={benefits}
       caseStudies={caseStudies}
       relatedServices={relatedServices}
+      heroImage={socialMediaServiceImg}
     />
   );
 }

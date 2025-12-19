@@ -1,7 +1,7 @@
 import { Shield } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ServiceDetailPage } from '@/components/ServiceDetailPage';
-import reputationServiceImg from '@/assets/reputation-service.jpg';
+import reputationServiceImg from '@/assets/services/reputation-service.jpg';
 
 export default function ReputationPage() {
   const { isEnglish } = useLanguage();
@@ -72,6 +72,7 @@ export default function ReputationPage() {
       benefits={benefits}
       caseStudies={caseStudies}
       relatedServices={relatedServices}
+      heroImage={reputationServiceImg}
     />
   );
 }
