@@ -1,0 +1,76 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-report-token',
+};
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { token } = await req.json();
+    
+    if (!token) {
+      console.error('No token provided');
+      return new Response(
+        JSON.stringify({ error: 'Token is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Fetching analysis report for token:', token);
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Fetch the analysis report
+    const { data: report, error: reportError } = await supabase
+      .from('analysis_reports')
+      .select('*')
+      .eq('token', token)
+      .maybeSingle();
+
+    if (reportError) {
+      console.error('Error fetching report:', reportError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch report' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!report) {
+      console.log('Report not found for token:', token);
+      return new Response(
+        JSON.stringify({ error: 'Report not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Update viewed_at timestamp
+    await supabase
+      .from('analysis_reports')
+      .update({ viewed_at: new Date().toISOString() })
+      .eq('id', report.id);
+
+    console.log('Report found:', report.site_name);
+
+    return new Response(
+      JSON.stringify({ report }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});
