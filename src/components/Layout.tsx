@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { CookieBanner } from './CookieBanner';
 import { PromoSection } from './PromoSection';
 import { DemoTeaserSection } from './DemoTeaserSection';
 
@@ -21,7 +20,6 @@ export function Layout({ children, showPromo = false, showDemoTeaser = false }: 
         {showPromo && <PromoSection />}
       </main>
       <Footer />
-      <CookieBanner />
     </div>
   );
 }
