@@ -270,35 +270,35 @@ const AnalysisReportPage: React.FC = () => {
 
   const content = {
     // Executive Summary
-    headline: language === 'de' ? 'Dini Scorecard – das kostet di aktuell Umsatz.' : 'Your Scorecard – this is costing you revenue.',
-    subline: language === 'de' ? 'Basierend uf dine Inputs. Im Voll-Audit chömed no manuelle Checks dazu.' : 'Based on your inputs. Manual checks are included in the full audit.',
-    assumptionLabel: language === 'de' ? 'Schätzung basierend uf dine Inputs' : 'Estimate based on your inputs',
+    headline: language === 'de' ? 'Ihre Scorecard – das kostet Sie aktuell Umsatz.' : 'Your Scorecard – this is costing you revenue.',
+    subline: language === 'de' ? 'Basierend auf Ihren Angaben. Im Voll-Audit kommen noch manuelle Checks dazu.' : 'Based on your inputs. Manual checks are included in the full audit.',
+    assumptionLabel: language === 'de' ? 'Schätzung basierend auf Ihren Angaben' : 'Estimate based on your inputs',
     
     // Sections
-    section2Title: language === 'de' ? 'Was passiert, wenn mer d\'Leaks stopft?' : 'What happens when we fix the leaks?',
-    section2Micro: language === 'de' ? 'Du gsehsch 3 Szenarien. Du chasch dine Zahlene aapasse.' : 'You see 3 scenarios. You can adjust your numbers.',
+    section2Title: language === 'de' ? 'Was passiert, wenn wir die Leaks stopfen?' : 'What happens when we fix the leaks?',
+    section2Micro: language === 'de' ? 'Sie sehen 3 Szenarien. Sie können Ihre Zahlen anpassen.' : 'You see 3 scenarios. You can adjust your numbers.',
     
-    section3Title: language === 'de' ? 'Was du verlürsch, wenn du\'s laufe lahsch.' : 'What you lose if you let it run.',
-    section3Micro: language === 'de' ? 'Das sind Opportunity Costs. Je länger du wartisch, desto meh summiert sich\'s.' : 'These are opportunity costs. The longer you wait, the more it adds up.',
+    section3Title: language === 'de' ? 'Was Sie verlieren, wenn Sie es laufen lassen.' : 'What you lose if you let it run.',
+    section3Micro: language === 'de' ? 'Das sind Opportunity Costs. Je länger Sie warten, desto mehr summiert es sich.' : 'These are opportunity costs. The longer you wait, the more it adds up.',
     
     section4Title: language === 'de' ? 'Top 10 Fixes – priorisiert' : 'Top 10 Fixes – prioritized',
     
     section5Title: language === 'de' ? 'Vollständiger Backlog' : 'Complete Backlog',
     
     section6Title: language === 'de' ? 'Aufwand & Kosten' : 'Effort & Cost',
-    diyTitle: language === 'de' ? 'Selber machen' : 'DIY',
-    doneForYouTitle: language === 'de' ? 'Mir mached\'s für di' : 'We do it for you',
+    diyTitle: language === 'de' ? 'Selbst umsetzen' : 'DIY',
+    doneForYouTitle: language === 'de' ? 'Wir machen es für Sie' : 'We do it for you',
     
     section7Title: language === 'de' ? '14-Tage Roadmap' : '14-Day Roadmap',
     
-    section8Title: language === 'de' ? 'Wenn du\'s nöd machsch...' : 'If you don\'t do it...',
+    section8Title: language === 'de' ? 'Wenn Sie es nicht machen...' : 'If you don\'t do it...',
     
-    section9Title: language === 'de' ? 'Was du gewinnsch' : 'What you gain',
+    section9Title: language === 'de' ? 'Was Sie gewinnen' : 'What you gain',
     
-    section10Title: language === 'de' ? 'Du hesch zwei Optionen' : 'You have two options',
-    diyButtonLabel: language === 'de' ? 'Ich mach\'s selber' : 'I\'ll do it myself',
-    doneForYouButtonLabel: language === 'de' ? 'Macht ihr\'s für mich' : 'Do it for me',
-    diyMicro: language === 'de' ? 'Wenn du\'s selber machsch: super. Wenn du\'s richtig & schnell wotsch: mir übernehmed.' : 'If you do it yourself: great. If you want it done right & fast: we take over.',
+    section10Title: language === 'de' ? 'Sie haben zwei Optionen' : 'You have two options',
+    diyButtonLabel: language === 'de' ? 'Ich mache es selbst' : 'I\'ll do it myself',
+    doneForYouButtonLabel: language === 'de' ? 'Machen Sie es für mich' : 'Do it for me',
+    diyMicro: language === 'de' ? 'Wenn Sie es selbst machen: super. Wenn Sie es richtig & schnell wollen: wir übernehmen.' : 'If you do it yourself: great. If you want it done right & fast: we take over.',
     
     // Labels
     now: language === 'de' ? 'Jetzt' : 'Now',
@@ -314,14 +314,14 @@ const AnalysisReportPage: React.FC = () => {
     effort: language === 'de' ? 'Aufwand' : 'Effort',
     timeToLive: language === 'de' ? 'Zeit bis live' : 'Time to live',
     whyImportant: language === 'de' ? 'Warum wichtig' : 'Why important',
-    ifNotDone: language === 'de' ? 'Wenn nöd gmacht' : 'If not done',
+    ifNotDone: language === 'de' ? 'Wenn nicht umgesetzt' : 'If not done',
     downloadPdf: language === 'de' ? 'Report als PDF' : 'Download PDF',
     notFound: language === 'de' ? 'Report nicht gefunden' : 'Report not found',
     notFoundDesc: language === 'de' ? 'Der angeforderte Analyse-Report existiert nicht oder ist abgelaufen.' : 'The requested analysis report does not exist or has expired.',
     startNew: language === 'de' ? 'Neue Analyse starten' : 'Start New Analysis',
     high: language === 'de' ? 'Hoch' : 'High',
     medium: language === 'de' ? 'Mittel' : 'Medium',
-    low: language === 'de' ? 'Tief' : 'Low',
+    low: language === 'de' ? 'Niedrig' : 'Low',
     hours: language === 'de' ? 'Stunden' : 'Hours',
     complexity: language === 'de' ? 'Komplexität' : 'Complexity',
     risk: language === 'de' ? 'Risiko' : 'Risk',
@@ -329,7 +329,7 @@ const AnalysisReportPage: React.FC = () => {
     monthly: language === 'de' ? 'monatlich' : 'monthly',
     oneTime: language === 'de' ? 'einmalig' : 'one-time',
     recommended: language === 'de' ? 'Empfohlen' : 'Recommended',
-    findings: language === 'de' ? 'Findings' : 'Findings',
+    findings: language === 'de' ? 'Erkenntnisse' : 'Findings',
     critical: language === 'de' ? 'kritisch' : 'critical',
     perMonth: language === 'de' ? '/Monat' : '/Month',
   };
