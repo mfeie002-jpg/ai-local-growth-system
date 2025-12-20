@@ -4,8 +4,6 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { 
   Loader2, 
-  LogOut, 
-  ArrowLeft,
   Phone,
   PhoneIncoming,
   PhoneOutgoing,
@@ -20,10 +18,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface CallDetail {
   id: string;
@@ -104,7 +102,7 @@ export default function AdminCallDetailPage() {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  if (authLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -116,27 +114,18 @@ export default function AdminCallDetailPage() {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   if (!call) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-muted-foreground mb-4">Call nicht gefunden.</p>
-          <Link to="/admin/calls">
-            <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Zurück
-            </Button>
-          </Link>
+      <AdminLayout title="Call nicht gefunden">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">Call nicht gefunden.</p>
+            <Link to="/admin/calls">
+              <Button variant="outline">Zurück zu Calls</Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -151,30 +140,11 @@ export default function AdminCallDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link to="/admin/calls">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Calls
-                </Button>
-              </Link>
-            </div>
-            
-            <Button variant="outline" onClick={signOut} size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Abmelden
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout 
+      title={call.direction === 'inbound' ? 'Inbound Call' : 'Outbound Call'}
+      subtitle={format(new Date(call.created_at), "dd. MMMM yyyy 'um' HH:mm 'Uhr'", { locale: de })}
+    >
+      <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">
           {/* Header Card */}
           <div className="bg-background border border-border rounded-lg p-6">
@@ -370,7 +340,7 @@ export default function AdminCallDetailPage() {
             </div>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }

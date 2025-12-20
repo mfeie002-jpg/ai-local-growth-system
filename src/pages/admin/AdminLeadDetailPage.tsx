@@ -4,11 +4,8 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { 
   Loader2, 
-  LogOut, 
-  ArrowLeft,
   Mail, 
   Phone, 
-  Globe,
   Copy,
   Check,
   ExternalLink,
@@ -24,6 +21,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface LeadDetail {
   id: string;
@@ -160,7 +158,7 @@ export default function AdminLeadDetailPage() {
     return `https://itsfeierabend.ch/gratis-audit/report/${lead.public_token}`;
   };
 
-  if (authLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -172,27 +170,18 @@ export default function AdminLeadDetailPage() {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   if (!lead) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-muted-foreground mb-4">Lead nicht gefunden.</p>
-          <Link to="/admin/leads">
-            <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Zurück
-            </Button>
-          </Link>
+      <AdminLayout title="Lead nicht gefunden">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">Lead nicht gefunden.</p>
+            <Link to="/admin/leads">
+              <Button variant="outline">Zurück zu Leads</Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -209,30 +198,11 @@ export default function AdminLeadDetailPage() {
   const reportUrl = getReportUrl();
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link to="/admin/leads">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Zurück
-                </Button>
-              </Link>
-            </div>
-            
-            <Button variant="outline" onClick={signOut} size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Abmelden
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout 
+      title={lead.name} 
+      subtitle={`${lead.lead_type === 'free_audit' ? 'Gratis Audit' : 'Gratis Call'} • ${format(new Date(lead.created_at), "dd. MMMM yyyy", { locale: de })}`}
+    >
+      <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">
           {/* Header Card */}
           <div className="bg-background border border-border rounded-lg p-6">
@@ -468,7 +438,7 @@ export default function AdminLeadDetailPage() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
