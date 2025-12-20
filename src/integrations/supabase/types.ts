@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      analysis_reports: {
+        Row: {
+          categories: Json
+          consequences: Json
+          created_at: string
+          critical_issues: number
+          current_revenue: number
+          hourly_rate: number
+          id: string
+          info_issues: number
+          lead_id: string | null
+          monthly_loss: number
+          overall_score: number
+          projected_revenue: number
+          site_name: string
+          token: string
+          total_hours: number
+          total_issues: number
+          viewed_at: string | null
+          warning_issues: number
+        }
+        Insert: {
+          categories?: Json
+          consequences?: Json
+          created_at?: string
+          critical_issues?: number
+          current_revenue?: number
+          hourly_rate?: number
+          id?: string
+          info_issues?: number
+          lead_id?: string | null
+          monthly_loss?: number
+          overall_score?: number
+          projected_revenue?: number
+          site_name: string
+          token: string
+          total_hours?: number
+          total_issues?: number
+          viewed_at?: string | null
+          warning_issues?: number
+        }
+        Update: {
+          categories?: Json
+          consequences?: Json
+          created_at?: string
+          critical_issues?: number
+          current_revenue?: number
+          hourly_rate?: number
+          id?: string
+          info_issues?: number
+          lead_id?: string | null
+          monthly_loss?: number
+          overall_score?: number
+          projected_revenue?: number
+          site_name?: string
+          token?: string
+          total_hours?: number
+          total_issues?: number
+          viewed_at?: string | null
+          warning_issues?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analysis_reports_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       callback_requests: {
         Row: {
           consent_ai_call: boolean | null
