@@ -21,14 +21,16 @@ import {
   Clock,
   Calendar,
   PhoneCall,
-  Target
+  Target,
+  Users,
+  CheckCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, FunnelChart, Funnel, LabelList, Cell } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -61,7 +63,8 @@ const scoreColors = (score: number) => {
 export default function AdminReportsPage() {
   const { isAdmin, isLoading: authLoading, signOut } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
-  const [callbackRequests, setCallbackRequests] = useState<Array<{ id: string; report_token: string | null }>>([]);
+  const [callbackRequests, setCallbackRequests] = useState<Array<{ id: string; report_token: string | null; lead_id: string | null }>>([]);
+  const [leads, setLeads] = useState<Array<{ id: string; status: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewFilter, setViewFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -85,11 +88,17 @@ export default function AdminReportsPage() {
       // Fetch callback requests for conversion tracking
       const callbackQuery = supabase
         .from('callback_requests')
-        .select('id, report_token');
+        .select('id, report_token, lead_id');
 
-      const [reportsResult, callbackResult] = await Promise.all([
+      // Fetch leads for conversion tracking
+      const leadsQuery = supabase
+        .from('leads')
+        .select('id, status');
+
+      const [reportsResult, callbackResult, leadsResult] = await Promise.all([
         reportsQuery,
-        callbackQuery
+        callbackQuery,
+        leadsQuery
       ]);
 
       if (reportsResult.error) {
@@ -101,6 +110,10 @@ export default function AdminReportsPage() {
 
       if (!callbackResult.error) {
         setCallbackRequests(callbackResult.data || []);
+      }
+
+      if (!leadsResult.error) {
+        setLeads(leadsResult.data || []);
       }
     } finally {
       setIsLoading(false);
@@ -147,6 +160,12 @@ export default function AdminReportsPage() {
     // Conversion rate: viewed reports that converted to callbacks
     const conversionRate = viewed > 0 ? Math.round((reportsWithCallbacks / viewed) * 100) : 0;
 
+    // Leads that converted (status = 'qualified', 'converted', 'won')
+    const convertedStatuses = ['qualified', 'converted', 'won'];
+    const convertedLeadIds = new Set(leads.filter(l => convertedStatuses.includes(l.status)).map(l => l.id));
+    const reportsWithConvertedLeads = reports.filter(r => r.lead_id && convertedLeadIds.has(r.lead_id)).length;
+    const leadConversionRate = total > 0 ? Math.round((reportsWithConvertedLeads / total) * 100) : 0;
+
     return { 
       total, 
       viewed, 
@@ -156,9 +175,41 @@ export default function AdminReportsPage() {
       totalCriticalIssues, 
       recentReports,
       reportsWithCallbacks,
-      conversionRate
+      conversionRate,
+      reportsWithConvertedLeads,
+      leadConversionRate
     };
-  }, [reports, callbackRequests]);
+  }, [reports, callbackRequests, leads]);
+
+  // Funnel data for visualization
+  const funnelData = useMemo(() => {
+    return [
+      { 
+        name: 'Reports erstellt', 
+        value: kpis.total, 
+        fill: 'hsl(var(--primary))',
+        percentage: 100
+      },
+      { 
+        name: 'Angesehen', 
+        value: kpis.viewed, 
+        fill: 'hsl(var(--chart-2))',
+        percentage: kpis.viewRate
+      },
+      { 
+        name: 'Callback angefordert', 
+        value: kpis.reportsWithCallbacks, 
+        fill: 'hsl(var(--chart-3))',
+        percentage: kpis.total > 0 ? Math.round((kpis.reportsWithCallbacks / kpis.total) * 100) : 0
+      },
+      { 
+        name: 'Lead konvertiert', 
+        value: kpis.reportsWithConvertedLeads, 
+        fill: 'hsl(var(--chart-4))',
+        percentage: kpis.leadConversionRate
+      },
+    ];
+  }, [kpis]);
 
   // Calculate chart data (last 30 days, daily)
   const chartData = useMemo(() => {
@@ -348,59 +399,120 @@ export default function AdminReportsPage() {
           </div>
         </div>
 
-        {/* Chart: Reports over time */}
-        <div className="bg-background rounded-lg border border-border p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              <h2 className="font-semibold">Reports der letzten 30 Tage</h2>
+        {/* Charts Row */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          {/* Funnel Chart */}
+          <div className="bg-background rounded-lg border border-border p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="w-5 h-5 text-primary" />
+              <h2 className="font-semibold">Conversion Funnel</h2>
             </div>
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-muted-foreground">Erstellt</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-muted-foreground">Angesehen</span>
-              </div>
+            <div className="h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <FunnelChart>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                    formatter={(value: number, name: string, props: any) => [
+                      `${value} (${props.payload.percentage}%)`,
+                      name
+                    ]}
+                  />
+                  <Funnel
+                    dataKey="value"
+                    data={funnelData}
+                    isAnimationActive
+                  >
+                    {funnelData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                    <LabelList 
+                      position="center" 
+                      fill="hsl(var(--foreground))"
+                      stroke="none"
+                      dataKey="name"
+                      formatter={(value: string) => value}
+                    />
+                  </Funnel>
+                </FunnelChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {funnelData.map((item, index) => (
+                <div key={index} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-sm" 
+                      style={{ backgroundColor: item.fill }}
+                    />
+                    <span className="text-muted-foreground text-xs">{item.name}</span>
+                  </div>
+                  <span className="font-medium text-foreground text-xs">
+                    {item.value} ({item.percentage}%)
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis 
-                  dataKey="date" 
-                  tick={{ fontSize: 10 }} 
-                  tickLine={false}
-                  axisLine={false}
-                  interval="preserveStartEnd"
-                />
-                <YAxis 
-                  tick={{ fontSize: 10 }} 
-                  tickLine={false}
-                  axisLine={false}
-                  allowDecimals={false}
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'hsl(var(--background))', 
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                    fontSize: '12px'
-                  }}
-                  labelFormatter={(label, payload) => {
-                    if (payload && payload[0]) {
-                      return payload[0].payload.fullDate;
-                    }
-                    return label;
-                  }}
-                />
-                <Bar dataKey="reports" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Reports erstellt" />
-                <Bar dataKey="viewed" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} name="Angesehen" />
-              </BarChart>
-            </ResponsiveContainer>
+
+          {/* Chart: Reports over time */}
+          <div className="bg-background rounded-lg border border-border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold">Reports der letzten 30 Tage</h2>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">Erstellt</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <span className="text-muted-foreground">Angesehen</span>
+                </div>
+              </div>
+            </div>
+            <div className="h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 10 }} 
+                    tickLine={false}
+                    axisLine={false}
+                    interval="preserveStartEnd"
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 10 }} 
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                    labelFormatter={(label, payload) => {
+                      if (payload && payload[0]) {
+                        return payload[0].payload.fullDate;
+                      }
+                      return label;
+                    }}
+                  />
+                  <Bar dataKey="reports" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Reports erstellt" />
+                  <Bar dataKey="viewed" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} name="Angesehen" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
