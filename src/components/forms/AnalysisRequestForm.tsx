@@ -127,6 +127,8 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default',
       website_url: websiteUrl,
       industry: 'analysis_request',
       service_area: 'ultimate_package',
+      budget_range: 'not_specified',
+      capacity_range: 'not_specified',
       message: `Free website analysis requested for: ${websiteUrl}`,
     });
     
