@@ -361,35 +361,42 @@ export default function InvestorPage() {
             </h2>
             <p className="text-muted-foreground mb-6">
               {isEnglish 
-                ? 'A 30-second overview of how we transform local service businesses.'
-                : 'Ein 30-Sekunden-Überblick, wie wir lokale Dienstleister transformieren.'}
+                ? 'A 30-second Swiss German pitch about how we transform local service businesses.'
+                : 'Ein 30-Sekunden Schweizerdeutsch-Pitch, wie wir lokale Dienstleister transformieren.'}
             </p>
             
-            <div className="p-6 rounded-2xl bg-card border border-border/50 inline-flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="lg"
-                className="rounded-full w-16 h-16"
-                onClick={toggleAudio}
-              >
-                {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-              </Button>
-              <div className="text-left">
-                <p className="font-medium">{isEnglish ? 'Ultimate Package Pitch' : 'Ultimate Package Pitch'}</p>
-                <p className="text-sm text-muted-foreground">0:30 • {isEnglish ? 'Click to play' : 'Klicken zum Abspielen'}</p>
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-ai/5 to-accent/5 border border-border/50">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                  <Volume2 className="w-8 h-8 text-primary" />
+                </div>
+                <div className="text-center md:text-left flex-1">
+                  <p className="font-bold text-lg mb-1">Ultimate Package Pitch</p>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {isEnglish ? 'Swiss German • 30 seconds' : 'Schweizerdeutsch • 30 Sekunden'}
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted text-sm text-muted-foreground">
+                    <Volume2 className="w-4 h-4" />
+                    {isEnglish 
+                      ? 'Audio coming soon - upload your own pitch!'
+                      : 'Audio kommt bald - lade deinen eigenen Pitch hoch!'}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <p className="text-xs text-muted-foreground">
+                  {isEnglish 
+                    ? '💡 Tip: Upload your MP3 to /public/audio/investor-pitch.mp3 to activate the audio player.'
+                    : '💡 Tipp: Lade deine MP3 nach /public/audio/investor-pitch.mp3 hoch, um den Audioplayer zu aktivieren.'}
+                </p>
               </div>
             </div>
             
-            {/* Hidden audio element - would need actual audio file */}
+            {/* Hidden audio element - ready for uploaded file */}
             <audio ref={audioRef} onEnded={() => setIsPlaying(false)}>
               <source src="/audio/investor-pitch.mp3" type="audio/mpeg" />
             </audio>
-            
-            <p className="text-xs text-muted-foreground mt-4">
-              {isEnglish 
-                ? 'Audio plays only on user interaction (GDPR compliant)'
-                : 'Audio startet nur bei Nutzerinteraktion (DSGVO-konform)'}
-            </p>
           </div>
         </ScrollReveal>
       </SectionContainer>
