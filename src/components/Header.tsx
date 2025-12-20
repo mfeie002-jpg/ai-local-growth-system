@@ -35,6 +35,7 @@ export function Header() {
     { label: isEnglish ? 'Ultimate Package' : 'Ultimate Package', path: isEnglish ? '/en/ultimate-package' : '/ultimate-package', highlight: true },
     { label: t.nav.audit, path: isEnglish ? '/en/free-audit' : '/gratis-audit' },
     { label: isEnglish ? 'Case Studies' : 'Fallstudien', path: isEnglish ? '/en/case-studies' : '/fallstudien' },
+    { label: isEnglish ? 'Investors' : 'Investoren', path: isEnglish ? '/en/investors' : '/investoren' },
     { label: t.nav.pricing, path: isEnglish ? '/en/pricing' : '/pakete' },
     { label: t.nav.faq, path: isEnglish ? '/en/faq' : '/faq' },
   ];
