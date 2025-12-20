@@ -21,6 +21,7 @@ import CaseStudiesPage from "./pages/CaseStudiesPage";
 import UltimatePackagePage from "./pages/UltimatePackagePage";
 import AnalysisResultsDemo from "./pages/AnalysisResultsDemo";
 import AnalysisReportPage from "./pages/AnalysisReportPage";
+import InvestorPage from "./pages/InvestorPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import NotFound from "./pages/NotFound";
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/ultimate-package" element={<UltimatePackagePage />} />
               <Route path="/analyse-ergebnis" element={<AnalysisResultsDemo />} />
               <Route path="/analyse/:token" element={<AnalysisReportPage />} />
+              <Route path="/investoren" element={<InvestorPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               
