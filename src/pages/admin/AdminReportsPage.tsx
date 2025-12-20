@@ -19,7 +19,9 @@ import {
   AlertTriangle,
   BarChart3,
   Clock,
-  Calendar
+  Calendar,
+  PhoneCall,
+  Target
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -59,41 +61,57 @@ const scoreColors = (score: number) => {
 export default function AdminReportsPage() {
   const { isAdmin, isLoading: authLoading, signOut } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
+  const [callbackRequests, setCallbackRequests] = useState<Array<{ id: string; report_token: string | null }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewFilter, setViewFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const fetchReports = async () => {
+  const fetchData = async () => {
     setIsLoading(true);
     try {
-      let query = supabase
+      // Fetch reports
+      let reportsQuery = supabase
         .from('analysis_reports')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (viewFilter === 'viewed') {
-        query = query.not('viewed_at', 'is', null);
+        reportsQuery = reportsQuery.not('viewed_at', 'is', null);
       } else if (viewFilter === 'not_viewed') {
-        query = query.is('viewed_at', null);
+        reportsQuery = reportsQuery.is('viewed_at', null);
       }
 
-      const { data, error } = await query;
+      // Fetch callback requests for conversion tracking
+      const callbackQuery = supabase
+        .from('callback_requests')
+        .select('id, report_token');
 
-      if (error) {
-        console.error('Error fetching reports:', error);
+      const [reportsResult, callbackResult] = await Promise.all([
+        reportsQuery,
+        callbackQuery
+      ]);
+
+      if (reportsResult.error) {
+        console.error('Error fetching reports:', reportsResult.error);
         toast.error('Fehler beim Laden der Reports');
       } else {
-        setReports(data || []);
+        setReports(reportsResult.data || []);
+      }
+
+      if (!callbackResult.error) {
+        setCallbackRequests(callbackResult.data || []);
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchReports = fetchData;
+
   useEffect(() => {
     if (isAdmin) {
-      fetchReports();
+      fetchData();
     }
   }, [isAdmin, viewFilter]);
 
@@ -107,7 +125,7 @@ export default function AdminReportsPage() {
     );
   }, [reports, searchQuery]);
 
-  // Calculate KPIs
+  // Calculate KPIs including conversion tracking
   const kpis = useMemo(() => {
     const total = reports.length;
     const viewed = reports.filter(r => r.viewed_at).length;
@@ -121,8 +139,26 @@ export default function AdminReportsPage() {
     weekAgo.setDate(weekAgo.getDate() - 7);
     const recentReports = reports.filter(r => new Date(r.created_at) > weekAgo).length;
 
-    return { total, viewed, viewRate, avgScore, totalMonthlyLoss, totalCriticalIssues, recentReports };
-  }, [reports]);
+    // Conversion tracking: Reports that led to callback requests
+    const reportsWithCallbacks = reports.filter(r => 
+      callbackRequests.some(cb => cb.report_token === r.token)
+    ).length;
+    
+    // Conversion rate: viewed reports that converted to callbacks
+    const conversionRate = viewed > 0 ? Math.round((reportsWithCallbacks / viewed) * 100) : 0;
+
+    return { 
+      total, 
+      viewed, 
+      viewRate, 
+      avgScore, 
+      totalMonthlyLoss, 
+      totalCriticalIssues, 
+      recentReports,
+      reportsWithCallbacks,
+      conversionRate
+    };
+  }, [reports, callbackRequests]);
 
   // Calculate chart data (last 30 days, daily)
   const chartData = useMemo(() => {
@@ -240,7 +276,7 @@ export default function AdminReportsPage() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
           <div className="bg-background rounded-lg border border-border p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <FileText className="w-4 h-4" />
@@ -287,9 +323,28 @@ export default function AdminReportsPage() {
               <TrendingUp className="w-4 h-4 text-green-600" />
               <span className="text-xs">Potenzial/Monat</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">
+            <p className="text-xl font-bold text-green-600">
               CHF {kpis.totalMonthlyLoss.toLocaleString('de-CH')}
             </p>
+          </div>
+          
+          {/* Conversion Tracking KPIs */}
+          <div className="bg-background rounded-lg border border-primary/30 p-4">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <PhoneCall className="w-4 h-4 text-primary" />
+              <span className="text-xs">Callbacks</span>
+            </div>
+            <p className="text-2xl font-bold text-primary">{kpis.reportsWithCallbacks}</p>
+            <p className="text-xs text-muted-foreground">aus Reports</p>
+          </div>
+          
+          <div className="bg-background rounded-lg border border-primary/30 p-4">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <Target className="w-4 h-4 text-primary" />
+              <span className="text-xs">Conversion</span>
+            </div>
+            <p className="text-2xl font-bold text-primary">{kpis.conversionRate}%</p>
+            <p className="text-xs text-muted-foreground">View → Callback</p>
           </div>
         </div>
 
