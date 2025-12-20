@@ -18,6 +18,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import DemoPage from "./pages/DemoPage";
 import AuditReportPage from "./pages/AuditReportPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
+import UltimatePackagePage from "./pages/UltimatePackagePage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import NotFound from "./pages/NotFound";
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="/datenschutz" element={<PrivacyPage />} />
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/fallstudien" element={<CaseStudiesPage />} />
+              <Route path="/ultimate-package" element={<UltimatePackagePage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               
@@ -86,6 +88,7 @@ const App = () => (
               <Route path="/en/privacy" element={<PrivacyPage />} />
               <Route path="/en/demo" element={<DemoPage />} />
               <Route path="/en/case-studies" element={<CaseStudiesPage />} />
+              <Route path="/en/ultimate-package" element={<UltimatePackagePage />} />
               <Route path="/en/blog" element={<BlogPage />} />
               <Route path="/en/blog/:slug" element={<BlogPostPage />} />
               

@@ -32,9 +32,9 @@ export function Header() {
   ];
 
   const navLinks = [
+    { label: isEnglish ? 'Ultimate Package' : 'Ultimate Package', path: isEnglish ? '/en/ultimate-package' : '/ultimate-package', highlight: true },
     { label: t.nav.audit, path: isEnglish ? '/en/free-audit' : '/gratis-audit' },
     { label: isEnglish ? 'Case Studies' : 'Fallstudien', path: isEnglish ? '/en/case-studies' : '/fallstudien' },
-    { label: isEnglish ? 'Blog' : 'Blog', path: isEnglish ? '/en/blog' : '/blog' },
     { label: t.nav.pricing, path: isEnglish ? '/en/pricing' : '/pakete' },
     { label: t.nav.faq, path: isEnglish ? '/en/faq' : '/faq' },
   ];
@@ -118,7 +118,9 @@ export function Header() {
                   'px-4 py-2 text-sm font-medium rounded-md transition-colors',
                   isActive(link.path)
                     ? 'text-primary bg-primary/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    : 'highlight' in link && link.highlight
+                      ? 'text-ai hover:text-ai hover:bg-ai/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 )}
               >
                 {link.label}
