@@ -4,8 +4,6 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { 
   Loader2, 
-  LogOut, 
-  ChevronLeft,
   Eye,
   EyeOff,
   Copy,
@@ -34,9 +32,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface BacklogIssue {
   title: string;
@@ -188,7 +186,7 @@ export default function AdminReportDetailPage() {
     toast.success('Link kopiert');
   };
 
-  if (authLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -200,31 +198,18 @@ export default function AdminReportDetailPage() {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   if (!report) {
     return (
-      <div className="min-h-screen bg-muted/30">
-        <header className="bg-background border-b border-border sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <Link to="/admin/reports" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                <ChevronLeft className="w-4 h-4" />
-                Zurück
-              </Link>
-            </div>
-          </div>
-        </header>
+      <AdminLayout title="Report nicht gefunden">
         <div className="flex items-center justify-center py-20">
-          <p className="text-muted-foreground">Report nicht gefunden</p>
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">Report nicht gefunden.</p>
+            <Link to="/admin/reports">
+              <Button variant="outline">Zurück zu Reports</Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -235,44 +220,26 @@ export default function AdminReportDetailPage() {
   const costOfInaction = categories.cost_of_inaction || { leaks: [], total_monthly_loss: 0 };
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link to="/admin/reports" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                <ChevronLeft className="w-4 h-4" />
-                Zurück
-              </Link>
-              <span className="text-muted-foreground">|</span>
-              <span className="font-semibold truncate max-w-[200px]">{report.site_name}</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={copyReportLink}>
-                {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                Link kopieren
-              </Button>
-              <a href={`/analyse/${report.token}`} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Report öffnen
-                </Button>
-              </a>
-              <Button variant="outline" onClick={signOut} size="sm">
-                <LogOut className="w-4 h-4 mr-2" />
-                Abmelden
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <AdminLayout 
+      title={report.site_name}
+      subtitle={`Report vom ${format(new Date(report.created_at), "dd. MMMM yyyy", { locale: de })}`}
+    >
+      {/* Action buttons */}
+      <div className="flex items-center gap-3 mb-6">
+        <Button variant="outline" size="sm" onClick={copyReportLink}>
+          {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+          Link kopieren
+        </Button>
+        <a href={`/analyse/${report.token}`} target="_blank" rel="noopener noreferrer">
+          <Button variant="outline" size="sm">
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Report öffnen
+          </Button>
+        </a>
+      </div>
 
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+      {/* Overview Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-muted-foreground mb-1">
@@ -537,7 +504,6 @@ export default function AdminReportDetailPage() {
             )}
           </div>
         </div>
-      </main>
-    </div>
-  );
-}
+      </AdminLayout>
+    );
+  }
