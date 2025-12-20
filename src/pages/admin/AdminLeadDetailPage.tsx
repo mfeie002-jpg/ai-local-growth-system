@@ -201,6 +201,10 @@ export default function AdminLeadDetailPage() {
     <AdminLayout 
       title={lead.name} 
       subtitle={`${lead.lead_type === 'free_audit' ? 'Gratis Audit' : 'Gratis Call'} • ${format(new Date(lead.created_at), "dd. MMMM yyyy", { locale: de })}`}
+      breadcrumbs={[
+        { label: 'Leads', href: '/admin/leads' },
+        { label: lead.name }
+      ]}
     >
       <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">

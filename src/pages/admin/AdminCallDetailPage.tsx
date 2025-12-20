@@ -143,6 +143,10 @@ export default function AdminCallDetailPage() {
     <AdminLayout 
       title={call.direction === 'inbound' ? 'Inbound Call' : 'Outbound Call'}
       subtitle={format(new Date(call.created_at), "dd. MMMM yyyy 'um' HH:mm 'Uhr'", { locale: de })}
+      breadcrumbs={[
+        { label: 'Calls', href: '/admin/calls' },
+        { label: call.direction === 'inbound' ? 'Inbound Call' : 'Outbound Call' }
+      ]}
     >
       <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">
