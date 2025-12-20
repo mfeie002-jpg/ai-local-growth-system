@@ -44,6 +44,7 @@ import AdminCallDetailPage from "./pages/admin/AdminCallDetailPage";
 import AdminVoiceSetupPage from "./pages/admin/AdminVoiceSetupPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
 import AdminReportDetailPage from "./pages/admin/AdminReportDetailPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const App = () => (
               <Route path="/en/services/social-media" element={<SocialMediaPage />} />
               
               {/* Admin Routes */}
+              <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin/leads" element={<AdminLeadsPage />} />
               <Route path="/admin/leads/:id" element={<AdminLeadDetailPage />} />
