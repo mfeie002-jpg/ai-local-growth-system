@@ -62,6 +62,7 @@ export default function UltimatePackagePage() {
           description: 'A comprehensive report showing every issue, prioritized by impact with clear explanations.',
           highlight: 'OVERWHELMING',
           details: ['Priority-ranked action list', 'Technical specifications', 'Quick wins identified'],
+          demoLink: '/en/analysis-results',
         },
         {
           icon: Wrench,
@@ -176,6 +177,7 @@ export default function UltimatePackagePage() {
           description: 'Einen umfassenden Report mit jedem Problem, nach Impact priorisiert mit klaren Erklärungen.',
           highlight: 'ÜBERWÄLTIGEND',
           details: ['Priorisierte Aktionsliste', 'Technische Spezifikationen', 'Quick Wins identifiziert'],
+          demoLink: '/analyse-ergebnis',
         },
         {
           icon: Wrench,
@@ -454,6 +456,17 @@ export default function UltimatePackagePage() {
                       </li>
                     ))}
                   </ul>
+                  
+                  {/* Demo Link for Step 2 */}
+                  {(step as any).demoLink && (
+                    <a 
+                      href={(step as any).demoLink}
+                      className="mt-4 inline-flex items-center gap-2 text-sm text-ai hover:text-ai/80 transition-colors font-medium"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      {isEnglish ? 'See sample report' : 'Beispiel-Report ansehen'}
+                    </a>
+                  )}
                 </div>
               </ScrollReveal>
             ))}
