@@ -4,6 +4,7 @@ import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
 import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { ServicesSection } from '@/components/ServicesSection';
+import { UltimatePackageSection } from '@/components/UltimatePackageSection';
 import { AIChatbotDemo } from '@/components/AIChatbotDemo';
 import { SocialProofSection } from '@/components/SocialProofSection';
 import { PricingCard } from '@/components/PricingCard';
@@ -306,6 +307,9 @@ export default function HomePage() {
 
       {/* Services Section */}
       <ServicesSection />
+
+      {/* Ultimate Package - Our Core USP */}
+      <UltimatePackageSection />
 
       {/* Social Proof - Logos & Testimonials */}
       <SocialProofSection />
