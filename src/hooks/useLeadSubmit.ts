@@ -22,6 +22,7 @@ interface SubmitResult {
   success: boolean;
   errors?: Record<string, string>;
   error?: string;
+  leadId?: string;
 }
 
 export function useLeadSubmit() {
@@ -96,7 +97,7 @@ export function useLeadSubmit() {
         });
       }
 
-      return { success: true };
+      return { success: true, leadId: result.lead_id };
     } catch (err) {
       console.error('Unexpected error:', err);
       return {
