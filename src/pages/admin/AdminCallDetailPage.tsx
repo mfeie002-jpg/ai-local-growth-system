@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { formatDuration } from '@/lib/admin-constants';
 
 interface CallDetail {
   id: string;
@@ -52,7 +53,7 @@ interface CallDetail {
 
 export default function AdminCallDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { isAdmin, isLoading: authLoading, signOut } = useAuth();
+  const { isAdmin, isLoading: authLoading } = useAuth();
   const [call, setCall] = useState<CallDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -94,13 +95,6 @@ export default function AdminCallDetailPage() {
     }
   };
 
-  const formatDuration = (ms: number | null) => {
-    if (!ms) return '-';
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
   if (authLoading || isLoading) {
     return (

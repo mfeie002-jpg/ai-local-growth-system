@@ -22,6 +22,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { statusColors, statusLabels, bucketColors, bucketLabels } from '@/lib/admin-constants';
 
 interface LeadDetail {
   id: string;
@@ -51,37 +52,9 @@ interface LeadDetail {
   duplicate_of: string | null;
 }
 
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-800',
-  reviewing: 'bg-yellow-100 text-yellow-800',
-  scored: 'bg-purple-100 text-purple-800',
-  contacted: 'bg-green-100 text-green-800',
-  closed: 'bg-gray-100 text-gray-800',
-};
-
-const statusLabels: Record<string, string> = {
-  new: 'Neu',
-  reviewing: 'In Bearbeitung',
-  scored: 'Bewertet',
-  contacted: 'Kontaktiert',
-  closed: 'Abgeschlossen',
-};
-
-const bucketColors: Record<string, string> = {
-  red: 'bg-red-100 text-red-800',
-  yellow: 'bg-yellow-100 text-yellow-800',
-  green: 'bg-green-100 text-green-800',
-};
-
-const bucketLabels: Record<string, string> = {
-  red: 'Rot – Fundament kritisch',
-  yellow: 'Gelb – Solide Basis, Hebel offen',
-  green: 'Grün – Starkes Fundament',
-};
-
 export default function AdminLeadDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { isAdmin, isLoading: authLoading, signOut } = useAuth();
+  const { isAdmin, isLoading: authLoading } = useAuth();
   const [lead, setLead] = useState<LeadDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

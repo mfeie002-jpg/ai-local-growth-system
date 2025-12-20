@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { callStatusColors, formatDuration } from '@/lib/admin-constants';
 
 interface Call {
   id: string;
@@ -36,12 +37,6 @@ interface Call {
   consent_transcript: boolean;
   lead_id: string | null;
 }
-
-const statusColors: Record<string, string> = {
-  started: 'bg-blue-100 text-blue-800',
-  ended: 'bg-gray-100 text-gray-800',
-  error: 'bg-red-100 text-red-800',
-};
 
 export default function AdminCallsPage() {
   const { isAdmin, isLoading: authLoading } = useAuth();
@@ -95,14 +90,6 @@ export default function AdminCallsPage() {
       call.retell_call_id?.toLowerCase().includes(query)
     );
   }, [calls, searchQuery]);
-
-  const formatDuration = (ms: number | null) => {
-    if (!ms) return '-';
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
   if (authLoading) {
     return (
@@ -216,7 +203,7 @@ export default function AdminCallsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-1">
-                        <Badge className={cn('font-normal text-xs', statusColors[call.status || ''] || 'bg-gray-100')}>
+                        <Badge className={cn('font-normal text-xs', callStatusColors[call.status || ''] || 'bg-gray-100')}>
                           {call.status || 'unknown'}
                         </Badge>
                         {call.disconnection_reason && (
