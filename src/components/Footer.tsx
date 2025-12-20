@@ -86,6 +86,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  to={isEnglish ? '/en/investors' : '/investoren'}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {isEnglish ? 'Investors & Partners' : 'Investoren & Partner'}
+                </Link>
+              </li>
+              <li>
+                <Link
                   to={isEnglish ? '/en/pricing' : '/pakete'}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
