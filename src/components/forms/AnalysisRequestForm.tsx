@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useLeadSubmit } from '@/hooks/useLeadSubmit';
 import { Button } from '@/components/ui/button';
@@ -8,16 +9,19 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Globe, ArrowRight, CheckCircle, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AnalysisRequestFormProps {
   onSuccess?: () => void;
   className?: string;
   variant?: 'default' | 'hero' | 'compact';
+  autoGenerate?: boolean;
 }
 
-export function AnalysisRequestForm({ onSuccess, className, variant = 'default' }: AnalysisRequestFormProps) {
+export function AnalysisRequestForm({ onSuccess, className, variant = 'default', autoGenerate = true }: AnalysisRequestFormProps) {
   const { isEnglish, language } = useLanguage();
   const { submitLead, isSubmitting } = useLeadSubmit();
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     website_url: '',
@@ -28,6 +32,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const content = isEnglish ? {
     title: 'Start Your Free Analysis',
@@ -41,8 +46,10 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
     consentText: 'I agree to receive the analysis results and occasional updates.',
     submitButton: 'Get Free Analysis',
     submittingButton: 'Submitting...',
+    generatingButton: 'Generating Analysis...',
     successTitle: 'Analysis Request Received!',
     successMessage: 'We\'ll analyze your website and send you the results within 24-48 hours.',
+    instantSuccess: 'Your analysis is ready!',
     errors: {
       website_url: 'Please enter a valid website URL',
       email: 'Please enter a valid email address',
@@ -61,8 +68,10 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
     consentText: 'Ich stimme zu, die Analyse-Ergebnisse und gelegentliche Updates zu erhalten.',
     submitButton: 'Gratis-Analyse starten',
     submittingButton: 'Wird gesendet...',
+    generatingButton: 'Analyse wird generiert...',
     successTitle: 'Analyse-Anfrage erhalten!',
     successMessage: 'Wir analysieren deine Website und senden dir die Resultate innerhalb von 24-48 Stunden.',
+    instantSuccess: 'Deine Analyse ist bereit!',
     errors: {
       website_url: 'Bitte gib eine gültige Website-URL ein',
       email: 'Bitte gib eine gültige E-Mail-Adresse ein',
@@ -122,6 +131,34 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
     });
     
     if (result.success) {
+      // If autoGenerate is enabled, generate the report immediately
+      if (autoGenerate) {
+        setIsGenerating(true);
+        try {
+          const { data, error } = await supabase.functions.invoke('generate-analysis-report', {
+            body: { 
+              websiteUrl,
+              leadId: result.leadId 
+            }
+          });
+          
+          if (error) throw error;
+          
+          if (data?.success && data?.token) {
+            toast.success(content.instantSuccess);
+            navigate(`/analyse/${data.token}`);
+            onSuccess?.();
+            return;
+          }
+        } catch (genError) {
+          console.error('Auto-generation failed:', genError);
+          // Fall back to manual processing
+        } finally {
+          setIsGenerating(false);
+        }
+      }
+      
+      // Fallback: show success message
       setSubmitted(true);
       toast.success(content.successTitle, {
         description: content.successMessage,
@@ -151,6 +188,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
 
   const isHero = variant === 'hero';
   const isCompact = variant === 'compact';
+  const isLoading = isSubmitting || isGenerating;
 
   return (
     <div className={cn(
@@ -192,6 +230,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
                 "pl-10",
                 errors.website_url && "border-destructive"
               )}
+              disabled={isLoading}
             />
           </div>
           {errors.website_url && (
@@ -213,6 +252,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
             className={cn(
               errors.email && "border-destructive"
             )}
+            disabled={isLoading}
           />
           {errors.email && (
             <p className="text-xs text-destructive">{errors.email}</p>
@@ -233,6 +273,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
             className={cn(
               errors.name && "border-destructive"
             )}
+            disabled={isLoading}
           />
           {errors.name && (
             <p className="text-xs text-destructive">{errors.name}</p>
@@ -248,6 +289,7 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
             className={cn(
               errors.consent && "border-destructive"
             )}
+            disabled={isLoading}
           />
           <Label 
             htmlFor="consent" 
@@ -266,16 +308,16 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default' 
         {/* Submit */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading}
           className={cn(
             "w-full font-semibold",
             isHero && "bg-ai hover:bg-ai/90 text-ai-foreground glow-ai py-6 text-lg"
           )}
         >
-          {isSubmitting ? (
+          {isLoading ? (
             <>
               <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-              {content.submittingButton}
+              {isGenerating ? content.generatingButton : content.submittingButton}
             </>
           ) : (
             <>
