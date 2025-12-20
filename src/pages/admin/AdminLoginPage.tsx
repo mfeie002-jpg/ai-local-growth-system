@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Loader2, LogIn, AlertCircle } from 'lucide-react';
+import { Loader2, LogIn, AlertCircle, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 
 export default function AdminLoginPage() {
-  const { isAdmin, isLoading, signIn } = useAuth();
+  const { isAdmin, isLoading, signIn, signUp } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   if (isLoading) {
     return (
@@ -29,16 +30,32 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsSubmitting(true);
 
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setError('Ungültige Anmeldedaten. Bitte prüfe E-Mail und Passwort.');
+      if (isSignUp) {
+        const { error } = await signUp(email, password);
+        
+        if (error) {
+          if (error.message.includes('already registered')) {
+            setError('Diese E-Mail-Adresse ist bereits registriert.');
+          } else {
+            setError(error.message || 'Registrierung fehlgeschlagen.');
+          }
         } else {
-          setError('Anmeldung fehlgeschlagen. Bitte versuche es erneut.');
+          setSuccess('Konto erstellt! Du kannst dich jetzt anmelden. Ein Admin muss dir noch die Admin-Rolle zuweisen.');
+          setIsSignUp(false);
+        }
+      } else {
+        const { error } = await signIn(email, password);
+        
+        if (error) {
+          if (error.message.includes('Invalid login credentials')) {
+            setError('Ungültige Anmeldedaten. Bitte prüfe E-Mail und Passwort.');
+          } else {
+            setError('Anmeldung fehlgeschlagen. Bitte versuche es erneut.');
+          }
         }
       }
     } catch (err) {
@@ -58,9 +75,13 @@ export default function AdminLoginPage() {
               <span className="font-bold text-foreground">Feierabend</span>
               <span className="text-primary font-bold">.ch</span>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              {isSignUp ? 'Admin Registrierung' : 'Admin Login'}
+            </h1>
             <p className="text-muted-foreground mt-2">
-              Melde dich an, um auf das Admin-Panel zuzugreifen.
+              {isSignUp 
+                ? 'Erstelle ein neues Admin-Konto.' 
+                : 'Melde dich an, um auf das Admin-Panel zuzugreifen.'}
             </p>
           </div>
 
@@ -87,7 +108,8 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                autoComplete="current-password"
+                minLength={6}
+                autoComplete={isSignUp ? 'new-password' : 'current-password'}
               />
             </div>
 
@@ -95,6 +117,12 @@ export default function AdminLoginPage() {
               <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                 <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-destructive">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="flex items-start gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <p className="text-sm text-green-600">{success}</p>
               </div>
             )}
 
@@ -106,16 +134,41 @@ export default function AdminLoginPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Anmelden...
+                  {isSignUp ? 'Registrieren...' : 'Anmelden...'}
                 </>
               ) : (
                 <>
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Anmelden
+                  {isSignUp ? (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Registrieren
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Anmelden
+                    </>
+                  )}
                 </>
               )}
             </Button>
           </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setError(null);
+                setSuccess(null);
+              }}
+              className="text-sm text-primary hover:underline"
+            >
+              {isSignUp 
+                ? 'Bereits ein Konto? Anmelden' 
+                : 'Noch kein Konto? Registrieren'}
+            </button>
+          </div>
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-4">
