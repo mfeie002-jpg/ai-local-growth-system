@@ -43,6 +43,7 @@ import AdminCallsPage from "./pages/admin/AdminCallsPage";
 import AdminCallDetailPage from "./pages/admin/AdminCallDetailPage";
 import AdminVoiceSetupPage from "./pages/admin/AdminVoiceSetupPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
+import AdminReportDetailPage from "./pages/admin/AdminReportDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => (
               <Route path="/admin/calls/:id" element={<AdminCallDetailPage />} />
               <Route path="/admin/voice/setup" element={<AdminVoiceSetupPage />} />
               <Route path="/admin/reports" element={<AdminReportsPage />} />
+              <Route path="/admin/reports/:id" element={<AdminReportDetailPage />} />
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

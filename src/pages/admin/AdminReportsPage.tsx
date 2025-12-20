@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, subDays, startOfDay, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { 
   Loader2, 
@@ -18,13 +18,15 @@ import {
   TrendingUp,
   AlertTriangle,
   BarChart3,
-  Clock
+  Clock,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -120,6 +122,37 @@ export default function AdminReportsPage() {
     const recentReports = reports.filter(r => new Date(r.created_at) > weekAgo).length;
 
     return { total, viewed, viewRate, avgScore, totalMonthlyLoss, totalCriticalIssues, recentReports };
+  }, [reports]);
+
+  // Calculate chart data (last 30 days, daily)
+  const chartData = useMemo(() => {
+    const today = startOfDay(new Date());
+    const thirtyDaysAgo = subDays(today, 29);
+    
+    const days = eachDayOfInterval({ start: thirtyDaysAgo, end: today });
+    
+    return days.map(day => {
+      const dayStart = startOfDay(day);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+      
+      const dayReports = reports.filter(r => {
+        const reportDate = new Date(r.created_at);
+        return reportDate >= dayStart && reportDate < dayEnd;
+      });
+      
+      const viewedReports = dayReports.filter(r => r.viewed_at);
+      
+      return {
+        date: format(day, 'dd.MM', { locale: de }),
+        fullDate: format(day, 'dd.MM.yyyy', { locale: de }),
+        reports: dayReports.length,
+        viewed: viewedReports.length,
+        avgScore: dayReports.length > 0 
+          ? Math.round(dayReports.reduce((sum, r) => sum + r.overall_score, 0) / dayReports.length) 
+          : 0
+      };
+    });
   }, [reports]);
 
   // Export to CSV
@@ -260,6 +293,62 @@ export default function AdminReportsPage() {
           </div>
         </div>
 
+        {/* Chart: Reports over time */}
+        <div className="bg-background rounded-lg border border-border p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              <h2 className="font-semibold">Reports der letzten 30 Tage</h2>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <span className="text-muted-foreground">Erstellt</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="text-muted-foreground">Angesehen</span>
+              </div>
+            </div>
+          </div>
+          <div className="h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 10 }} 
+                  tickLine={false}
+                  axisLine={false}
+                  interval="preserveStartEnd"
+                />
+                <YAxis 
+                  tick={{ fontSize: 10 }} 
+                  tickLine={false}
+                  axisLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--background))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px'
+                  }}
+                  labelFormatter={(label, payload) => {
+                    if (payload && payload[0]) {
+                      return payload[0].payload.fullDate;
+                    }
+                    return label;
+                  }}
+                />
+                <Bar dataKey="reports" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Reports erstellt" />
+                <Bar dataKey="viewed" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} name="Angesehen" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Reports</h1>
@@ -392,6 +481,12 @@ export default function AdminReportsPage() {
                               <Copy className="w-4 h-4" />
                             )}
                           </Button>
+                          <Link to={`/admin/reports/${report.id}`}>
+                            <Button variant="ghost" size="sm">
+                              Details
+                              <ChevronDown className="w-4 h-4 ml-1 rotate-[-90deg]" />
+                            </Button>
+                          </Link>
                           <a 
                             href={`/analyse/${report.token}`} 
                             target="_blank" 
@@ -399,7 +494,6 @@ export default function AdminReportsPage() {
                           >
                             <Button variant="ghost" size="sm">
                               Öffnen
-                              <ChevronDown className="w-4 h-4 ml-1 rotate-[-90deg]" />
                             </Button>
                           </a>
                         </div>
