@@ -35,6 +35,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { scoreTextColors } from '@/lib/admin-constants';
 
 interface BacklogIssue {
   title: string;
@@ -127,11 +128,6 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Clock
 };
 
-const scoreColors = (score: number) => {
-  if (score >= 80) return 'text-green-600';
-  if (score >= 60) return 'text-yellow-600';
-  return 'text-destructive';
-};
 
 const severityConfig = {
   critical: { color: 'bg-destructive text-destructive-foreground', icon: AlertTriangle, label: 'Kritisch' },
@@ -141,7 +137,7 @@ const severityConfig = {
 
 export default function AdminReportDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { isAdmin, isLoading: authLoading, signOut } = useAuth();
+  const { isAdmin, isLoading: authLoading } = useAuth();
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -250,7 +246,7 @@ export default function AdminReportDetailPage() {
                 <Target className="w-4 h-4" />
                 <span className="text-xs">Score</span>
               </div>
-              <p className={cn("text-3xl font-bold", scoreColors(report.overall_score))}>
+              <p className={cn("text-3xl font-bold", scoreTextColors(report.overall_score))}>
                 {report.overall_score}
               </p>
             </CardContent>

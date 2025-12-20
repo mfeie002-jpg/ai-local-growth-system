@@ -1,10 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { format, subDays, startOfDay, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from 'date-fns';
+import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { 
   Loader2, 
-  LogOut, 
   FileText,
   Filter,
   ChevronDown,
@@ -22,11 +21,11 @@ import {
   Calendar,
   PhoneCall,
   Target,
-  Users,
-  CheckCircle
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -34,6 +33,7 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Ba
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { scoreColors } from '@/lib/admin-constants';
 
 interface Report {
   id: string;
@@ -54,14 +54,8 @@ interface Report {
   lead_id: string | null;
 }
 
-const scoreColors = (score: number) => {
-  if (score >= 80) return 'bg-green-100 text-green-800';
-  if (score >= 60) return 'bg-yellow-100 text-yellow-800';
-  return 'bg-red-100 text-red-800';
-};
-
 export default function AdminReportsPage() {
-  const { isAdmin, isLoading: authLoading, signOut } = useAuth();
+  const { isAdmin, isLoading: authLoading } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
   const [callbackRequests, setCallbackRequests] = useState<Array<{ id: string; report_token: string | null; lead_id: string | null }>>([]);
   const [leads, setLeads] = useState<Array<{ id: string; status: string }>>([]);
@@ -293,39 +287,7 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <span className="text-primary font-bold">its</span>
-                <span className="font-bold text-foreground">Feierabend</span>
-                <span className="text-primary font-bold">.ch</span>
-              </div>
-              <span className="text-muted-foreground">|</span>
-              <span className="font-semibold">Admin</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Link to="/admin/leads">
-                <Button variant="ghost" size="sm">Leads</Button>
-              </Link>
-              <Link to="/admin/calls">
-                <Button variant="ghost" size="sm">Calls</Button>
-              </Link>
-              <Button variant="outline" onClick={signOut} size="sm">
-                <LogOut className="w-4 h-4 mr-2" />
-                Abmelden
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout title="Reports" subtitle={`${filteredReports.length} Report${filteredReports.length !== 1 ? 's' : ''} gefunden`}>
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
           <div className="bg-background rounded-lg border border-border p-4">
@@ -672,7 +634,6 @@ export default function AdminReportsPage() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
 }
