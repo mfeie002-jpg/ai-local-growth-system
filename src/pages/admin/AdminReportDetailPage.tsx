@@ -223,6 +223,10 @@ export default function AdminReportDetailPage() {
     <AdminLayout 
       title={report.site_name}
       subtitle={`Report vom ${format(new Date(report.created_at), "dd. MMMM yyyy", { locale: de })}`}
+      breadcrumbs={[
+        { label: 'Reports', href: '/admin/reports' },
+        { label: report.site_name }
+      ]}
     >
       {/* Action buttons */}
       <div className="flex items-center gap-3 mb-6">

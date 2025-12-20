@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Users, 
   Phone, 
@@ -14,11 +14,25 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
 
 interface AdminLayoutProps {
   children: ReactNode;
   title: string;
   subtitle?: string;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 const navItems = [
@@ -29,10 +43,9 @@ const navItems = [
   { title: 'Voice Setup', url: '/admin/voice/setup', icon: Settings },
 ];
 
-export default function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, subtitle, breadcrumbs }: AdminLayoutProps) {
   const { signOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isActive = (path: string) => {
@@ -122,7 +135,25 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
         <header className="bg-background border-b border-border sticky top-0 z-10 h-16 flex items-center px-6">
-          <div>
+          <div className="flex-1">
+            {breadcrumbs && breadcrumbs.length > 0 ? (
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {breadcrumbs.map((item, index) => (
+                    <BreadcrumbItem key={index}>
+                      {index > 0 && <BreadcrumbSeparator />}
+                      {item.href ? (
+                        <BreadcrumbLink asChild>
+                          <Link to={item.href}>{item.label}</Link>
+                        </BreadcrumbLink>
+                      ) : (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            ) : null}
             <h1 className="text-xl font-bold text-foreground">{title}</h1>
             {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
           </div>
