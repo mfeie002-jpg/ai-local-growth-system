@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -9,18 +9,18 @@ import {
   FileText,
   TrendingUp,
   Eye,
-  PhoneCall,
   Target,
   ArrowUpRight,
-  ArrowDownRight,
   Clock
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import AdminLayout from '@/components/admin/AdminLayout';
+import FunnelOverview from '@/components/admin/FunnelOverview';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DashboardStats {
@@ -191,6 +191,13 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Übersicht aller wichtigen Kennzahlen">
+      <Tabs defaultValue="overview" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="overview">Übersicht</TabsTrigger>
+          <TabsTrigger value="funnels">Funnels & Traffic</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="mt-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
         <Card>
@@ -419,6 +426,12 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+        
+        <TabsContent value="funnels" className="mt-6">
+          <FunnelOverview />
+        </TabsContent>
+      </Tabs>
     </AdminLayout>
   );
 }

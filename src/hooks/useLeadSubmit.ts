@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { track } from '@/lib/analytics';
+import { getUTMParams, getStoredUTMParams } from '@/hooks/useUTMTracking';
 
 interface LeadData {
   lead_type: 'free_audit' | 'free_call';
@@ -29,30 +30,25 @@ export function useLeadSubmit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { language } = useLanguage();
 
-  const getUTMParams = () => {
-    if (typeof window === 'undefined') return {};
-    const params = new URLSearchParams(window.location.search);
-    return {
-      utm_source: params.get('utm_source') || undefined,
-      utm_medium: params.get('utm_medium') || undefined,
-      utm_campaign: params.get('utm_campaign') || undefined,
-      utm_term: params.get('utm_term') || undefined,
-      utm_content: params.get('utm_content') || undefined,
-      gclid: params.get('gclid') || undefined,
-    };
-  };
-
   const submitLead = async (data: LeadData): Promise<SubmitResult> => {
     setIsSubmitting(true);
 
     try {
+      // Get UTM params from URL or storage
       const utmParams = getUTMParams();
+      const storedParams = getStoredUTMParams();
       
       const payload = {
         ...data,
         language,
-        ...utmParams,
-        referrer: document.referrer || undefined,
+        // Prefer current URL params, fallback to stored
+        utm_source: utmParams.utm_source || storedParams?.utm_source,
+        utm_medium: utmParams.utm_medium || storedParams?.utm_medium,
+        utm_campaign: utmParams.utm_campaign || storedParams?.utm_campaign,
+        utm_term: utmParams.utm_term || storedParams?.utm_term,
+        utm_content: utmParams.utm_content || storedParams?.utm_content,
+        gclid: utmParams.gclid || storedParams?.gclid,
+        referrer: storedParams?.referrer || document.referrer || undefined,
         user_agent: navigator.userAgent || undefined,
       };
 
@@ -78,7 +74,13 @@ export function useLeadSubmit() {
         return { success: false, error: result.error };
       }
 
-      // Track success event
+      // Track success event with UTM data
+      const trackingParams = {
+        utm_source: payload.utm_source,
+        utm_medium: payload.utm_medium,
+        utm_campaign: payload.utm_campaign,
+      };
+
       if (data.lead_type === 'free_audit') {
         track('audit_submit', {
           lead_type: 'free_audit',
@@ -88,12 +90,14 @@ export function useLeadSubmit() {
           budget_range: data.budget_range,
           capacity_range: data.capacity_range,
           page_path: window.location.pathname,
+          ...trackingParams,
         });
       } else {
         track('call_book', {
           lead_type: 'free_call',
           language,
           page_path: window.location.pathname,
+          ...trackingParams,
         });
       }
 

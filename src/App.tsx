@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { UTMTracker } from "@/components/UTMTracker";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -56,6 +57,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <UTMTracker />
             <Routes>
               {/* DE Routes */}
               <Route path="/" element={<HomePage />} />
