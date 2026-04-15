@@ -1,68 +1,310 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from 'https://esm.sh/@supabase/supabase-js@2/cors'
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+// ── Types ──────────────────────────────────────────────────────────
+interface ScanRequest {
+  websiteUrl: string
+  leadId?: string
+  language?: string
+}
+
+interface RawEvidence {
+  pagespeed?: { mobile?: any; desktop?: any; error?: string }
+  observatory?: { scan?: any; error?: string }
+  firecrawl?: { scrape?: any; map?: any; error?: string }
+  timing: Record<string, number>
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────
+function normalizeUrl(input: string): string {
+  let url = input.trim()
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`
+  }
+  return url
+}
+
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url.replace(/^https?:\/\//, '').split('/')[0]
+  }
+}
+
+async function updateProgress(
+  supabase: any,
+  token: string,
+  status: string,
+  passed: number,
+  total: number,
+) {
+  await supabase
+    .from('analysis_reports')
+    .update({ scan_status: status, checks_passed: passed, checks_total: total })
+    .eq('token', token)
+}
+
+// ── Data Source: Google PageSpeed Insights ──────────────────────────
+async function fetchPageSpeed(url: string, strategy: 'mobile' | 'desktop'): Promise<any> {
+  const apiKey = Deno.env.get('GOOGLE_PAGESPEED_API_KEY')
+  if (!apiKey) throw new Error('GOOGLE_PAGESPEED_API_KEY not configured')
+
+  const params = new URLSearchParams({
+    url,
+    key: apiKey,
+    strategy,
+    category: 'performance',
+  })
+  // Also request accessibility + seo + best-practices
+  params.append('category', 'accessibility')
+  params.append('category', 'seo')
+  params.append('category', 'best-practices')
+
+  const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, {
+    signal: AbortSignal.timeout(30_000),
+  })
+  if (!resp.ok) {
+    const text = await resp.text()
+    throw new Error(`PageSpeed ${strategy} error [${resp.status}]: ${text}`)
+  }
+  return resp.json()
+}
+
+async function collectPageSpeed(url: string): Promise<{ mobile?: any; desktop?: any; error?: string }> {
+  try {
+    const [mobile, desktop] = await Promise.allSettled([
+      fetchPageSpeed(url, 'mobile'),
+      fetchPageSpeed(url, 'desktop'),
+    ])
+    return {
+      mobile: mobile.status === 'fulfilled' ? mobile.value : { error: String(mobile.reason) },
+      desktop: desktop.status === 'fulfilled' ? desktop.value : { error: String(desktop.reason) },
+    }
+  } catch (err) {
+    return { error: `PageSpeed collection failed: ${err}` }
+  }
+}
+
+// ── Data Source: Mozilla Observatory ────────────────────────────────
+async function collectObservatory(host: string): Promise<{ scan?: any; error?: string }> {
+  try {
+    // Start scan
+    const startResp = await fetch(`https://observatory-api.mdn.mozilla.net/api/v2/scan?host=${encodeURIComponent(host)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'hidden=true&rescan=true',
+      signal: AbortSignal.timeout(10_000),
+    })
+    
+    if (!startResp.ok) {
+      // Try GET for cached results
+      const cached = await fetch(`https://observatory-api.mdn.mozilla.net/api/v2/scan?host=${encodeURIComponent(host)}`, {
+        signal: AbortSignal.timeout(10_000),
+      })
+      if (cached.ok) return { scan: await cached.json() }
+      throw new Error(`Observatory start failed [${startResp.status}]`)
+    }
+
+    let scanData = await startResp.json()
+    
+    // Poll if still running (max 6 attempts, 5s apart)
+    for (let i = 0; i < 6 && scanData.state === 'RUNNING'; i++) {
+      await new Promise(r => setTimeout(r, 5000))
+      const pollResp = await fetch(
+        `https://observatory-api.mdn.mozilla.net/api/v2/scan?host=${encodeURIComponent(host)}`,
+        { signal: AbortSignal.timeout(10_000) }
+      )
+      if (pollResp.ok) scanData = await pollResp.json()
+    }
+
+    return { scan: scanData }
+  } catch (err) {
+    return { error: `Observatory failed: ${err}` }
+  }
+}
+
+// ── Data Source: Firecrawl ──────────────────────────────────────────
+async function collectFirecrawl(url: string): Promise<{ scrape?: any; map?: any; error?: string }> {
+  const apiKey = Deno.env.get('FIRECRAWL_API_KEY')
+  if (!apiKey) return { error: 'FIRECRAWL_API_KEY not configured' }
+
+  const headers = {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
   }
 
   try {
-    const { websiteUrl, leadId, language } = await req.json();
+    const [scrapeResult, mapResult] = await Promise.allSettled([
+      // Scrape main page
+      fetch('https://api.firecrawl.dev/v2/scrape', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          url,
+          formats: ['markdown', 'links'],
+          onlyMainContent: false,
+          waitFor: 3000,
+        }),
+        signal: AbortSignal.timeout(30_000),
+      }).then(async r => {
+        if (!r.ok) throw new Error(`Scrape failed [${r.status}]: ${await r.text()}`)
+        return r.json()
+      }),
+      // Map site structure
+      fetch('https://api.firecrawl.dev/v2/map', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          url,
+          limit: 100,
+          includeSubdomains: false,
+        }),
+        signal: AbortSignal.timeout(15_000),
+      }).then(async r => {
+        if (!r.ok) throw new Error(`Map failed [${r.status}]: ${await r.text()}`)
+        return r.json()
+      }),
+    ])
 
-    // Validate input
+    return {
+      scrape: scrapeResult.status === 'fulfilled' ? scrapeResult.value : { error: String(scrapeResult.reason) },
+      map: mapResult.status === 'fulfilled' ? mapResult.value : { error: String(mapResult.reason) },
+    }
+  } catch (err) {
+    return { error: `Firecrawl collection failed: ${err}` }
+  }
+}
+
+// ── Main Handler ───────────────────────────────────────────────────
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  const t0 = Date.now()
+
+  try {
+    const body: ScanRequest = await req.json()
+    const { websiteUrl, leadId, language } = body
+
     if (!websiteUrl || typeof websiteUrl !== 'string') {
       return new Response(JSON.stringify({ error: 'websiteUrl is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      })
     }
+
+    const url = normalizeUrl(websiteUrl)
+    const host = hostname(url)
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
+    )
 
-    // Extract site name from URL
-    let siteName: string;
-    try {
-      siteName = new URL(websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`).hostname;
-    } catch {
-      siteName = websiteUrl;
-    }
+    // Create report row
+    const token = crypto.randomUUID()
+    const totalChecks = 3 // pagespeed, observatory, firecrawl
 
-    // Generate token
-    const token = crypto.randomUUID();
-
-    // Create report row with queued status
     const { error: insertError } = await supabase
       .from('analysis_reports')
       .insert({
         token,
-        site_name: siteName,
+        site_name: host,
         lead_id: leadId || null,
-        scan_status: 'queued',
+        scan_status: 'collecting',
         language: language || 'de',
         checks_passed: 0,
-        checks_total: 0,
-      });
+        checks_total: totalChecks,
+        scan_version: 'v1.0-evidence',
+        data_sources_used: [],
+      })
 
     if (insertError) {
-      console.error('Insert error:', insertError);
-      return new Response(JSON.stringify({ error: 'Failed to create scan job' }), {
+      console.error('Insert error:', insertError)
+      return new Response(JSON.stringify({ error: 'Failed to create scan' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      })
     }
 
-    return new Response(JSON.stringify({ success: true, token }), {
+    // Return token immediately, then continue processing in background
+    const responsePromise = new Response(JSON.stringify({ success: true, token }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })
+
+    // Background: collect evidence from all 3 sources
+    // We use waitUntil-style processing via EdgeRuntime
+    const evidence: RawEvidence = { timing: {} }
+    const dataSources: string[] = []
+    let checksCompleted = 0
+
+    // Run all 3 collectors in parallel
+    const [psResult, obsResult, fcResult] = await Promise.allSettled([
+      (async () => {
+        const t = Date.now()
+        const result = await collectPageSpeed(url)
+        evidence.timing.pagespeed_ms = Date.now() - t
+        evidence.pagespeed = result
+        if (!result.error) dataSources.push('pagespeed')
+        checksCompleted++
+        await updateProgress(supabase, token, 'collecting', checksCompleted, totalChecks)
+        return result
+      })(),
+      (async () => {
+        const t = Date.now()
+        const result = await collectObservatory(host)
+        evidence.timing.observatory_ms = Date.now() - t
+        evidence.observatory = result
+        if (!result.error) dataSources.push('observatory')
+        checksCompleted++
+        await updateProgress(supabase, token, 'collecting', checksCompleted, totalChecks)
+        return result
+      })(),
+      (async () => {
+        const t = Date.now()
+        const result = await collectFirecrawl(url)
+        evidence.timing.firecrawl_ms = Date.now() - t
+        evidence.firecrawl = result
+        if (!result.error) dataSources.push('firecrawl')
+        checksCompleted++
+        await updateProgress(supabase, token, 'collecting', checksCompleted, totalChecks)
+        return result
+      })(),
+    ])
+
+    const scanDuration = Date.now() - t0
+    evidence.timing.total_ms = scanDuration
+
+    // Store raw evidence
+    const finalStatus = dataSources.length === 0 ? 'error' : 'evidence_collected'
+
+    const { error: updateError } = await supabase
+      .from('analysis_reports')
+      .update({
+        raw_evidence: evidence,
+        data_sources_used: dataSources,
+        scan_status: finalStatus,
+        scan_duration_ms: scanDuration,
+        checks_passed: dataSources.length,
+        checks_total: totalChecks,
+      })
+      .eq('token', token)
+
+    if (updateError) {
+      console.error('Update error:', updateError)
+    }
+
+    console.log(`Scan complete: ${host} | ${dataSources.length}/${totalChecks} sources | ${scanDuration}ms`)
+
+    return responsePromise
   } catch (err) {
-    console.error('Scanner error:', err);
+    console.error('Scanner error:', err)
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })
   }
-});
+})
