@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.voice-tools]
 verify_jwt = false
+
+[functions.business-scanner]
+verify_jwt = false
+
+[functions.scan-status]
+verify_jwt = false

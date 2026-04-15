@@ -7,14 +7,9 @@ Analytics/GA4 must only fire AFTER explicit consent (Consent Mode v2 default den
 HARD CONSTRAINT: Never invent results, metrics, or logos. Unverified proof must be feature-flagged off.
 Positioning: "AI-first digital marketing agency". Differentiator: "Connection between machine and humans".
 Voice agents must include clear AI disclosure and separate recording consent.
-Source of Truth v1.2 is the canonical project document. It overrides all prior blueprints.
-Scanner: Evidence → Normalize → Deterministic Score → AI Interpret. AI never invents scores.
-Build order: Firecrawl → DB migrate → business-scanner → scan-status → progress page → form rewire → cleanup → report rebuild.
-Homepage = brand/authority. Scan LP = dedicated ad funnel. Never merge them.
-Scoring: Visibility 25%, Trust 20%, Conversion 25%, Technical 15%, Automation 15%.
+Scanner architecture: Evidence → Normalize → Deterministic Score → AI Interpret (4-layer pipeline, Source of Truth v1.2).
 
 ## Memories
-- [Source of Truth v1.2](mem://strategy/source-of-truth-v1.2) — Canonical reference: architecture, scoring, build order, guardrails, all conflict resolutions
 - [Feature Flags](mem://tech/feature-flags-system) — site.ts config controls for risky features and proof elements
 - [No Fake Proof](mem://constraints/no-fake-proof) — Strict rules against inventing testimonials or metrics
 - [Bilingual Architecture](mem://architecture/bilingual-routing) — DE-CH and EN language persistence and routing rules
@@ -28,3 +23,4 @@ Scoring: Visibility 25%, Trust 20%, Conversion 25%, Technical 15%, Automation 15
 - [Conversion Strategy](mem://strategy/overwhelming-effect-conversion-tactic) — Psychological positioning for Ultimate Package results
 - [Valid Case Studies](mem://brand/case-study-companies-featured) — Whitelisted companies allowed for use in case studies
 - [Ultimate Package](mem://product/ultimate-package-core-differentiator) — Core USP: AI-powered automated website analysis system
+- [Source of Truth v1.2](mem://strategy/source-of-truth-v1.2) — Canonical reference for scanner architecture, scoring, build order, guardrails

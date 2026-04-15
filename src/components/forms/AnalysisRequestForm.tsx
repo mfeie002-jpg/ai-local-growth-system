@@ -133,28 +133,28 @@ export function AnalysisRequestForm({ onSuccess, className, variant = 'default',
     });
     
     if (result.success) {
-      // If autoGenerate is enabled, generate the report immediately
+      // Call async business-scanner instead of synchronous generate
       if (autoGenerate) {
         setIsGenerating(true);
         try {
-          const { data, error } = await supabase.functions.invoke('generate-analysis-report', {
+          const { data, error } = await supabase.functions.invoke('business-scanner', {
             body: { 
               websiteUrl,
-              leadId: result.leadId 
+              leadId: result.leadId,
+              language,
             }
           });
           
           if (error) throw error;
           
           if (data?.success && data?.token) {
-            toast.success(content.instantSuccess);
-            navigate(`/analyse/${data.token}`);
+            const prefix = isEnglish ? '/en/analysis/progress' : '/analyse/progress';
+            navigate(`${prefix}/${data.token}`);
             onSuccess?.();
             return;
           }
         } catch (genError) {
-          console.error('Auto-generation failed:', genError);
-          // Fall back to manual processing
+          console.error('Scanner init failed:', genError);
         } finally {
           setIsGenerating(false);
         }
