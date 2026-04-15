@@ -233,7 +233,7 @@ function extractFirecrawlSignals(fc: any): Signal[] {
     })
 
     // Check for important pages
-    const urls = fc.map.links.map((u: string) => u.toLowerCase())
+    const urls = fc.map.links.filter((u: any) => typeof u === 'string').map((u: string) => u.toLowerCase())
     const hasImpressum = urls.some((u: string) => u.includes('impressum') || u.includes('imprint'))
     signals.push({
       id: 'fc_impressum', category: 'trust', label: 'Impressum vorhanden',
