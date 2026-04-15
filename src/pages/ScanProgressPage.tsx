@@ -24,7 +24,7 @@ const STEPS = [
   { key: 'interpreting', icon: Brain, de: 'KI-Analyse erstellen', en: 'AI Interpretation' },
 ] as const;
 
-const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'normalizing', 'scoring', 'interpreting', 'complete'];
+const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'evidence_collected', 'normalizing', 'scoring', 'scored', 'interpreting', 'complete'];
 
 function getStepState(stepKey: string, currentStatus: ScanStatus): 'pending' | 'active' | 'done' {
   const currentIdx = STATUS_ORDER.indexOf(currentStatus);
