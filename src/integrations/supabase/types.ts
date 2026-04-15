@@ -16,18 +16,29 @@ export type Database = {
     Tables: {
       analysis_reports: {
         Row: {
+          ai_interpretation: Json | null
           categories: Json
+          checks_passed: number | null
+          checks_total: number | null
           consequences: Json
           created_at: string
           critical_issues: number
           current_revenue: number
+          data_sources_used: string[] | null
           hourly_rate: number
           id: string
           info_issues: number
+          language: string | null
           lead_id: string | null
           monthly_loss: number
+          normalized_signals: Json | null
           overall_score: number
           projected_revenue: number
+          raw_evidence: Json | null
+          scan_duration_ms: number | null
+          scan_status: string
+          scan_version: string | null
+          scoring_details: Json | null
           site_name: string
           token: string
           total_hours: number
@@ -36,18 +47,29 @@ export type Database = {
           warning_issues: number
         }
         Insert: {
+          ai_interpretation?: Json | null
           categories?: Json
+          checks_passed?: number | null
+          checks_total?: number | null
           consequences?: Json
           created_at?: string
           critical_issues?: number
           current_revenue?: number
+          data_sources_used?: string[] | null
           hourly_rate?: number
           id?: string
           info_issues?: number
+          language?: string | null
           lead_id?: string | null
           monthly_loss?: number
+          normalized_signals?: Json | null
           overall_score?: number
           projected_revenue?: number
+          raw_evidence?: Json | null
+          scan_duration_ms?: number | null
+          scan_status?: string
+          scan_version?: string | null
+          scoring_details?: Json | null
           site_name: string
           token: string
           total_hours?: number
@@ -56,18 +78,29 @@ export type Database = {
           warning_issues?: number
         }
         Update: {
+          ai_interpretation?: Json | null
           categories?: Json
+          checks_passed?: number | null
+          checks_total?: number | null
           consequences?: Json
           created_at?: string
           critical_issues?: number
           current_revenue?: number
+          data_sources_used?: string[] | null
           hourly_rate?: number
           id?: string
           info_issues?: number
+          language?: string | null
           lead_id?: string | null
           monthly_loss?: number
+          normalized_signals?: Json | null
           overall_score?: number
           projected_revenue?: number
+          raw_evidence?: Json | null
+          scan_duration_ms?: number | null
+          scan_status?: string
+          scan_version?: string | null
+          scoring_details?: Json | null
           site_name?: string
           token?: string
           total_hours?: number
