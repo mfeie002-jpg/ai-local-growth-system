@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import Layout from '@/components/Layout';
+import { Layout } from '@/components/Layout';
 import { Loader2, CheckCircle, AlertCircle, Radio, Sparkles, Search, BarChart3, Brain } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';

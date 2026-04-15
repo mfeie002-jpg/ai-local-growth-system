@@ -1,7 +1,7 @@
-import Layout from '@/components/Layout';
+import { Layout } from '@/components/Layout';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { AnalysisRequestForm } from '@/components/forms/AnalysisRequestForm';
-import SEOHead from '@/components/SEOHead';
+import { SEOHead } from '@/components/SEOHead';
 
 export default function ScanPage() {
   const { isEnglish } = useLanguage();
