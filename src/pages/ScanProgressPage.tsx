@@ -7,7 +7,7 @@ import { Loader2, CheckCircle, AlertCircle, Radio, Sparkles, Search, BarChart3, 
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type ScanStatus = 'queued' | 'collecting' | 'normalizing' | 'scoring' | 'interpreting' | 'complete' | 'partial' | 'failed' | 'legacy';
+type ScanStatus = 'queued' | 'collecting' | 'normalizing' | 'scoring' | 'interpreting' | 'complete' | 'complete_no_ai' | 'evidence_collected' | 'scored' | 'partial' | 'failed' | 'error' | 'legacy';
 
 interface StatusData {
   scan_status: ScanStatus;
