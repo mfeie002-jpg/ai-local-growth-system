@@ -49,11 +49,11 @@ export default function ScanProgressPage() {
       });
       if (fnError) throw fnError;
       if (data) setStatus(data);
-      if (data?.scan_status === 'complete') {
+      if (data?.scan_status === 'complete' || data?.scan_status === 'complete_no_ai') {
         const prefix = isEnglish ? '/en/analysis' : '/analyse';
         navigate(`${prefix}/${token}`, { replace: true });
       }
-      if (data?.scan_status === 'failed') {
+      if (data?.scan_status === 'failed' || data?.scan_status === 'error') {
         setError(isEnglish ? 'Analysis could not be completed. We\'ll email you the results.' : 'Analyse konnte nicht abgeschlossen werden. Wir senden dir die Resultate per E-Mail.');
       }
     } catch (e) {
