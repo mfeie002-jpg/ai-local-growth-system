@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
 
     const { data, error } = await supabase
       .from('analysis_reports')
-      .select('scan_status, checks_passed, checks_total')
+      .select('scan_status, checks_passed, checks_total, overall_score')
       .eq('token', token)
       .single();
 
@@ -34,7 +34,17 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify(data), {
+    // Map internal statuses to frontend-friendly ones
+    let frontendStatus = data.scan_status;
+    if (data.scan_status === 'evidence_collected') frontendStatus = 'normalizing';
+    if (data.scan_status === 'scored') frontendStatus = 'interpreting';
+
+    return new Response(JSON.stringify({
+      scan_status: frontendStatus,
+      checks_passed: data.checks_passed,
+      checks_total: data.checks_total,
+      overall_score: data.overall_score,
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
