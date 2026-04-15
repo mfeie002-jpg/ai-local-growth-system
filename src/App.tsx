@@ -25,6 +25,8 @@ import AnalysisReportPage from "./pages/AnalysisReportPage";
 import InvestorPage from "./pages/InvestorPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
+import ScanProgressPage from "./pages/ScanProgressPage";
+import ScanPage from "./pages/ScanPage";
 import NotFound from "./pages/NotFound";
 
 // Service Pages
@@ -73,7 +75,9 @@ const App = () => (
               <Route path="/fallstudien" element={<CaseStudiesPage />} />
               <Route path="/ultimate-package" element={<UltimatePackagePage />} />
               <Route path="/analyse-ergebnis" element={<AnalysisResultsDemo />} />
+              <Route path="/analyse/progress/:token" element={<ScanProgressPage />} />
               <Route path="/analyse/:token" element={<AnalysisReportPage />} />
+              <Route path="/scan" element={<ScanPage />} />
               <Route path="/investoren" element={<InvestorPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
@@ -101,7 +105,9 @@ const App = () => (
               <Route path="/en/case-studies" element={<CaseStudiesPage />} />
               <Route path="/en/ultimate-package" element={<UltimatePackagePage />} />
               <Route path="/en/analysis-results" element={<AnalysisResultsDemo />} />
+              <Route path="/en/analysis/progress/:token" element={<ScanProgressPage />} />
               <Route path="/en/analysis/:token" element={<AnalysisReportPage />} />
+              <Route path="/en/scan" element={<ScanPage />} />
               <Route path="/en/blog" element={<BlogPage />} />
               <Route path="/en/blog/:slug" element={<BlogPostPage />} />
               
