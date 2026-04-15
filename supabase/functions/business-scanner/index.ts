@@ -297,7 +297,58 @@ Deno.serve(async (req) => {
       console.error('Update error:', updateError)
     }
 
-    console.log(`Scan complete: ${host} | ${dataSources.length}/${totalChecks} sources | ${scanDuration}ms`)
+    console.log(`Evidence collected: ${host} | ${dataSources.length}/${totalChecks} sources | ${scanDuration}ms`)
+
+    // Chain: auto-call normalize-and-score if evidence was collected
+    if (dataSources.length > 0) {
+      try {
+        const scoreResp = await fetch(
+          `${Deno.env.get('SUPABASE_URL')}/functions/v1/normalize-and-score`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({ token }),
+            signal: AbortSignal.timeout(15_000),
+          }
+        )
+        if (scoreResp.ok) {
+          const scoreData = await scoreResp.json()
+          console.log(`Scored: ${scoreData.overall_score}/100, ${scoreData.signal_count} signals`)
+
+          // Chain: auto-call AI interpretation
+          try {
+            const aiResp = await fetch(
+              `${Deno.env.get('SUPABASE_URL')}/functions/v1/ai-interpret`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                },
+                body: JSON.stringify({ token }),
+                signal: AbortSignal.timeout(30_000),
+              }
+            )
+            if (aiResp.ok) {
+              console.log(`AI interpretation complete for ${token}`)
+            } else {
+              console.error(`AI interpret failed: ${aiResp.status}`)
+              await aiResp.text() // consume body
+            }
+          } catch (aiErr) {
+            console.error('AI interpretation error (non-fatal):', aiErr)
+          }
+        } else {
+          console.error(`Scoring failed: ${scoreResp.status}`)
+          await scoreResp.text()
+        }
+      } catch (scoreErr) {
+        console.error('Scoring chain error (non-fatal):', scoreErr)
+      }
+    }
 
     return responsePromise
   } catch (err) {
