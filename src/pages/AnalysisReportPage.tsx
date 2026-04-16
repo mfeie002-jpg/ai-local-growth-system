@@ -239,7 +239,7 @@ const AnalysisReportPage: React.FC = () => {
 
               {/* Data sources */}
               <div className="flex items-center justify-center gap-3 mt-4 text-xs text-muted-foreground">
-                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Checks bestanden' : 'checks passed'}</span>
+                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche geprüft' : 'areas checked'}</span>
                 <span>·</span>
                 <span>{report.data_sources_used?.map(getSourceLabel).join(', ')}</span>
                 {report.scan_duration_ms && (
@@ -269,7 +269,7 @@ const AnalysisReportPage: React.FC = () => {
               <section className="mb-10">
                 <h2 className="text-xl font-bold font-display mb-4 flex items-center gap-2">
                   <Target className="h-5 w-5 text-ai" />
-                  {isDE ? 'Top 3 Chancen' : 'Top 3 Opportunities'}
+                  {isDE ? 'Grösste Chancen' : 'Biggest Opportunities'}
                 </h2>
                 <div className="grid gap-4">
                   {ai.top_3_opportunities.map((opp, i) => (
@@ -313,7 +313,8 @@ const AnalysisReportPage: React.FC = () => {
           <ScrollReveal delay={0.15}>
             <section className="mb-10">
               <h2 className="text-xl font-bold font-display mb-4">
-                {isDE ? 'Kategorie-Scores' : 'Category Scores'}
+                {isDE ? 'Digitaler Reifegrad nach Bereich' : 'Digital Maturity by Area'}
+              </h2>
               </h2>
               <div className="grid gap-3">
                 {categories.map((cat) => {
@@ -389,7 +390,7 @@ const AnalysisReportPage: React.FC = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <CheckCircle className="h-5 w-5 text-green-500" />
-                    {isDE ? 'Stärken' : 'Strengths'}
+                    {isDE ? 'Was bereits gut läuft' : 'What\'s already working well'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -409,11 +410,11 @@ const AnalysisReportPage: React.FC = () => {
           {/* ===== RISK IF IGNORED ===== */}
           {ai?.risk_if_ignored && (
             <ScrollReveal delay={0.25}>
-              <Card className="mb-8 border-destructive/20 bg-gradient-to-br from-destructive/5 to-background">
+              <Card className="mb-8 border-ai/20 bg-gradient-to-br from-ai/5 to-background">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                    {isDE ? 'Risiko bei Untätigkeit' : 'Risk if Ignored'}
+                    <ArrowRight className="h-5 w-5 text-ai" />
+                    {isDE ? 'Was sich verändert, wenn du handelst' : 'What changes when you act'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
