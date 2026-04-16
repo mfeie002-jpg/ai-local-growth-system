@@ -7,7 +7,7 @@ import { Loader2, CheckCircle, AlertCircle, Radio, Sparkles, Search, BarChart3, 
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type ScanStatus = 'queued' | 'collecting' | 'normalizing' | 'scoring' | 'interpreting' | 'complete' | 'partial' | 'failed' | 'legacy';
+type ScanStatus = 'queued' | 'collecting' | 'normalizing' | 'scoring' | 'interpreting' | 'complete' | 'complete_no_ai' | 'evidence_collected' | 'scored' | 'partial' | 'failed' | 'error' | 'legacy';
 
 interface StatusData {
   scan_status: ScanStatus;
@@ -24,7 +24,7 @@ const STEPS = [
   { key: 'interpreting', icon: Brain, de: 'KI-Analyse erstellen', en: 'AI Interpretation' },
 ] as const;
 
-const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'normalizing', 'scoring', 'interpreting', 'complete'];
+const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'evidence_collected', 'normalizing', 'scoring', 'scored', 'interpreting', 'complete'];
 
 function getStepState(stepKey: string, currentStatus: ScanStatus): 'pending' | 'active' | 'done' {
   const currentIdx = STATUS_ORDER.indexOf(currentStatus);
@@ -49,11 +49,11 @@ export default function ScanProgressPage() {
       });
       if (fnError) throw fnError;
       if (data) setStatus(data);
-      if (data?.scan_status === 'complete') {
+      if (data?.scan_status === 'complete' || data?.scan_status === 'complete_no_ai') {
         const prefix = isEnglish ? '/en/analysis' : '/analyse';
         navigate(`${prefix}/${token}`, { replace: true });
       }
-      if (data?.scan_status === 'failed') {
+      if (data?.scan_status === 'failed' || data?.scan_status === 'error') {
         setError(isEnglish ? 'Analysis could not be completed. We\'ll email you the results.' : 'Analyse konnte nicht abgeschlossen werden. Wir senden dir die Resultate per E-Mail.');
       }
     } catch (e) {
