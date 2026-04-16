@@ -18,10 +18,10 @@ interface StatusData {
 const POLL_INTERVAL = 3000;
 
 const STEPS = [
-  { key: 'collecting', icon: Search, de: 'Daten sammeln', en: 'Collecting Evidence' },
-  { key: 'normalizing', icon: Radio, de: 'Signale normalisieren', en: 'Normalizing Signals' },
-  { key: 'scoring', icon: BarChart3, de: 'Score berechnen', en: 'Calculating Scores' },
-  { key: 'interpreting', icon: Brain, de: 'KI-Analyse erstellen', en: 'AI Interpretation' },
+  { key: 'collecting', icon: Search, de: 'Daten sammeln', en: 'Collecting Data' },
+  { key: 'normalizing', icon: Radio, de: 'Bereiche auswerten', en: 'Evaluating Areas' },
+  { key: 'scoring', icon: BarChart3, de: 'Reifegrad berechnen', en: 'Calculating Maturity' },
+  { key: 'interpreting', icon: Brain, de: 'Potenziale identifizieren', en: 'Identifying Opportunities' },
 ] as const;
 
 const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'evidence_collected', 'normalizing', 'scoring', 'scored', 'interpreting', 'complete'];
