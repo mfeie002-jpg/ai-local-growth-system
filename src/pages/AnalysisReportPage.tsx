@@ -208,7 +208,7 @@ const AnalysisReportPage: React.FC = () => {
             <section className="mb-10 text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-ai/10 border border-ai/20">
                 <Sparkles className="w-3.5 h-3.5 text-ai" />
-                <span className="text-xs font-medium text-ai">Evidence-Based Analysis</span>
+                <span className="text-xs font-medium text-ai">{isDE ? 'Digitaler Reifegrad-Check' : 'Digital Maturity Check'}</span>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold font-display mb-2">
@@ -229,11 +229,11 @@ const AnalysisReportPage: React.FC = () => {
                 <div className={cn('text-7xl font-bold font-display', getScoreColor(report.overall_score))}>
                   {report.overall_score}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{isDE ? 'von 100 Punkten' : 'out of 100'}</p>
+                <p className="text-sm text-muted-foreground mt-1">{isDE ? 'Digitaler Reifegrad' : 'Digital Maturity Score'}</p>
                 <div className="flex gap-2 mt-4">
-                  <Badge variant="destructive">{report.critical_issues} {isDE ? 'kritisch' : 'critical'}</Badge>
-                  <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">{report.warning_issues} {isDE ? 'Warnung' : 'warning'}</Badge>
-                  <Badge variant="outline">{report.info_issues} Info</Badge>
+                  <Badge className="bg-primary/20 text-primary border-primary/30">{report.critical_issues} {isDE ? 'Top-Potenziale' : 'Top Potentials'}</Badge>
+                  <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">{report.warning_issues} {isDE ? 'Verbesserungen' : 'Improvements'}</Badge>
+                  <Badge variant="outline">{report.info_issues} {isDE ? 'Gut aufgestellt' : 'Well set up'}</Badge>
                 </div>
               </div>
 
