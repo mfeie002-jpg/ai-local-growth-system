@@ -208,7 +208,7 @@ const AnalysisReportPage: React.FC = () => {
             <section className="mb-10 text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-ai/10 border border-ai/20">
                 <Sparkles className="w-3.5 h-3.5 text-ai" />
-                <span className="text-xs font-medium text-ai">Evidence-Based Analysis</span>
+                <span className="text-xs font-medium text-ai">{isDE ? 'Digitaler Reifegrad-Check' : 'Digital Maturity Check'}</span>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold font-display mb-2">
@@ -229,17 +229,17 @@ const AnalysisReportPage: React.FC = () => {
                 <div className={cn('text-7xl font-bold font-display', getScoreColor(report.overall_score))}>
                   {report.overall_score}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{isDE ? 'von 100 Punkten' : 'out of 100'}</p>
+                <p className="text-sm text-muted-foreground mt-1">{isDE ? 'Digitaler Reifegrad' : 'Digital Maturity Score'}</p>
                 <div className="flex gap-2 mt-4">
-                  <Badge variant="destructive">{report.critical_issues} {isDE ? 'kritisch' : 'critical'}</Badge>
-                  <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">{report.warning_issues} {isDE ? 'Warnung' : 'warning'}</Badge>
-                  <Badge variant="outline">{report.info_issues} Info</Badge>
+                  <Badge className="bg-primary/20 text-primary border-primary/30">{report.critical_issues} {isDE ? 'Top-Potenziale' : 'Top Potentials'}</Badge>
+                  <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">{report.warning_issues} {isDE ? 'Verbesserungen' : 'Improvements'}</Badge>
+                  <Badge variant="outline">{report.info_issues} {isDE ? 'Gut aufgestellt' : 'Well set up'}</Badge>
                 </div>
               </div>
 
               {/* Data sources */}
               <div className="flex items-center justify-center gap-3 mt-4 text-xs text-muted-foreground">
-                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Checks bestanden' : 'checks passed'}</span>
+                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche geprüft' : 'areas checked'}</span>
                 <span>·</span>
                 <span>{report.data_sources_used?.map(getSourceLabel).join(', ')}</span>
                 {report.scan_duration_ms && (
@@ -269,7 +269,7 @@ const AnalysisReportPage: React.FC = () => {
               <section className="mb-10">
                 <h2 className="text-xl font-bold font-display mb-4 flex items-center gap-2">
                   <Target className="h-5 w-5 text-ai" />
-                  {isDE ? 'Top 3 Chancen' : 'Top 3 Opportunities'}
+                  {isDE ? 'Grösste Chancen' : 'Biggest Opportunities'}
                 </h2>
                 <div className="grid gap-4">
                   {ai.top_3_opportunities.map((opp, i) => (
@@ -313,7 +313,7 @@ const AnalysisReportPage: React.FC = () => {
           <ScrollReveal delay={0.15}>
             <section className="mb-10">
               <h2 className="text-xl font-bold font-display mb-4">
-                {isDE ? 'Kategorie-Scores' : 'Category Scores'}
+                {isDE ? 'Digitaler Reifegrad nach Bereich' : 'Digital Maturity by Area'}
               </h2>
               <div className="grid gap-3">
                 {categories.map((cat) => {
@@ -389,7 +389,7 @@ const AnalysisReportPage: React.FC = () => {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <CheckCircle className="h-5 w-5 text-green-500" />
-                    {isDE ? 'Stärken' : 'Strengths'}
+                    {isDE ? 'Was bereits gut läuft' : 'What\'s already working well'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -409,11 +409,11 @@ const AnalysisReportPage: React.FC = () => {
           {/* ===== RISK IF IGNORED ===== */}
           {ai?.risk_if_ignored && (
             <ScrollReveal delay={0.25}>
-              <Card className="mb-8 border-destructive/20 bg-gradient-to-br from-destructive/5 to-background">
+              <Card className="mb-8 border-ai/20 bg-gradient-to-br from-ai/5 to-background">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                    {isDE ? 'Risiko bei Untätigkeit' : 'Risk if Ignored'}
+                    <ArrowRight className="h-5 w-5 text-ai" />
+                    {isDE ? 'Was sich verändert, wenn du handelst' : 'What changes when you act'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

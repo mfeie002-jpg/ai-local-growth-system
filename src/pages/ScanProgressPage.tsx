@@ -18,10 +18,10 @@ interface StatusData {
 const POLL_INTERVAL = 3000;
 
 const STEPS = [
-  { key: 'collecting', icon: Search, de: 'Daten sammeln', en: 'Collecting Evidence' },
-  { key: 'normalizing', icon: Radio, de: 'Signale normalisieren', en: 'Normalizing Signals' },
-  { key: 'scoring', icon: BarChart3, de: 'Score berechnen', en: 'Calculating Scores' },
-  { key: 'interpreting', icon: Brain, de: 'KI-Analyse erstellen', en: 'AI Interpretation' },
+  { key: 'collecting', icon: Search, de: 'Daten sammeln', en: 'Collecting Data' },
+  { key: 'normalizing', icon: Radio, de: 'Bereiche auswerten', en: 'Evaluating Areas' },
+  { key: 'scoring', icon: BarChart3, de: 'Reifegrad berechnen', en: 'Calculating Maturity' },
+  { key: 'interpreting', icon: Brain, de: 'Potenziale identifizieren', en: 'Identifying Opportunities' },
 ] as const;
 
 const STATUS_ORDER: ScanStatus[] = ['queued', 'collecting', 'evidence_collected', 'normalizing', 'scoring', 'scored', 'interpreting', 'complete'];
@@ -68,8 +68,8 @@ export default function ScanProgressPage() {
   }, [pollStatus]);
 
   const content = isEnglish
-    ? { title: 'Analyzing Your Website', subtitle: 'Our AI scanner is examining your digital presence.', emailFallback: 'We\'ll send you the results by email as soon as they\'re ready.' }
-    : { title: 'Deine Website wird analysiert', subtitle: 'Unser KI-Scanner untersucht deine digitale Präsenz.', emailFallback: 'Wir senden dir die Resultate per E-Mail, sobald sie bereit sind.' };
+    ? { title: 'Analyzing Your Digital Maturity', subtitle: 'Our scanner is evaluating how well your key digital levers are utilized.', emailFallback: 'We\'ll send you the results by email as soon as they\'re ready.' }
+    : { title: 'Dein digitaler Reifegrad wird ermittelt', subtitle: 'Unser Scanner prüft, wie weit deine wichtigsten digitalen Hebel ausgeschöpft sind.', emailFallback: 'Wir senden dir die Resultate per E-Mail, sobald sie bereit sind.' };
 
   return (
     <Layout>
