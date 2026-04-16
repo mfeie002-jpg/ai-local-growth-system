@@ -333,11 +333,11 @@ function extractFirecrawlSignals(fc: any): Signal[] {
 // ── Deterministic Scoring Engine ───────────────────────────────────
 
 const CATEGORY_CONFIG = [
-  { id: 'visibility', name: 'Sichtbarkeit & SEO', weight: 0.25 },
+  { id: 'visibility', name: 'Sichtbarkeit & Reichweite', weight: 0.25 },
   { id: 'trust', name: 'Vertrauen & Sicherheit', weight: 0.20 },
-  { id: 'conversion', name: 'Conversion & UX', weight: 0.25 },
-  { id: 'technical', name: 'Technische Gesundheit', weight: 0.15 },
-  { id: 'automation', name: 'Automatisierung', weight: 0.15 },
+  { id: 'conversion', name: 'Conversion & Nutzererlebnis', weight: 0.25 },
+  { id: 'technical', name: 'Technische Basis', weight: 0.15 },
+  { id: 'automation', name: 'Automatisierungsreife', weight: 0.15 },
 ]
 
 function computeScores(signals: Signal[]): ScoringResult {
