@@ -126,8 +126,35 @@ const AnalysisReportPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const isDE = language === 'de';
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!report) return;
+    setPdfLoading(true);
+    try {
+      const [{ pdf }, { default: ReportPDF }] = await Promise.all([
+        import('@react-pdf/renderer'),
+        import('@/components/report/ReportPDF'),
+      ]);
+      const blob = await pdf(
+        <ReportPDF report={report} isDE={isDE} />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${report.site_name}-reifegrad-check.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(isDE ? 'PDF heruntergeladen' : 'PDF downloaded');
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error(isDE ? 'PDF konnte nicht erstellt werden' : 'PDF generation failed');
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [report, isDE]);
 
   useEffect(() => {
     const fetchReport = async () => {
