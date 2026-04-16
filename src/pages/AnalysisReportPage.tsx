@@ -315,7 +315,6 @@ const AnalysisReportPage: React.FC = () => {
               <h2 className="text-xl font-bold font-display mb-4">
                 {isDE ? 'Digitaler Reifegrad nach Bereich' : 'Digital Maturity by Area'}
               </h2>
-              </h2>
               <div className="grid gap-3">
                 {categories.map((cat) => {
                   const Icon = categoryIcons[cat.id] || Search;
