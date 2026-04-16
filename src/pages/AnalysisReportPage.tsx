@@ -276,6 +276,24 @@ const AnalysisReportPage: React.FC = () => {
                   </>
                 )}
               </div>
+
+              {/* PDF Download */}
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  disabled={pdfLoading}
+                  className="gap-2 text-xs"
+                >
+                  {pdfLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Download className="w-3.5 h-3.5" />
+                  )}
+                  {isDE ? 'Als PDF herunterladen' : 'Download as PDF'}
+                </Button>
+              </div>
             </section>
           </ScrollReveal>
 
