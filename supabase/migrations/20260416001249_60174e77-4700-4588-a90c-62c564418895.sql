@@ -1,0 +1,1 @@
+UPDATE analysis_reports SET scan_status = 'scored', ai_interpretation = '{}'::jsonb WHERE token = '2bc75e11-2780-411e-a7d6-240d5e3c0c8c';
