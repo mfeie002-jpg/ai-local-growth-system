@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { 
   AlertTriangle, CheckCircle, Search, Shield, Target, Zap, 
   Gauge, AlertOctagon, Info, Loader2, ArrowRight, Sparkles,
-  ExternalLink, ChevronDown, ChevronUp
+  ExternalLink, ChevronDown, ChevronUp, Download
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
