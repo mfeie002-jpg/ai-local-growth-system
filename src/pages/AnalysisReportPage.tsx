@@ -326,10 +326,10 @@ const AnalysisReportPage: React.FC = () => {
                     >
                       <Card className="border-ai/10 hover:border-ai/30 transition-colors">
                         <CardContent className="p-5">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="w-7 h-7 rounded-full bg-ai/10 text-ai flex items-center justify-center text-sm font-bold">{i + 1}</span>
+                                <span className="w-7 h-7 rounded-full bg-ai/10 text-ai flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>
                                 <h3 className="font-semibold">{opp.title}</h3>
                               </div>
                               <p className="text-sm text-muted-foreground">{opp.why}</p>
