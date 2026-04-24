@@ -1,9 +1,9 @@
+/* AI-First Digital Marketing Agency Design System — Maximalist */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* AI-First Digital Marketing Agency Design System */
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
