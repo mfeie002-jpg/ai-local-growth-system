@@ -66,17 +66,17 @@ export default function HomePage() {
     }
   };
 
-  // Stats data
-  const stats = isEnglish ? [
-    { value: '200+', label: 'AI Integrations' },
-    { value: '3x', label: 'Avg. ROI Increase' },
-    { value: '50%', label: 'Time Saved' },
-    { value: '24/7', label: 'AI Operations' },
+  // Value pillars (no fabricated metrics — methodology-based)
+  const pillars = isEnglish ? [
+    { icon: Bot, label: 'AI-First', sub: 'Built into every layer' },
+    { icon: Target, label: 'Measurable', sub: 'Evidence-based scoring' },
+    { icon: Zap, label: 'Fast', sub: 'Weeks, not quarters' },
+    { icon: Users, label: 'Human', sub: 'Machine meets craft' },
   ] : [
-    { value: '200+', label: 'KI-Integrationen' },
-    { value: '3x', label: 'Durchschn. ROI-Steigerung' },
-    { value: '50%', label: 'Zeitersparnis' },
-    { value: '24/7', label: 'KI-Betrieb' },
+    { icon: Bot, label: 'KI-First', sub: 'In jeder Ebene verankert' },
+    { icon: Target, label: 'Messbar', sub: 'Evidenzbasiertes Scoring' },
+    { icon: Zap, label: 'Schnell', sub: 'Wochen, keine Quartale' },
+    { icon: Users, label: 'Menschlich', sub: 'Maschine trifft Handwerk' },
   ];
 
   // Process steps with images
