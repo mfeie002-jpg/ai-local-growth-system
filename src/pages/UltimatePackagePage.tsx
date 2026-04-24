@@ -62,7 +62,7 @@ export default function UltimatePackagePage() {
           description: 'A comprehensive report showing every issue, prioritized by impact with clear explanations.',
           highlight: 'OVERWHELMING',
           details: ['Priority-ranked action list', 'Technical specifications', 'Quick wins identified'],
-          demoLink: '/en/analysis-results',
+          demoLink: '/en/demo',
         },
         {
           icon: Wrench,
@@ -177,7 +177,7 @@ export default function UltimatePackagePage() {
           description: 'Einen umfassenden Report mit jedem Problem, nach Impact priorisiert mit klaren Erklärungen.',
           highlight: 'ÜBERWÄLTIGEND',
           details: ['Priorisierte Aktionsliste', 'Technische Spezifikationen', 'Quick Wins identifiziert'],
-          demoLink: '/analyse-ergebnis',
+          demoLink: '/demo',
         },
         {
           icon: Wrench,
