@@ -242,46 +242,44 @@ export function ServicesSection() {
   ];
 
   return (
-    <SectionContainer id="services" background="muted" className="relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 grid-pattern opacity-30" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-ai/5 rounded-full blur-3xl" />
-      
+    <SectionContainer id="services" background="muted" className="relative overflow-hidden noise-overlay">
+      {/* Layered background */}
+      <div className="absolute inset-0 grid-pattern opacity-[0.15]" />
+      <div className="absolute -top-40 right-0 w-[40rem] h-[40rem] rounded-full blur-3xl opacity-30"
+           style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }} />
+      <div className="absolute -bottom-40 left-0 w-[36rem] h-[36rem] rounded-full blur-3xl opacity-25"
+           style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.4), transparent 70%)' }} />
+
       <div className="relative">
-        <SectionHeader 
-          title={isEnglish ? 'Full-Service Digital Excellence' : 'Full-Service Digital Excellence'}
-          subtitle={isEnglish 
-            ? 'Everything you need to dominate digital — powered by AI innovation.'
-            : 'Alles, was Sie brauchen, um digital zu dominieren — powered by KI-Innovation.'}
-        />
-        
-        {/* AI Focus Banner */}
-        <div className="max-w-3xl mx-auto mb-12 p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-ai/10 to-accent/10 border border-ai/20 animate-fade-in">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-ai/20 flex items-center justify-center flex-shrink-0">
-              <Bot className="w-6 h-6 text-ai" />
-            </div>
-            <div>
-              <h4 className="font-bold font-display text-lg mb-1">
-                {isEnglish ? 'AI-First Approach' : 'AI-First Ansatz'}
-              </h4>
-              <p className="text-muted-foreground text-sm">
-                {isEnglish 
-                  ? 'We don\'t just offer AI as an add-on. Every service we deliver is enhanced by intelligent automation and machine learning.'
-                  : 'Wir bieten KI nicht nur als Add-on an. Jeder Service wird durch intelligente Automatisierung und Machine Learning verstärkt.'}
-              </p>
-            </div>
+        {/* Editorial header */}
+        <div className="max-w-4xl mb-16 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full glass-panel">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              {isEnglish ? 'Services' : 'Leistungen'}
+            </span>
           </div>
+          <h2 className="font-editorial font-light text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tight mb-6">
+            {isEnglish ? (
+              <>Full-service digital, <span className="italic text-aurora">orchestrated</span> by AI.</>
+            ) : (
+              <>Full-Service Digital, <span className="italic text-aurora">orchestriert</span> von KI.</>
+            )}
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+            {isEnglish
+              ? 'Seven disciplines, one engine. AI Implementation is the spine — every other service plugs into it.'
+              : 'Sieben Disziplinen, eine Engine. AI Implementation ist das Rückgrat — alle anderen Services docken daran an.'}
+          </p>
         </div>
-        
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+        {/* Asymmetric Bento Grid: AI card spans 2x2, others fill around */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-fr gap-5">
           {services.map((service, index) => (
-            <ServiceCard 
-              key={index} 
-              {...service} 
-              delay={index * 100}
+            <ServiceCard
+              key={index}
+              {...service}
+              delay={index * 80}
               learnMoreText={learnMoreText}
             />
           ))}
