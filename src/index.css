@@ -427,4 +427,14 @@
   .delay-600 { animation-delay: 600ms; }
   .delay-700 { animation-delay: 700ms; }
   .delay-800 { animation-delay: 800ms; }
+
+  @keyframes aurora-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .animate-aurora {
+    background-size: 200% 200%;
+    animation: aurora-shift 12s ease-in-out infinite;
+  }
 }
