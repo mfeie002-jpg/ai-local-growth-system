@@ -66,17 +66,17 @@ export default function HomePage() {
     }
   };
 
-  // Stats data
-  const stats = isEnglish ? [
-    { value: '200+', label: 'AI Integrations' },
-    { value: '3x', label: 'Avg. ROI Increase' },
-    { value: '50%', label: 'Time Saved' },
-    { value: '24/7', label: 'AI Operations' },
+  // Value pillars (no fabricated metrics — methodology-based)
+  const pillars = isEnglish ? [
+    { icon: Bot, label: 'AI-First', sub: 'Built into every layer' },
+    { icon: Target, label: 'Measurable', sub: 'Evidence-based scoring' },
+    { icon: Zap, label: 'Fast', sub: 'Weeks, not quarters' },
+    { icon: Users, label: 'Human', sub: 'Machine meets craft' },
   ] : [
-    { value: '200+', label: 'KI-Integrationen' },
-    { value: '3x', label: 'Durchschn. ROI-Steigerung' },
-    { value: '50%', label: 'Zeitersparnis' },
-    { value: '24/7', label: 'KI-Betrieb' },
+    { icon: Bot, label: 'KI-First', sub: 'In jeder Ebene verankert' },
+    { icon: Target, label: 'Messbar', sub: 'Evidenzbasiertes Scoring' },
+    { icon: Zap, label: 'Schnell', sub: 'Wochen, keine Quartale' },
+    { icon: Users, label: 'Menschlich', sub: 'Maschine trifft Handwerk' },
   ];
 
   // Process steps with images
@@ -175,72 +175,77 @@ export default function HomePage() {
       />
       <OrganizationSchema description={t.siteDescription} />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-screen flex items-center">
-        {/* Mesh gradient background */}
+      {/* Hero Section — Maximalist Push */}
+      <section className="relative overflow-hidden min-h-screen flex items-center noise-overlay">
+        {/* Layered backgrounds */}
         <div className="absolute inset-0 gradient-mesh" />
-        
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        
-        {/* Hero background image - enhanced visibility */}
+        <div className="absolute inset-0 grid-pattern opacity-[0.12]" />
+
+        {/* Hero image with stronger gradient mask */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroHumanAI} 
-            alt={isEnglish ? "Human-AI connection" : "Mensch-KI-Verbindung"} 
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
+          <img
+            src={heroHumanAI}
+            alt={isEnglish ? 'Human-AI connection' : 'Mensch-KI-Verbindung'}
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-50 mix-blend-luminosity"
           />
-          {/* Gradient overlays - lighter for better visibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
         </div>
-        
-        {/* Animated orbs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-ai/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        
+
+        {/* Aurora orbs */}
+        <div className="absolute -top-32 -right-32 w-[40rem] h-[40rem] rounded-full blur-3xl opacity-40 animate-float"
+             style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }} />
+        <div className="absolute -bottom-32 -left-32 w-[36rem] h-[36rem] rounded-full blur-3xl opacity-30 animate-float"
+             style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.4), transparent 70%)', animationDelay: '2s' }} />
+        <div className="absolute top-1/3 left-1/2 w-72 h-72 rounded-full blur-3xl opacity-20 animate-pulse-glow"
+             style={{ background: 'radial-gradient(circle, hsl(190 90% 50% / 0.5), transparent 70%)' }} />
+
         <SectionContainer padding="large" background="none" className="relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left side - Content */}
-            <div className="max-w-2xl">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Left — Content (7 cols) */}
+            <div className="lg:col-span-7 max-w-3xl">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-primary/10 backdrop-blur-sm border border-primary/20 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 rounded-full glass-panel border-aurora animate-fade-in">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">
+                <span className="text-sm font-medium tracking-wide uppercase">
                   {isEnglish ? 'AI-Powered Growth Partner' : 'KI-gestützter Wachstumspartner'}
                 </span>
               </div>
-              
-              {/* Main headline */}
-              <h1 className="mb-6 animate-fade-in font-display" style={{ animationDelay: '100ms' }}>
+
+              {/* Editorial headline */}
+              <h1 className="mb-8 animate-fade-in font-editorial font-light text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight"
+                  style={{ animationDelay: '100ms' }}>
                 {isEnglish ? (
                   <>
-                    <span className="block text-foreground">Digital Marketing</span>
-                    <span className="block text-gradient-ai">Supercharged by AI</span>
+                    <span className="block text-foreground">Digital marketing,</span>
+                    <span className="block italic text-aurora">supercharged</span>
+                    <span className="block text-foreground">by AI.</span>
                   </>
                 ) : (
                   <>
-                    <span className="block text-foreground">Digital Marketing</span>
-                    <span className="block text-gradient-ai">verstärkt durch KI</span>
+                    <span className="block text-foreground">Digital Marketing,</span>
+                    <span className="block italic text-aurora">verstärkt</span>
+                    <span className="block text-foreground">durch KI.</span>
                   </>
                 )}
               </h1>
-              
+
               {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-muted-foreground mb-10 animate-fade-in leading-relaxed" style={{ animationDelay: '200ms' }}>
-                {isEnglish 
-                  ? 'We combine SEO, SEA, social media, and brand management with cutting-edge AI to deliver results that matter.'
-                  : 'Wir kombinieren SEO, SEA, Social Media und Markenmanagement mit modernster KI für Ergebnisse, die zählen.'}
+              <p className="text-lg md:text-2xl text-muted-foreground mb-12 max-w-2xl animate-fade-in leading-relaxed"
+                 style={{ animationDelay: '200ms' }}>
+                {isEnglish
+                  ? 'SEO, SEA, social, brand and design — orchestrated by an AI engine that turns your website into a measurable growth system.'
+                  : 'SEO, SEA, Social, Brand und Design — orchestriert von einer KI-Engine, die Ihre Website in ein messbares Wachstumssystem verwandelt.'}
               </p>
-              
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-10" style={{ animationDelay: '300ms' }}>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-12" style={{ animationDelay: '300ms' }}>
                 <CTAButton
                   variant="primary"
                   size="lg"
                   href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
                   location="hero"
-                  className="text-lg px-8 py-4 glow-primary hover:-translate-y-0.5 transition-all"
+                  className="text-lg px-8 py-4 shadow-glow-intense hover:-translate-y-0.5 transition-all"
                 >
                   {isEnglish ? 'Get Free AI Audit' : 'Gratis KI-Audit'}
                   <ArrowRight className="ml-2 w-5 h-5" />
@@ -250,13 +255,13 @@ export default function HomePage() {
                   size="lg"
                   href={isEnglish ? '/en/demo' : '/demo'}
                   location="hero"
-                  className="text-lg px-8 py-4 bg-secondary/50 backdrop-blur-sm hover:-translate-y-0.5 transition-all"
+                  className="text-lg px-8 py-4 glass-panel hover:-translate-y-0.5 transition-all"
                 >
                   <Play className="mr-2 w-5 h-5" />
                   {isEnglish ? 'See AI in Action' : 'KI in Aktion sehen'}
                 </CTAButton>
               </div>
-              
+
               {/* Trust signals */}
               <div className="flex items-center gap-6 flex-wrap text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '400ms' }}>
                 <span className="flex items-center gap-1.5">
@@ -273,34 +278,47 @@ export default function HomePage() {
                 </span>
               </div>
             </div>
-            
-            {/* Right side - Stats */}
-            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((stat, index) => (
-                  <div 
-                    key={index}
-                    className="p-6 rounded-2xl bg-card/50 backdrop-blur-md border border-border/50 hover:border-primary/30 transition-all duration-300 group"
-                    style={{ animationDelay: `${500 + index * 100}ms` }}
-                  >
-                    <div className="text-4xl font-bold font-display text-gradient mb-2 group-hover:scale-105 transition-transform">
-                      {stat.value}
+
+            {/* Right — Pillar stack (5 cols) */}
+            <div className="hidden lg:block lg:col-span-5 animate-fade-in" style={{ animationDelay: '500ms' }}>
+              <div className="space-y-3">
+                {pillars.map((p, index) => {
+                  const Icon = p.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="group glass-panel rounded-2xl p-5 flex items-center gap-4 hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300"
+                      style={{
+                        marginLeft: `${index * 1.5}rem`,
+                        animationDelay: `${500 + index * 100}ms`,
+                      }}
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-gradient-aurora flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+                        <Icon className="w-6 h-6 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-editorial font-semibold tracking-tight">{p.label}</div>
+                        <div className="text-sm text-muted-foreground">{p.sub}</div>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
-          
-          {/* Mobile stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50">
-                <div className="text-2xl font-bold font-display text-gradient mb-1">{stat.value}</div>
-                <div className="text-xs text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
+
+          {/* Mobile pillars */}
+          <div className="grid grid-cols-2 gap-3 mt-16 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
+            {pillars.map((p, index) => {
+              const Icon = p.icon;
+              return (
+                <div key={index} className="glass-panel rounded-xl p-4">
+                  <Icon className="w-5 h-5 text-primary mb-2" />
+                  <div className="text-base font-editorial font-semibold">{p.label}</div>
+                  <div className="text-xs text-muted-foreground">{p.sub}</div>
+                </div>
+              );
+            })}
           </div>
         </SectionContainer>
       </section>

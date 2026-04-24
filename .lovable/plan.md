@@ -75,3 +75,15 @@ Inhalt: Identity, Architektur, Scanner-Pipeline, Constraints, Sprint-Status, Mem
 - Globaler UI/UX-Redesign (Phase 1 + 2) — separate Session
 - Admin-Modell-Selector — erst wenn nötig
 - Cross-Project User-Memory (`mem://~user`) — separate kleine Aufgabe
+
+---
+
+## Phase 3 — Hero Redesign (DONE)
+
+- HomePage Hero komplett im Maximalist-Push-Stil neu gebaut:
+  - Editorial-Headline mit `font-editorial` + `text-aurora` + Italic-Akzent
+  - 3 layered Aurora-Orbs (primary, ai-accent, cyan) statt flachem Hintergrund
+  - `noise-overlay` für Textur, `mix-blend-luminosity` auf Hero-Bild
+  - Asymmetrisches 12-col Grid (7/5) statt symmetrischem 2-col
+  - Rechts: gestaffelte Pillar-Karten mit `glass-panel` + Aurora-Gradient-Icons
+- **No-fake-proof Fix**: erfundene Stats ("200+ AI Integrations", "3x Avg. ROI") entfernt, durch methodologie-basierte Pillars (AI-First, Messbar, Schnell, Menschlich) ersetzt.
