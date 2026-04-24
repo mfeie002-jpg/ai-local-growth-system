@@ -113,61 +113,72 @@ export function UltimatePackageSection() {
   };
 
   return (
-    <SectionContainer id="ultimate-package" background="default" className="relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 grid-pattern opacity-20" />
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-ai/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
-      
+    <SectionContainer id="ultimate-package" background="default" className="relative overflow-hidden noise-overlay">
+      {/* Layered background */}
+      <div className="absolute inset-0 grid-pattern opacity-[0.12]" />
+      <div className="absolute top-1/4 -left-40 w-[42rem] h-[42rem] rounded-full blur-3xl opacity-30"
+           style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.4), transparent 70%)' }} />
+      <div className="absolute -bottom-40 -right-20 w-[38rem] h-[38rem] rounded-full blur-3xl opacity-30"
+           style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-3xl opacity-20 animate-pulse-glow"
+           style={{ background: 'radial-gradient(circle, hsl(190 90% 50% / 0.5), transparent 70%)' }} />
+
       <div className="relative">
-        {/* Header */}
+        {/* Editorial Header — left-aligned, asymmetric */}
         <ScrollReveal>
-          <div className="text-center mb-16">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 backdrop-blur-sm border border-ai/20">
+          <div className="max-w-4xl mb-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full glass-panel border-aurora">
               <Sparkles className="w-4 h-4 text-ai" />
-              <span className="text-sm font-medium text-ai">{content.badge}</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em]">{content.badge}</span>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-bold font-display mb-4">
-              <span className="text-gradient-ai">{content.title}</span>
+
+            <h2 className="font-editorial font-light text-5xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight mb-8">
+              {isEnglish ? (
+                <>The <span className="italic text-aurora">Ultimate</span><br />Package.</>
+              ) : (
+                <>Das <span className="italic text-aurora">Ultimate</span><br />Package.</>
+              )}
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
+
+            <p className="text-2xl md:text-3xl text-foreground/90 font-editorial font-light max-w-3xl mb-6 leading-snug">
               {content.subtitle}
             </p>
-            <p className="text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
               {content.description}
             </p>
           </div>
         </ScrollReveal>
 
-        {/* How It Works - Visual Flow */}
+        {/* How It Works — vertical numbered timeline */}
         <ScrollReveal>
-          <div className="mb-20">
-            <h3 className="text-2xl font-bold font-display text-center mb-10">{content.howItWorks}</h3>
-            
-            <div className="grid md:grid-cols-3 gap-8 relative">
-              {/* Connection lines (desktop) */}
-              <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary/50 via-ai/50 to-primary/50" />
-              
+          <div className="mb-24">
+            <div className="flex items-baseline gap-4 mb-12">
+              <span className="text-6xl font-editorial font-light text-aurora leading-none">01</span>
+              <h3 className="text-2xl md:text-3xl font-editorial font-semibold tracking-tight">{content.howItWorks}</h3>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 relative">
+              {/* Aurora connection line (desktop) */}
+              <div className="hidden md:block absolute top-10 left-[16%] right-[16%] h-px"
+                   style={{ background: 'linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), hsl(var(--ai-accent) / 0.6), transparent)' }} />
+
               {content.steps.map((step, index) => (
                 <div key={index} className="relative">
-                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-ai/30 transition-all duration-300 group">
+                  <div className="glass-panel rounded-3xl p-8 hover:-translate-y-1 hover:shadow-glow-intense transition-all duration-500 group h-full">
                     {/* Step number */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-ai text-ai-foreground flex items-center justify-center font-bold text-sm z-10">
-                      {index + 1}
+                    <div className="absolute -top-3 left-8 px-3 py-1 rounded-full bg-gradient-aurora text-primary-foreground font-bold text-xs tracking-widest shadow-glow z-10">
+                      STEP {String(index + 1).padStart(2, '0')}
                     </div>
-                    
+
                     {/* Icon */}
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/20 flex items-center justify-center mb-5 mt-4 group-hover:scale-110 transition-transform">
-                      <step.icon className="w-8 h-8 text-ai" />
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-aurora flex items-center justify-center mb-6 mt-2 shadow-glow group-hover:scale-110 transition-transform">
+                      <step.icon className="w-8 h-8 text-primary-foreground" />
                     </div>
-                    
-                    <h4 className="text-lg font-bold font-display mb-2">{step.title}</h4>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+
+                    <h4 className="text-2xl font-editorial font-semibold mb-3 tracking-tight">{step.title}</h4>
+                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
-                  
-                  {/* Arrow (mobile) */}
+
                   {index < content.steps.length - 1 && (
                     <div className="flex justify-center my-4 md:hidden">
                       <ArrowRight className="w-6 h-6 text-ai rotate-90" />
@@ -179,27 +190,28 @@ export function UltimatePackageSection() {
           </div>
         </ScrollReveal>
 
-        {/* Two Column Layout: Deliverables + Showcase */}
-        <div className="grid lg:grid-cols-2 gap-10">
-          {/* What You Get */}
-          <ScrollReveal>
-            <div className="p-8 rounded-2xl bg-card border border-border/50">
-              <h3 className="text-2xl font-bold font-display mb-6 flex items-center gap-3">
-                <FileOutput className="w-6 h-6 text-ai" />
-                {content.whatYouGet}
-              </h3>
-              
+        {/* Two Column: Deliverables + Showcase */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* What You Get — 2 cols */}
+          <ScrollReveal className="lg:col-span-2">
+            <div className="glass-panel rounded-3xl p-8 h-full">
+              <div className="flex items-baseline gap-3 mb-8">
+                <span className="text-5xl font-editorial font-light text-aurora leading-none">02</span>
+                <h3 className="text-xl font-editorial font-semibold tracking-tight">{content.whatYouGet}</h3>
+              </div>
+
               <ul className="space-y-4">
                 {content.deliverables.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-ai flex-shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">{item}</span>
+                  <li key={index} className="flex items-start gap-3 group">
+                    <div className="w-6 h-6 rounded-full bg-gradient-aurora flex items-center justify-center flex-shrink-0 mt-0.5 shadow-glow group-hover:scale-110 transition-transform">
+                      <CheckCircle className="w-3.5 h-3.5 text-primary-foreground" />
+                    </div>
+                    <span className="text-foreground/90 leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
-              
-              {/* USPs */}
-              <div className="mt-8 pt-6 border-t border-border/50">
+
+              <div className="mt-8 pt-6 border-t border-border/30">
                 <div className="flex flex-wrap gap-4">
                   {content.usps.map((usp, index) => (
                     <div key={index} className="flex items-center gap-2 text-sm">
@@ -212,46 +224,51 @@ export function UltimatePackageSection() {
             </div>
           </ScrollReveal>
 
-          {/* Showcase */}
-          <ScrollReveal>
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-ai/10 via-primary/10 to-accent/10 border border-ai/20 flex flex-col justify-between h-full">
-              <div>
-                <h3 className="text-2xl font-bold font-display mb-4 flex items-center gap-3">
-                  <Bot className="w-6 h-6 text-ai" />
-                  {content.showcase.title}
-                </h3>
-                
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+          {/* Showcase — 3 cols, hero card with aurora border */}
+          <ScrollReveal className="lg:col-span-3">
+            <div className="border-aurora rounded-3xl p-8 md:p-10 flex flex-col justify-between h-full relative overflow-hidden"
+                 style={{ background: 'linear-gradient(135deg, hsl(var(--card) / 0.8), hsl(var(--background) / 0.6))' }}>
+              {/* Inner glow */}
+              <div className="absolute inset-0 opacity-30 pointer-events-none"
+                   style={{ background: 'radial-gradient(circle at 30% 20%, hsl(var(--ai-accent) / 0.3), transparent 60%)' }} />
+
+              <div className="relative">
+                <div className="flex items-baseline gap-3 mb-6">
+                  <span className="text-5xl font-editorial font-light text-aurora leading-none">03</span>
+                  <h3 className="text-xl font-editorial font-semibold tracking-tight">{content.showcase.title}</h3>
+                </div>
+
+                <p className="text-lg text-foreground/85 mb-8 leading-relaxed font-editorial font-light">
                   {content.showcase.description}
                 </p>
-                
-                {/* Visual representation of the process */}
-                <div className="p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30 mb-6">
-                  <div className="flex items-center justify-between gap-4">
+
+                {/* Process visualization */}
+                <div className="glass-panel rounded-2xl p-5 mb-8">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
                     <div className="flex items-center gap-2 text-sm">
                       <FileInput className="w-5 h-5 text-muted-foreground" />
-                      <span className="text-muted-foreground">Website URL</span>
+                      <span className="text-muted-foreground font-medium">Website URL</span>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-ai" />
-                    <div className="flex items-center gap-2 text-sm">
-                      <Bot className="w-5 h-5 text-ai" />
-                      <span className="text-ai font-medium">AI Analyzer</span>
+                    <ArrowRight className="w-4 h-4 text-ai" />
+                    <div className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-gradient-aurora shadow-glow">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
+                      <span className="text-primary-foreground font-semibold">AI Analyzer</span>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-ai" />
+                    <ArrowRight className="w-4 h-4 text-ai" />
                     <div className="flex items-center gap-2 text-sm">
                       <FileOutput className="w-5 h-5 text-primary" />
-                      <span className="text-primary font-medium">Blueprint</span>
+                      <span className="text-primary font-semibold">Blueprint</span>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <CTAButton
                 variant="primary"
                 size="lg"
                 href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
                 location="ultimate-package"
-                className="w-full justify-center text-lg glow-ai"
+                className="relative w-full justify-center text-lg shadow-glow-intense hover:-translate-y-0.5 transition-all"
               >
                 {content.showcase.cta}
                 <ArrowRight className="ml-2 w-5 h-5" />
