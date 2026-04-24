@@ -20,6 +20,12 @@ export default {
       fontFamily: {
         sans: ["Sora", "system-ui", "sans-serif"],
         display: ["Space Grotesk", "system-ui", "sans-serif"],
+        editorial: ["Fraunces", "Space Grotesk", "serif"],
+      },
+      backgroundImage: {
+        "gradient-aurora": "var(--gradient-aurora)",
+        "gradient-fire": "var(--gradient-fire)",
+        "gradient-sunset": "var(--gradient-sunset)",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -87,6 +93,8 @@ export default {
         card: "var(--shadow-card)",
         button: "var(--shadow-button)",
         glow: "var(--shadow-glow)",
+        "glow-intense": "var(--shadow-glow-intense)",
+        "glow-cyan": "var(--shadow-glow-cyan)",
         "ai-glow": "var(--shadow-ai-glow)",
       },
       spacing: {
