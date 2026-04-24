@@ -93,6 +93,8 @@ export default {
         card: "var(--shadow-card)",
         button: "var(--shadow-button)",
         glow: "var(--shadow-glow)",
+        "glow-intense": "var(--shadow-glow-intense)",
+        "glow-cyan": "var(--shadow-glow-cyan)",
         "ai-glow": "var(--shadow-ai-glow)",
       },
       spacing: {
