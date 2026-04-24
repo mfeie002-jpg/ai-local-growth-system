@@ -141,19 +141,27 @@
   }
 
   h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05];
+    @apply text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-[-0.03em];
+    font-feature-settings: "ss01", "cv11";
   }
 
   h2 {
-    @apply text-3xl sm:text-4xl md:text-5xl leading-tight;
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em];
   }
 
   h3 {
-    @apply text-2xl sm:text-3xl leading-snug;
+    @apply text-2xl sm:text-3xl md:text-4xl leading-snug tracking-tight;
   }
 
   p {
     @apply leading-relaxed;
+  }
+
+  /* Editorial display utility — for hero accents */
+  .font-editorial {
+    font-family: "Fraunces", "Space Grotesk", serif;
+    font-feature-settings: "ss01";
+    font-style: italic;
   }
 
   :focus-visible {
