@@ -20,7 +20,7 @@ import DemoPage from "./pages/DemoPage";
 import AuditReportPage from "./pages/AuditReportPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 import UltimatePackagePage from "./pages/UltimatePackagePage";
-import AnalysisResultsDemo from "./pages/AnalysisResultsDemo";
+
 import AnalysisReportPage from "./pages/AnalysisReportPage";
 import InvestorPage from "./pages/InvestorPage";
 import BlogPage from "./pages/BlogPage";
@@ -74,7 +74,7 @@ const App = () => (
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/fallstudien" element={<CaseStudiesPage />} />
               <Route path="/ultimate-package" element={<UltimatePackagePage />} />
-              <Route path="/analyse-ergebnis" element={<AnalysisResultsDemo />} />
+              
               <Route path="/analyse/progress/:token" element={<ScanProgressPage />} />
               <Route path="/analyse/:token" element={<AnalysisReportPage />} />
               <Route path="/scan" element={<ScanPage />} />
@@ -104,7 +104,7 @@ const App = () => (
               <Route path="/en/demo" element={<DemoPage />} />
               <Route path="/en/case-studies" element={<CaseStudiesPage />} />
               <Route path="/en/ultimate-package" element={<UltimatePackagePage />} />
-              <Route path="/en/analysis-results" element={<AnalysisResultsDemo />} />
+              
               <Route path="/en/analysis/progress/:token" element={<ScanProgressPage />} />
               <Route path="/en/analysis/:token" element={<AnalysisReportPage />} />
               <Route path="/en/scan" element={<ScanPage />} />
