@@ -37,55 +37,67 @@ interface ServiceCardProps {
 
 function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0, image, href, learnMoreText }: ServiceCardProps) {
   return (
-    <Link 
+    <Link
       to={href}
       className={cn(
-        "service-card group animate-fade-in-up overflow-hidden block relative",
-        isAI && "border-ai/30 hover:border-ai/60"
+        "group relative block overflow-hidden rounded-3xl glass-panel p-6 animate-fade-in-up transition-all duration-500",
+        "hover:-translate-y-1 hover:shadow-glow-intense",
+        isAI && "border-aurora md:col-span-2 md:row-span-2 p-8"
       )}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Service Image */}
       {image && (
-        <div className="relative -mx-6 -mt-6 mb-5 h-40 overflow-hidden">
-          <img 
-            src={image} 
+        <div className={cn(
+          "relative -mx-6 -mt-6 mb-5 overflow-hidden",
+          isAI ? "h-64 -mx-8 -mt-8" : "h-40"
+        )}>
+          <img
+            src={image}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+          {isAI && <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-ai/20 mix-blend-overlay" />}
         </div>
       )}
 
       {/* AI Badge */}
       {isAI && (
-        <div className="absolute right-4 top-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-ai/10 border border-ai/30 backdrop-blur-sm">
+        <div className="absolute right-6 top-6 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-panel border border-ai/40">
           <Sparkles className="w-3 h-3 text-ai" />
-          <span className="text-xs font-medium text-ai">AI-Powered</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ai">Core Service</span>
         </div>
       )}
-      
+
       {/* Icon */}
       <div className={cn(
-        "w-14 h-14 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110",
-        isAI 
-          ? "bg-gradient-to-br from-primary/20 to-ai/20 text-ai" 
-          : "bg-primary/10 text-primary group-hover:bg-primary/20"
+        "rounded-2xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110",
+        isAI
+          ? "w-16 h-16 bg-gradient-aurora shadow-glow-intense"
+          : "w-12 h-12 bg-primary/10 text-primary group-hover:bg-primary/20"
       )}>
-        <Icon className="w-7 h-7" />
+        <Icon className={cn(isAI ? "w-8 h-8 text-primary-foreground" : "w-6 h-6")} />
       </div>
-      
+
       {/* Content */}
-      <h3 className="text-xl font-bold mb-3 font-display group-hover:text-primary transition-colors">{title}</h3>
-      <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>
-      
+      <h3 className={cn(
+        "font-editorial font-semibold mb-3 tracking-tight group-hover:text-aurora transition-all",
+        isAI ? "text-4xl md:text-5xl leading-[1.05]" : "text-2xl"
+      )}>
+        {title}
+      </h3>
+      <p className={cn("text-muted-foreground mb-5 leading-relaxed", isAI ? "text-lg max-w-xl" : "text-sm")}>
+        {description}
+      </p>
+
       {/* Features */}
-      <ul className="space-y-2 mb-6">
+      <ul className={cn("mb-6", isAI ? "grid grid-cols-2 gap-2" : "space-y-2")}>
         {features.map((feature, i) => (
           <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className={cn(
-              "w-1.5 h-1.5 rounded-full flex-shrink-0",
-              isAI ? "bg-ai" : "bg-primary"
+              "rounded-full flex-shrink-0",
+              isAI ? "w-2 h-2 bg-gradient-aurora" : "w-1.5 h-1.5 bg-primary"
             )} />
             {feature}
           </li>
@@ -93,7 +105,12 @@ function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0
       </ul>
 
       {/* Learn More Link */}
-      <div className="flex items-center gap-2 text-sm font-medium text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 mt-auto">
+      <div className={cn(
+        "flex items-center gap-2 font-medium transition-all duration-300 mt-auto",
+        isAI
+          ? "text-base text-aurora opacity-100"
+          : "text-sm text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
+      )}>
         <span>{learnMoreText}</span>
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </div>
