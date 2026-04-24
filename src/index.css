@@ -61,6 +61,16 @@
     --shadow-button: 0 1px 2px hsl(217 91% 60% / 0.25);
     --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
     --shadow-ai-glow: 0 0 60px hsl(270 70% 60% / 0.2);
+    --shadow-glow-intense: 0 0 60px hsl(217 91% 60% / 0.55), 0 0 120px hsl(270 70% 60% / 0.3);
+    --shadow-glow-cyan: 0 0 50px hsl(190 90% 50% / 0.4), 0 0 100px hsl(217 91% 60% / 0.2);
+
+    /* Maximalist gradients */
+    --gradient-aurora: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(270 70% 60%) 45%, hsl(190 90% 50%) 100%);
+    --gradient-fire: linear-gradient(135deg, hsl(280 90% 65%) 0%, hsl(217 91% 60%) 50%, hsl(190 90% 55%) 100%);
+    --gradient-sunset: radial-gradient(ellipse at top, hsl(270 70% 60% / 0.4), transparent 60%), radial-gradient(ellipse at bottom right, hsl(190 90% 50% / 0.3), transparent 60%);
+    --gradient-card-glow: linear-gradient(135deg, hsl(225 15% 11%) 0%, hsl(225 15% 8%) 100%);
+    --gradient-border-aurora: linear-gradient(135deg, hsl(217 91% 60% / 0.6), hsl(270 70% 60% / 0.4), hsl(190 90% 50% / 0.6));
+    --noise-opacity: 0.05;
 
     /* Sidebar */
     --sidebar-background: 225 15% 8%;
