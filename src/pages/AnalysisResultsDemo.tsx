@@ -5,8 +5,7 @@ import { SEOHead } from '@/components/SEOHead';
 import { ScrollReveal } from '@/components/motion/ScrollReveal';
 import { CTAButton } from '@/components/CTAButton';
 import { Button } from '@/components/ui/button';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// PDF generation moved to evidence-based ReportPDF (@react-pdf/renderer) on real reports.
 import { 
   AlertTriangle, 
   XCircle, 
@@ -338,97 +337,14 @@ const AnalysisResultsDemo: React.FC = () => {
     return 'text-green-500';
   };
 
-  // Generate PDF
+  // PDF download is only available on real, evidence-based reports (see ReportPDF.tsx).
+  // This demo page is illustrative only — no PDF export here.
   const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    
-    // Header
-    doc.setFontSize(24);
-    doc.setTextColor(220, 38, 38);
-    doc.text('Website-Analyse Report', pageWidth / 2, 20, { align: 'center' });
-    
-    doc.setFontSize(14);
-    doc.setTextColor(100);
-    doc.text(content.demoSite, pageWidth / 2, 30, { align: 'center' });
-    doc.text(`Analysiert am ${new Date().toLocaleDateString('de-CH')}`, pageWidth / 2, 38, { align: 'center' });
-    
-    // Overall Score
-    doc.setFontSize(48);
-    doc.setTextColor(220, 38, 38);
-    doc.text(`${content.overallScore}/100`, pageWidth / 2, 60, { align: 'center' });
-    
-    doc.setFontSize(12);
-    doc.setTextColor(100);
-    doc.text('Gesamt-Score', pageWidth / 2, 68, { align: 'center' });
-    
-    // Summary
-    doc.setFontSize(14);
-    doc.setTextColor(0);
-    doc.text(`${content.totalIssues} Verbesserungspunkte gefunden`, 20, 85);
-    doc.setFontSize(11);
-    doc.setTextColor(100);
-    doc.text(`${content.criticalIssues} Kritisch | ${content.warningIssues} Warnungen | ${content.infoIssues} Verbesserungen`, 20, 92);
-    
-    // Cost summary
-    doc.setFontSize(12);
-    doc.setTextColor(220, 38, 38);
-    doc.text(`Geschätzter monatlicher Verlust: CHF ${monthlyLossIfIgnored.toLocaleString()}`, 20, 105);
-    doc.text(`Geschätzte Implementierungszeit: ${totalHours} Stunden`, 20, 112);
-    
-    let yPosition = 130;
-    
-    // Categories
-    categories.forEach((category) => {
-      if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      doc.setFontSize(14);
-      doc.setTextColor(0);
-      doc.text(`${category.name} (Score: ${category.score}/100)`, 20, yPosition);
-      yPosition += 8;
-      
-      const tableData = category.issues.map(issue => [
-        issue.severity === 'critical' ? '🔴' : issue.severity === 'warning' ? '🟡' : '🔵',
-        issue.title,
-        `${issue.hoursToFix}h`,
-        `CHF ${issue.costIfIgnored}`
-      ]);
-      
-      autoTable(doc, {
-        startY: yPosition,
-        head: [['', 'Problem', 'Zeit', 'Verlust/Monat']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: { fillColor: [220, 38, 38] },
-        margin: { left: 20, right: 20 },
-        styles: { fontSize: 9 }
-      });
-      
-      yPosition = (doc as any).lastAutoTable.finalY + 15;
-    });
-    
-    // Final page
-    doc.addPage();
-    doc.setFontSize(20);
-    doc.setTextColor(0);
-    doc.text('Zusammenfassung', pageWidth / 2, 30, { align: 'center' });
-    
-    doc.setFontSize(12);
-    doc.text(`Aktuelle geschätzte monatliche Einnahmen: CHF ${currentMonthlyRevenue.toLocaleString()}`, 20, 50);
-    doc.setTextColor(34, 197, 94);
-    doc.text(`Projizierte monatliche Einnahmen nach Optimierung: CHF ${projectedMonthlyRevenue.toLocaleString()}`, 20, 60);
-    doc.setTextColor(0);
-    doc.text(`Potenzielle Steigerung: +${Math.round((projectedMonthlyRevenue - currentMonthlyRevenue) / currentMonthlyRevenue * 100)}%`, 20, 70);
-    
-    doc.setFontSize(14);
-    doc.setTextColor(220, 38, 38);
-    doc.text('Kontaktieren Sie uns für die Implementierung!', pageWidth / 2, 100, { align: 'center' });
-    
-    doc.save(`website-analyse-${content.demoSite}.pdf`);
-    toast.success(language === 'de' ? 'PDF wurde heruntergeladen!' : 'PDF downloaded!');
+    toast.info(
+      language === 'de'
+        ? 'PDF-Export ist nur für echte Analyse-Reports verfügbar. Starte eine kostenlose Analyse, um deinen Report zu erhalten.'
+        : 'PDF export is only available for real analysis reports. Start a free analysis to get your report.'
+    );
   };
 
   // Simulate email notification (dummy)
