@@ -20,6 +20,12 @@ export default {
       fontFamily: {
         sans: ["Sora", "system-ui", "sans-serif"],
         display: ["Space Grotesk", "system-ui", "sans-serif"],
+        editorial: ["Fraunces", "Space Grotesk", "serif"],
+      },
+      backgroundImage: {
+        "gradient-aurora": "var(--gradient-aurora)",
+        "gradient-fire": "var(--gradient-fire)",
+        "gradient-sunset": "var(--gradient-sunset)",
       },
       colors: {
         border: "hsl(var(--border))",
