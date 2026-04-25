@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { scoreColors } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface Report {
   id: string;

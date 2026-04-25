@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { statusColors, statusLabels, bucketColors, bucketLabels } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface LeadDetail {
   id: string;

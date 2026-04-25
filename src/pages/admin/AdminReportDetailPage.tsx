@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { scoreTextColors } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface BacklogIssue {
   title: string;

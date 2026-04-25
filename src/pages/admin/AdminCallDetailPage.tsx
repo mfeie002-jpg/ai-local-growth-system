@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { formatDuration } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface CallDetail {
   id: string;

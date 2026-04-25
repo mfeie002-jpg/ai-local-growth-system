@@ -21,6 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
+import { NoIndex } from '@/components/NoIndex';
 
 export default function AdminVoiceSetupPage() {
   const { isAdmin, isLoading: authLoading, signOut } = useAuth();
