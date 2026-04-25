@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
+import { SEOHead } from '@/components/SEOHead';
 import { Loader2, CheckCircle, AlertCircle, Radio, Sparkles, Search, BarChart3, Brain } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -73,6 +74,11 @@ export default function ScanProgressPage() {
 
   return (
     <Layout>
+      <SEOHead
+        title={isEnglish ? 'Scan in progress' : 'Scan läuft'}
+        description={isEnglish ? 'Your business scan is being prepared.' : 'Dein Business-Scan wird vorbereitet.'}
+        noIndex
+      />
       <div className="min-h-[70vh] flex items-center justify-center px-4">
         <div className="w-full max-w-lg text-center space-y-8">
           <div>
