@@ -1,11 +1,9 @@
 # itsFeierabend - Robots.txt
 # https://itsfeierabend.ch
 
-# Allow all search engines
 User-agent: *
 Allow: /
 
-# Allow specific crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -33,19 +31,19 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
-# Block admin pages from indexing
+# Block admin pages
 Disallow: /admin/
 Disallow: /admin/*
 
-# Block audit report pages (private user data)
+# Block private user-data pages (token-scoped)
 Disallow: /gratis-audit/report/
 Disallow: /en/free-audit/report/
+Disallow: /analyse/
+Disallow: /en/analysis/
 
-# Block API endpoints if any
+# Block API endpoints
 Disallow: /api/
 
-# Crawl delay for polite crawling
 Crawl-delay: 1
 
-# Sitemap location
 Sitemap: https://itsfeierabend.ch/sitemap.xml
