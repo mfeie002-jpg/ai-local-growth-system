@@ -1,6 +1,6 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOHead, ServiceSchema } from '@/components/SEOHead';
 import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import {
@@ -55,6 +55,7 @@ export function ServiceDetailPage({
   return (
     <Layout>
       <SEOHead title={title} description={subtitle} />
+      <ServiceSchema name={title} description={description || subtitle} />
 
       {/* ============ HERO — Editorial / Maximalist ============ */}
       <section className="relative overflow-hidden pt-28 pb-20 md:pt-40 md:pb-32">

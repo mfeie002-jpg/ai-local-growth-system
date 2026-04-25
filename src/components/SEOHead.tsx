@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { BASE_URL, findRoutePair } from '@/lib/routePairs';
 
 interface SEOHeadProps {
   title: string;
@@ -11,15 +12,12 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, canonical, ogImage, noIndex = false }: SEOHeadProps) {
   const location = useLocation();
-  const baseUrl = 'https://itsfeierabend.ch';
-  const fullCanonical = canonical || `${baseUrl}${location.pathname}`;
+  const fullCanonical = canonical || `${BASE_URL}${location.pathname}`;
   const fullTitle = `${title} | itsFeierabend.ch`;
 
   useEffect(() => {
-    // Update document title
     document.title = fullTitle;
 
-    // Update or create meta tags
     const updateMeta = (name: string, content: string, isProperty = false) => {
       const attr = isProperty ? 'property' : 'name';
       let meta = document.querySelector(`meta[${attr}="${name}"]`);
@@ -31,11 +29,9 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
       meta.setAttribute('content', content);
     };
 
-    // Standard meta
     updateMeta('description', description);
-    if (noIndex) {
-      updateMeta('robots', 'noindex, nofollow');
-    }
+    // Always set robots so prior values from another route don't leak through
+    updateMeta('robots', noIndex ? 'noindex, nofollow' : 'index, follow');
 
     // OpenGraph
     updateMeta('og:title', fullTitle, true);
@@ -43,19 +39,15 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
     updateMeta('og:url', fullCanonical, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:site_name', 'itsFeierabend.ch', true);
-    if (ogImage) {
-      updateMeta('og:image', ogImage, true);
-    }
+    if (ogImage) updateMeta('og:image', ogImage, true);
 
     // Twitter
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', description);
-    if (ogImage) {
-      updateMeta('twitter:image', ogImage);
-    }
+    if (ogImage) updateMeta('twitter:image', ogImage);
 
-    // Update canonical link
+    // Canonical
     let link = document.querySelector('link[rel="canonical"]');
     if (!link) {
       link = document.createElement('link');
@@ -64,10 +56,26 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
     }
     link.setAttribute('href', fullCanonical);
 
-    return () => {
-      // Cleanup is handled by next page update
-    };
-  }, [fullTitle, description, fullCanonical, ogImage, noIndex]);
+    // Hreflang alternates — remove old, then emit DE / EN / x-default
+    document
+      .querySelectorAll('link[rel="alternate"][data-seo-hreflang]')
+      .forEach((el) => el.remove());
+
+    const pair = findRoutePair(location.pathname);
+    if (pair && !noIndex) {
+      const addAlternate = (hreflang: string, href: string) => {
+        const l = document.createElement('link');
+        l.setAttribute('rel', 'alternate');
+        l.setAttribute('hreflang', hreflang);
+        l.setAttribute('href', href);
+        l.setAttribute('data-seo-hreflang', '');
+        document.head.appendChild(l);
+      };
+      addAlternate('de', `${BASE_URL}${pair.de}`);
+      addAlternate('en', `${BASE_URL}${pair.en}`);
+      addAlternate('x-default', `${BASE_URL}${pair.de}`);
+    }
+  }, [fullTitle, description, fullCanonical, ogImage, noIndex, location.pathname]);
 
   return null;
 }
