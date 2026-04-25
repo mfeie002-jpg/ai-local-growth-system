@@ -186,7 +186,7 @@ const AnalysisReportPage: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <SEOHead title="Loading..." description="Loading analysis report..." />
+        <SEOHead title="Loading..." description="Loading analysis report..." noIndex />
         <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
@@ -198,7 +198,7 @@ const AnalysisReportPage: React.FC = () => {
   if (error || !report) {
     return (
       <Layout>
-        <SEOHead title={isDE ? 'Report nicht gefunden' : 'Report not found'} description="" />
+        <SEOHead title={isDE ? 'Report nicht gefunden' : 'Report not found'} description="" noIndex />
         <div className="min-h-screen flex items-center justify-center py-20">
           <div className="text-center max-w-md">
             <AlertOctagon className="h-16 w-16 text-destructive mx-auto mb-6" />
@@ -225,6 +225,7 @@ const AnalysisReportPage: React.FC = () => {
         title={`${report.site_name} — ${report.overall_score}/100`}
         description={ai?.headline || `Analysis report for ${report.site_name}`}
         canonical={`/analyse/${token}`}
+        noIndex
       />
 
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 md:py-12">

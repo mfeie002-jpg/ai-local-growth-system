@@ -143,6 +143,7 @@ export default function AuditReportPage() {
         <SEOHead
           title={isDE ? 'Report nicht gefunden | itsFeierabend.ch' : 'Report not found | itsFeierabend.ch'}
           description={isDE ? 'Der angeforderte Report wurde nicht gefunden.' : 'The requested report was not found.'}
+          noIndex
         />
         <SectionContainer className="pt-24 sm:pt-32 pb-16">
           <div className="max-w-lg mx-auto text-center">
@@ -176,10 +177,11 @@ export default function AuditReportPage() {
     <Layout>
       <SEOHead
         title={isDE ? 'Dein Vorab-Score | itsFeierabend.ch' : 'Your Pre-Score | itsFeierabend.ch'}
-        description={isDE 
+        description={isDE
           ? 'Dein Vorab-Score basierend auf deiner Audit-Anfrage.'
           : 'Your pre-score based on your audit request.'
         }
+        noIndex
       />
 
       <SectionContainer className="pt-24 sm:pt-32 pb-16">
