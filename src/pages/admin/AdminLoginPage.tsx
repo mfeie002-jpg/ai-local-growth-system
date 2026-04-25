@@ -68,6 +68,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <NoIndex />
       <div className="w-full max-w-md">
         <div className="bg-card border border-border rounded-xl p-8 shadow-lg">
           <div className="text-center mb-8">

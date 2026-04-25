@@ -192,6 +192,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Übersicht aller wichtigen Kennzahlen">
+      <NoIndex />
       <Tabs defaultValue="overview" className="mb-6">
         <TabsList>
           <TabsTrigger value="overview">Übersicht</TabsTrigger>

@@ -106,6 +106,7 @@ export default function AdminCallsPage() {
 
   return (
     <AdminLayout title="Voice Calls" subtitle={`${filteredCalls.length} Call${filteredCalls.length !== 1 ? 's' : ''} gefunden`}>
+      <NoIndex />
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="relative">

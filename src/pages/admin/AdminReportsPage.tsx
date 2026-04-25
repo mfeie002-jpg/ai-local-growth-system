@@ -289,6 +289,7 @@ export default function AdminReportsPage() {
 
   return (
     <AdminLayout title="Reports" subtitle={`${filteredReports.length} Report${filteredReports.length !== 1 ? 's' : ''} gefunden`}>
+      <NoIndex />
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
           <div className="bg-background rounded-lg border border-border p-4">

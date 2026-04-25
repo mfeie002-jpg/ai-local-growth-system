@@ -180,6 +180,7 @@ export default function AdminLeadDetailPage() {
         { label: lead.name }
       ]}
     >
+      <NoIndex />
       <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">
           {/* Header Card */}
