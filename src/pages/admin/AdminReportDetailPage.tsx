@@ -464,7 +464,6 @@ export default function AdminReportDetailPage() {
                   const IconComponent = iconMap[leak.icon] || DollarSign;
                   return (
                     <div key={leak.id} className="p-4 rounded-lg bg-destructive/5 border border-destructive/20">
-                      <NoIndex />
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
                           <IconComponent className="w-5 h-5 text-destructive" />
