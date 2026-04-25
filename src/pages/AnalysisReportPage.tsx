@@ -3,18 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { ScrollReveal } from '@/components/motion/ScrollReveal';
+import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  AlertTriangle, CheckCircle, Search, Shield, Target, Zap, 
-  Gauge, AlertOctagon, Info, Loader2, ArrowRight, Sparkles,
-  ExternalLink, ChevronDown, ChevronUp, Download
+import {
+  AlertTriangle, CheckCircle, Search, Shield, Target, Zap,
+  Gauge, AlertOctagon, Loader2, ArrowUpRight, Sparkles,
+  ChevronDown, ChevronUp, Download
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -88,24 +87,35 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
   automation: Zap,
 };
 
-function getScoreColor(score: number) {
-  if (score >= 80) return 'text-green-500';
-  if (score >= 60) return 'text-yellow-500';
-  if (score >= 40) return 'text-orange-500';
-  return 'text-destructive';
+function getScoreTone(score: number) {
+  if (score >= 75) return { text: 'text-aurora', label: 'aurora' };
+  if (score >= 50) return { text: 'text-primary', label: 'primary' };
+  return { text: 'text-foreground', label: 'foreground' };
 }
 
-function getScoreBg(score: number) {
-  if (score >= 80) return 'from-green-500/10 to-green-500/5 border-green-500/20';
-  if (score >= 60) return 'from-yellow-500/10 to-yellow-500/5 border-yellow-500/20';
-  if (score >= 40) return 'from-orange-500/10 to-orange-500/5 border-orange-500/20';
-  return 'from-destructive/10 to-destructive/5 border-destructive/20';
-}
-
-function getScoreBucket(score: number): string {
-  if (score >= 75) return 'green';
-  if (score >= 50) return 'yellow';
-  return 'red';
+function getBucketCopy(score: number, isDE: boolean) {
+  if (score >= 75) {
+    return {
+      label: isDE ? 'Starke Basis' : 'Strong foundation',
+      description: isDE
+        ? 'Solides Fundament — gezielte Hebel bringen schnelle Zuwächse.'
+        : 'Solid foundation — targeted levers will unlock fast gains.',
+    };
+  }
+  if (score >= 50) {
+    return {
+      label: isDE ? 'Klares Wachstumsfeld' : 'Clear growth field',
+      description: isDE
+        ? 'Gute Ausgangslage mit deutlichem Spielraum nach oben.'
+        : 'Good starting point with meaningful upside ahead.',
+    };
+  }
+  return {
+    label: isDE ? 'Großes Potenzial' : 'Significant potential',
+    description: isDE
+      ? 'Viel ungenutztes Potenzial — mit klarem Plan schnell aktivierbar.'
+      : 'Plenty of untapped potential — quickly activated with a clear plan.',
+  };
 }
 
 function getSourceLabel(source: string): string {
@@ -187,9 +197,10 @@ const AnalysisReportPage: React.FC = () => {
     return (
       <Layout>
         <SEOHead title="Loading..." description="Loading analysis report..." noIndex />
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
+        <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 noise-overlay" aria-hidden />
+          <Loader2 className="w-10 h-10 animate-spin text-aurora" />
+        </section>
       </Layout>
     );
   }
@@ -199,16 +210,36 @@ const AnalysisReportPage: React.FC = () => {
     return (
       <Layout>
         <SEOHead title={isDE ? 'Report nicht gefunden' : 'Report not found'} description="" noIndex />
-        <div className="min-h-screen flex items-center justify-center py-20">
-          <div className="text-center max-w-md">
-            <AlertOctagon className="h-16 w-16 text-destructive mx-auto mb-6" />
-            <h1 className="text-2xl font-bold mb-4">{isDE ? 'Report nicht gefunden' : 'Report not found'}</h1>
-            <p className="text-muted-foreground mb-8">{error}</p>
-            <CTAButton href="/scan" size="lg">
-              {isDE ? 'Neue Analyse starten' : 'Start New Analysis'}
-            </CTAButton>
-          </div>
-        </div>
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 noise-overlay" aria-hidden />
+          <div
+            className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
+            style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }}
+            aria-hidden
+          />
+          <SectionContainer padding="large">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
+                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                  § Report / 404
+                </span>
+              </div>
+              <h1 className="mt-6 font-editorial font-semibold leading-[0.95] text-5xl sm:text-7xl">
+                {isDE ? (<>Report <span className="italic text-aurora">nicht gefunden.</span></>) : (<>Report <span className="italic text-aurora">not found.</span></>)}
+              </h1>
+              <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+                {error || (isDE ? 'Der Link ist abgelaufen oder ungültig.' : 'The link has expired or is invalid.')}
+              </p>
+              <div className="mt-8">
+                <CTAButton href={isDE ? '/scan' : '/en/scan'} size="lg">
+                  {isDE ? 'Neue Analyse starten' : 'Start new analysis'}
+                  <ArrowUpRight className="ml-2 w-5 h-5" />
+                </CTAButton>
+              </div>
+            </div>
+          </SectionContainer>
+        </section>
       </Layout>
     );
   }
@@ -216,8 +247,8 @@ const AnalysisReportPage: React.FC = () => {
   const ai = report.ai_interpretation;
   const categories: CategoryScore[] = report.scoring_details?.categories || [];
   const signals: Signal[] = report.normalized_signals || [];
-  const bucket = getScoreBucket(report.overall_score);
-  const isComplete = report.scan_status === 'complete' || report.scan_status === 'complete_no_ai';
+  const bucket = getBucketCopy(report.overall_score, isDE);
+  const tone = getScoreTone(report.overall_score);
 
   return (
     <Layout>
@@ -228,45 +259,90 @@ const AnalysisReportPage: React.FC = () => {
         noIndex
       />
 
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 md:py-12">
-        <div className="container mx-auto px-4 max-w-4xl">
+      {/* ===== HERO — Editorial ===== */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-30" aria-hidden />
+        <div className="absolute inset-0 noise-overlay" aria-hidden />
+        <div
+          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-40"
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
+          aria-hidden
+        />
+        <div
+          className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
+          style={{ background: 'radial-gradient(circle, hsl(var(--accent) / 0.4), transparent 70%)' }}
+          aria-hidden
+        />
 
-          {/* ===== HERO SCORE ===== */}
-          <ScrollReveal>
-            <section className="mb-10 text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-ai/10 border border-ai/20">
-                <Sparkles className="w-3.5 h-3.5 text-ai" />
-                <span className="text-xs font-medium text-ai">{isDE ? 'Digitaler Reifegrad-Check' : 'Digital Maturity Check'}</span>
+        <SectionContainer padding="large">
+          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+            {/* Score panel */}
+            <aside className="lg:col-span-4 order-2 lg:order-1 space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
+                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                  {isDE ? '§ Reifegrad-Check' : '§ Maturity Check'}
+                </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold font-display mb-2">
-                {report.site_name}
-              </h1>
+              <div className="glass-panel rounded-2xl p-6 space-y-4">
+                <div className="flex items-start justify-between">
+                  <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                    {isDE ? 'Score' : 'Score'}
+                  </span>
+                  <Sparkles className="w-5 h-5 text-aurora" />
+                </div>
+                <div className="font-editorial leading-none">
+                  <span className={cn('text-7xl italic font-semibold', tone.text)}>{report.overall_score}</span>
+                  <span className="text-2xl text-muted-foreground">/100</span>
+                </div>
+                <p className={cn('font-editorial text-lg leading-snug', tone.text)}>
+                  {bucket.label}
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {bucket.description}
+                </p>
 
+                <div className="pt-4 border-t border-border/50 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">{isDE ? 'Top-Potenziale' : 'Top potentials'}</span>
+                    <span className="font-editorial text-aurora">{report.critical_issues}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">{isDE ? 'Verbesserungen' : 'Improvements'}</span>
+                    <span className="font-editorial text-primary">{report.warning_issues}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">{isDE ? 'Gut aufgestellt' : 'Well set up'}</span>
+                    <span className="font-editorial">{report.info_issues}</span>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  disabled={pdfLoading}
+                  className="w-full gap-2 text-xs mt-2"
+                >
+                  {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  {isDE ? 'Als PDF herunterladen' : 'Download as PDF'}
+                </Button>
+              </div>
+            </aside>
+
+            {/* Headline */}
+            <div className="lg:col-span-8 order-1 lg:order-2">
+              <h1 className="font-editorial font-semibold leading-[0.9] tracking-tight text-5xl sm:text-7xl md:text-8xl">
+                <span className="block text-foreground">{report.site_name}</span>
+                <span className="block italic text-aurora">{isDE ? 'Reifegrad.' : 'maturity.'}</span>
+              </h1>
               {ai?.headline && (
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+                <p className="mt-8 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
                   {ai.headline}
                 </p>
               )}
-
-              {/* Score Ring */}
-              <div className={cn(
-                'inline-flex flex-col items-center p-8 rounded-3xl border bg-gradient-to-br',
-                getScoreBg(report.overall_score)
-              )}>
-                <div className={cn('text-7xl font-bold font-display', getScoreColor(report.overall_score))}>
-                  {report.overall_score}
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">{isDE ? 'Digitaler Reifegrad' : 'Digital Maturity Score'}</p>
-                <div className="flex gap-2 mt-4">
-                  <Badge className="bg-primary/20 text-primary border-primary/30">{report.critical_issues} {isDE ? 'Top-Potenziale' : 'Top Potentials'}</Badge>
-                  <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">{report.warning_issues} {isDE ? 'Verbesserungen' : 'Improvements'}</Badge>
-                  <Badge variant="outline">{report.info_issues} {isDE ? 'Gut aufgestellt' : 'Well set up'}</Badge>
-                </div>
-              </div>
-
-              {/* Data sources */}
-              <div className="flex items-center justify-center gap-3 mt-4 text-xs text-muted-foreground">
+              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                 <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche geprüft' : 'areas checked'}</span>
                 <span>·</span>
                 <span>{report.data_sources_used?.map(getSourceLabel).join(', ')}</span>
@@ -277,233 +353,260 @@ const AnalysisReportPage: React.FC = () => {
                   </>
                 )}
               </div>
-
-              {/* PDF Download */}
-              <div className="flex justify-center mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  disabled={pdfLoading}
-                  className="gap-2 text-xs"
-                >
-                  {pdfLoading ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Download className="w-3.5 h-3.5" />
-                  )}
-                  {isDE ? 'Als PDF herunterladen' : 'Download as PDF'}
-                </Button>
-              </div>
-            </section>
-          </ScrollReveal>
-
-          {/* ===== AI SUMMARY ===== */}
-          {ai?.summary && (
-            <ScrollReveal delay={0.05}>
-              <Card className="mb-8 border-ai/20 bg-gradient-to-br from-ai/5 to-background">
-                <CardContent className="p-6">
-                  <p className="text-base leading-relaxed">{ai.summary}</p>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          )}
-
-          {/* ===== TOP 3 OPPORTUNITIES ===== */}
-          {ai?.top_3_opportunities && ai.top_3_opportunities.length > 0 && (
-            <ScrollReveal delay={0.1}>
-              <section className="mb-10">
-                <h2 className="text-xl font-bold font-display mb-4 flex items-center gap-2">
-                  <Target className="h-5 w-5 text-ai" />
-                  {isDE ? 'Grösste Chancen' : 'Biggest Opportunities'}
-                </h2>
-                <div className="grid gap-4">
-                  {ai.top_3_opportunities.map((opp, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 + i * 0.1 }}
-                    >
-                      <Card className="border-ai/10 hover:border-ai/30 transition-colors">
-                        <CardContent className="p-5">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="w-7 h-7 rounded-full bg-ai/10 text-ai flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>
-                                <h3 className="font-semibold">{opp.title}</h3>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{opp.why}</p>
-                            </div>
-                            <div className="flex gap-2 shrink-0">
-                              <Badge className={cn(
-                                opp.impact === 'high' ? 'bg-destructive/20 text-destructive border-destructive/30' :
-                                opp.impact === 'medium' ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500/30' :
-                                'bg-muted'
-                              )}>
-                                {opp.impact === 'high' ? (isDE ? 'Hoch' : 'High') : opp.impact === 'medium' ? (isDE ? 'Mittel' : 'Medium') : (isDE ? 'Niedrig' : 'Low')}
-                              </Badge>
-                              <Badge variant="secondary" className="font-mono">{opp.effort}</Badge>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            </ScrollReveal>
-          )}
-
-          {/* ===== CATEGORY SCORES ===== */}
-          <ScrollReveal delay={0.15}>
-            <section className="mb-10">
-              <h2 className="text-xl font-bold font-display mb-4">
-                {isDE ? 'Digitaler Reifegrad nach Bereich' : 'Digital Maturity by Area'}
-              </h2>
-              <div className="grid gap-3">
-                {categories.map((cat) => {
-                  const Icon = categoryIcons[cat.id] || Search;
-                  const isExpanded = expandedCategories.includes(cat.id);
-                  return (
-                    <Card key={cat.id} className="overflow-hidden">
-                      <button
-                        onClick={() => toggleCategory(cat.id)}
-                        className="w-full p-4 flex items-center gap-4 text-left hover:bg-muted/30 transition-colors"
-                      >
-                        <div className={cn(
-                          'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
-                          cat.score >= 70 ? 'bg-green-500/10 text-green-500' :
-                          cat.score >= 40 ? 'bg-yellow-500/10 text-yellow-500' :
-                          'bg-destructive/10 text-destructive'
-                        )}>
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium text-sm">{cat.name}</span>
-                            <span className={cn('font-bold text-lg', getScoreColor(cat.score))}>{cat.score}</span>
-                          </div>
-                          <Progress value={cat.score} className="h-1.5" />
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0 ml-2">
-                          {cat.criticalCount > 0 && (
-                            <Badge variant="destructive" className="text-xs">{cat.criticalCount}</Badge>
-                          )}
-                          {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-                        </div>
-                      </button>
-
-                      {isExpanded && cat.signals && (
-                        <div className="border-t px-4 pb-4">
-                          <div className="space-y-2 mt-3">
-                            {cat.signals.map((signal) => (
-                              <div key={signal.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30 text-sm">
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                  {signal.score >= 70 ? (
-                                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-                                  ) : signal.score >= 30 ? (
-                                    <AlertTriangle className="w-4 h-4 text-yellow-500 shrink-0" />
-                                  ) : (
-                                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-                                  )}
-                                  <span className="truncate">{signal.label}</span>
-                                  {signal.details && (
-                                    <span className="text-xs text-muted-foreground hidden md:inline truncate">— {signal.details}</span>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 shrink-0 ml-2">
-                                  <Badge variant="outline" className="text-xs">{getSourceLabel(signal.source)}</Badge>
-                                  <span className={cn('font-mono text-xs font-bold', getScoreColor(signal.score))}>{signal.score}</span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  );
-                })}
-              </div>
-            </section>
-          </ScrollReveal>
-
-          {/* ===== STRENGTHS ===== */}
-          {ai?.strengths && ai.strengths.length > 0 && (
-            <ScrollReveal delay={0.2}>
-              <Card className="mb-8 border-green-500/20">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                    {isDE ? 'Was bereits gut läuft' : 'What\'s already working well'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {ai.strengths.map((s, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          )}
-
-          {/* ===== RISK IF IGNORED ===== */}
-          {ai?.risk_if_ignored && (
-            <ScrollReveal delay={0.25}>
-              <Card className="mb-8 border-ai/20 bg-gradient-to-br from-ai/5 to-background">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <ArrowRight className="h-5 w-5 text-ai" />
-                    {isDE ? 'Was sich verändert, wenn du handelst' : 'What changes when you act'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{ai.risk_if_ignored}</p>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          )}
-
-          {/* ===== CTA ===== */}
-          <ScrollReveal delay={0.3}>
-            <section className="text-center py-10">
-              <Card className="border-ai/20 bg-gradient-to-br from-ai/5 to-primary/5 p-8">
-                <h2 className="text-2xl font-bold font-display mb-3">
-                  {isDE ? 'Bereit für den nächsten Schritt?' : 'Ready for the next step?'}
-                </h2>
-                {ai?.recommended_action_reason && (
-                  <p className="text-muted-foreground mb-6 max-w-lg mx-auto">{ai.recommended_action_reason}</p>
-                )}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <CTAButton href={isDE ? '/gratis-call' : '/en/free-call'} size="lg" className="glow-ai">
-                    {isDE ? 'Kostenloses Beratungsgespräch' : 'Free Consultation Call'}
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </CTAButton>
-                  <Button variant="outline" size="lg" onClick={() => navigate(isDE ? '/ultimate-package' : '/en/ultimate-package')}>
-                    {isDE ? 'Ultimate Package entdecken' : 'Discover Ultimate Package'}
-                    <ExternalLink className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
-              </Card>
-            </section>
-          </ScrollReveal>
-
-          {/* ===== META FOOTER ===== */}
-          <div className="text-center text-xs text-muted-foreground/50 pb-8">
-            <p>
-              {isDE ? 'Erstellt am' : 'Generated'} {new Date(report.created_at).toLocaleDateString(isDE ? 'de-CH' : 'en-US')}
-              {' · '}Version {report.scan_version || 'v1.0'}
-              {' · '}{signals.length} Signals
-              {' · '}{report.data_sources_used?.length || 0} {isDE ? 'Datenquellen' : 'data sources'}
-            </p>
+            </div>
           </div>
+        </SectionContainer>
+      </section>
+
+      {/* ===== AI SUMMARY ===== */}
+      {ai?.summary && (
+        <SectionContainer>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+            <div className="lg:col-span-4">
+              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                {isDE ? '— Lagebild' : '— Snapshot'}
+              </span>
+              <h2 className="mt-4 font-editorial text-3xl sm:text-4xl font-semibold leading-tight">
+                {isDE ? (<>Was die Daten <span className="italic text-aurora">erzählen.</span></>) : (<>What the data <span className="italic text-aurora">tells us.</span></>)}
+              </h2>
+            </div>
+            <div className="lg:col-span-8">
+              <p className="font-editorial text-xl sm:text-2xl leading-relaxed text-foreground/90">
+                {ai.summary}
+              </p>
+            </div>
+          </div>
+        </SectionContainer>
+      )}
+
+      {/* ===== TOP 3 OPPORTUNITIES ===== */}
+      {ai?.top_3_opportunities && ai.top_3_opportunities.length > 0 && (
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 noise-overlay opacity-50" aria-hidden />
+          <SectionContainer>
+            <div className="max-w-3xl">
+              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                {isDE ? '— Top 3 Chancen' : '— Top 3 opportunities'}
+              </span>
+              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl md:text-6xl font-semibold leading-[0.95]">
+                {isDE ? (<>Größte <span className="italic text-aurora">Hebel.</span></>) : (<>Biggest <span className="italic text-aurora">levers.</span></>)}
+              </h2>
+            </div>
+
+            <div className="mt-12 space-y-px">
+              {ai.top_3_opportunities.map((opp, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="group grid grid-cols-12 gap-4 sm:gap-8 py-8 border-t border-border/40 last:border-b"
+                >
+                  <div className="col-span-2 sm:col-span-1">
+                    <span className="font-editorial text-aurora text-sm tracking-widest">
+                      0{i + 1}
+                    </span>
+                  </div>
+                  <div className="col-span-10 sm:col-span-8">
+                    <h3 className="font-editorial text-2xl sm:text-3xl font-semibold leading-tight">
+                      {opp.title}
+                    </h3>
+                    <p className="mt-3 text-base text-muted-foreground leading-relaxed">
+                      {opp.why}
+                    </p>
+                  </div>
+                  <div className="col-span-12 sm:col-span-3 flex sm:flex-col sm:items-end gap-2 sm:gap-3 sm:text-right">
+                    <div>
+                      <span className="block font-editorial text-[10px] tracking-[0.2em] uppercase text-muted-foreground">{isDE ? 'Wirkung' : 'Impact'}</span>
+                      <span className={cn(
+                        'font-editorial text-lg italic',
+                        opp.impact === 'high' ? 'text-aurora' : opp.impact === 'medium' ? 'text-primary' : 'text-muted-foreground'
+                      )}>
+                        {opp.impact === 'high' ? (isDE ? 'Hoch' : 'High') : opp.impact === 'medium' ? (isDE ? 'Mittel' : 'Medium') : (isDE ? 'Niedrig' : 'Low')}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block font-editorial text-[10px] tracking-[0.2em] uppercase text-muted-foreground">{isDE ? 'Aufwand' : 'Effort'}</span>
+                      <span className="font-editorial text-lg italic text-foreground">{opp.effort}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </SectionContainer>
+        </section>
+      )}
+
+      {/* ===== CATEGORY SCORES ===== */}
+      <SectionContainer>
+        <div className="max-w-3xl mb-10">
+          <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+            {isDE ? '— Bereiche' : '— Areas'}
+          </span>
+          <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
+            {isDE ? (<>Reifegrad nach <span className="italic text-aurora">Bereich.</span></>) : (<>Maturity by <span className="italic text-aurora">area.</span></>)}
+          </h2>
         </div>
-      </div>
+
+        <div className="space-y-3">
+          {categories.map((cat) => {
+            const Icon = categoryIcons[cat.id] || Search;
+            const isExpanded = expandedCategories.includes(cat.id);
+            const catTone = getScoreTone(cat.score);
+            return (
+              <div key={cat.id} className="glass-panel rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => toggleCategory(cat.id)}
+                  className="w-full p-5 flex items-center gap-4 text-left hover:bg-muted/20 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-aurora/10 text-aurora">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-editorial text-base sm:text-lg">{cat.name}</span>
+                      <span className={cn('font-editorial italic text-2xl', catTone.text)}>{cat.score}</span>
+                    </div>
+                    <Progress value={cat.score} className="h-1" />
+                  </div>
+                  <div className="shrink-0 ml-2 text-muted-foreground">
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </div>
+                </button>
+
+                {isExpanded && cat.signals && (
+                  <div className="border-t border-border/40 px-5 pb-5">
+                    <div className="space-y-1 mt-3">
+                      {cat.signals.map((signal) => (
+                        <div key={signal.id} className="flex items-center justify-between py-2.5 text-sm border-b border-border/20 last:border-0">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            {signal.score >= 70 ? (
+                              <CheckCircle className="w-4 h-4 text-aurora shrink-0" />
+                            ) : (
+                              <AlertTriangle className="w-4 h-4 text-primary shrink-0" />
+                            )}
+                            <span className="truncate">{signal.label}</span>
+                            {signal.details && (
+                              <span className="text-xs text-muted-foreground hidden md:inline truncate">— {signal.details}</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0 ml-2">
+                            <Badge variant="outline" className="text-[10px] font-editorial tracking-wider">{getSourceLabel(signal.source)}</Badge>
+                            <span className={cn('font-editorial italic text-base', getScoreTone(signal.score).text)}>{signal.score}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </SectionContainer>
+
+      {/* ===== STRENGTHS ===== */}
+      {ai?.strengths && ai.strengths.length > 0 && (
+        <SectionContainer>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+            <div className="lg:col-span-4">
+              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                {isDE ? '— Stärken' : '— Strengths'}
+              </span>
+              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
+                {isDE ? (<>Was bereits <span className="italic text-aurora">trägt.</span></>) : (<>What's already <span className="italic text-aurora">working.</span></>)}
+              </h2>
+            </div>
+            <ul className="lg:col-span-8 space-y-px">
+              {ai.strengths.map((s, i) => (
+                <li key={i} className="grid grid-cols-12 gap-4 py-5 border-t border-border/40 last:border-b">
+                  <span className="col-span-2 sm:col-span-1 font-editorial text-aurora text-sm tracking-widest pt-1">
+                    0{i + 1}
+                  </span>
+                  <div className="col-span-10 sm:col-span-11 flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-aurora mt-1 flex-shrink-0" />
+                    <span className="font-editorial text-lg sm:text-xl leading-snug">{s}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </SectionContainer>
+      )}
+
+      {/* ===== WHAT CHANGES IF YOU ACT ===== */}
+      {ai?.risk_if_ignored && (
+        <SectionContainer>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+            <div className="lg:col-span-5">
+              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                {isDE ? '— Wirkung' : '— Outcome'}
+              </span>
+              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
+                {isDE ? (<>Was sich <span className="italic text-aurora">verändert.</span></>) : (<>What <span className="italic text-aurora">shifts.</span></>)}
+              </h2>
+            </div>
+            <div className="lg:col-span-7">
+              <p className="font-editorial text-xl sm:text-2xl leading-relaxed text-foreground/90">
+                {ai.risk_if_ignored}
+              </p>
+            </div>
+          </div>
+        </SectionContainer>
+      )}
+
+      {/* ===== CTA ===== */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 noise-overlay" aria-hidden />
+        <div
+          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }}
+          aria-hidden
+        />
+        <SectionContainer padding="large">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-end">
+            <div className="lg:col-span-7">
+              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                {isDE ? '— Nächster Schritt' : '— Next step'}
+              </span>
+              <h2 className="mt-4 font-editorial font-semibold leading-[0.95] text-5xl sm:text-6xl md:text-7xl">
+                {isDE ? (<>Lass uns das <span className="italic text-aurora">aktivieren.</span></>) : (<>Let's <span className="italic text-aurora">activate this.</span></>)}
+              </h2>
+              {ai?.recommended_action_reason && (
+                <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+                  {ai.recommended_action_reason}
+                </p>
+              )}
+            </div>
+            <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-4">
+              <CTAButton href={isDE ? '/gratis-call' : '/en/free-call'} size="lg" location="analysis-report-cta">
+                {isDE ? 'Kostenloses Gespräch' : 'Free consultation'}
+                <ArrowUpRight className="ml-2 w-5 h-5" />
+              </CTAButton>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate(isDE ? '/ultimate-package' : '/en/ultimate-package')}
+                className="font-editorial"
+              >
+                {isDE ? 'Ultimate Package entdecken' : 'Discover Ultimate Package'}
+                <ArrowUpRight className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </SectionContainer>
+      </section>
+
+      {/* ===== META FOOTER ===== */}
+      <SectionContainer padding="small">
+        <div className="text-center text-xs text-muted-foreground/60 font-editorial tracking-wider">
+          {isDE ? 'Erstellt am' : 'Generated'} {new Date(report.created_at).toLocaleDateString(isDE ? 'de-CH' : 'en-US')}
+          {' · '}Version {report.scan_version || 'v1.0'}
+          {' · '}{signals.length} Signals
+          {' · '}{report.data_sources_used?.length || 0} {isDE ? 'Datenquellen' : 'data sources'}
+        </div>
+      </SectionContainer>
     </Layout>
   );
 };
