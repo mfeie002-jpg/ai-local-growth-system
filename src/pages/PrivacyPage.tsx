@@ -47,17 +47,37 @@ export default function PrivacyPage() {
         noIndex
       />
 
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60 py-20 sm:py-28">
+        <div className="absolute inset-0 grid-pattern opacity-[0.05]" />
+        <div className="absolute -top-40 left-1/4 h-[400px] w-[400px] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute inset-0 noise-overlay opacity-[0.04]" />
+        <div className="container-section relative">
+          <div className="grid grid-cols-12 gap-6 lg:gap-12">
+            <aside className="col-span-12 lg:col-span-3">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-8 bg-foreground/40" />
+                <span className="font-editorial text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+                  {isEnglish ? 'Legal / 02' : 'Rechtlich / 02'}
+                </span>
+              </div>
+            </aside>
+            <div className="col-span-12 lg:col-span-9">
+              <h1 className="font-editorial text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight">
+                {isEnglish ? <>Privacy, <em className="italic text-aurora">respected.</em></> : <>Datenschutz, <em className="italic text-aurora">gelebt.</em></>}
+              </h1>
+              <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+                {isEnglish
+                  ? 'How we collect, use, and protect your data — under Swiss law (nFADP).'
+                  : 'Wie wir deine Daten erheben, verwenden und schützen — gemäss Schweizer Recht (nDSG).'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <SectionContainer padding="large">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <Shield className="w-8 h-8 text-primary" />
-            <h1 className="mb-0">{isEnglish ? 'Privacy Policy' : 'Datenschutzerklärung'}</h1>
-          </div>
-          <p className="text-muted-foreground mb-8">
-            {isEnglish 
-              ? 'Your privacy is important to us. This policy explains how we collect, use, and protect your personal data.'
-              : 'Dein Datenschutz ist uns wichtig. Diese Erklärung erläutert, wie wir deine persönlichen Daten erheben, verwenden und schützen.'}
-          </p>
 
           {/* Cookie & Analytics Consent Settings */}
           <Card className="mb-10">

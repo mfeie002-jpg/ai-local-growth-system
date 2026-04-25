@@ -1,108 +1,98 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, ArrowRight, BookOpen, Filter } from 'lucide-react';
+import { Calendar, Clock, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
-import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
+import { ScrollReveal } from '@/components/motion/ScrollReveal';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { getAllBlogPosts, getFeaturedPosts, getPostsByCategory, categories, BlogPost } from '@/data/blogPosts';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { NewsletterSignup } from '@/components/NewsletterSignup';
 
-function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
+function BlogCard({ post, index, featured = false }: { post: BlogPost; index: number; featured?: boolean }) {
   const { isEnglish } = useLanguage();
   const slug = isEnglish ? post.slugEn : post.slug;
   const path = isEnglish ? `/en/blog/${slug}` : `/blog/${slug}`;
+  const num = String(index + 1).padStart(2, '0');
 
   return (
-    <Link to={path} className="group block">
-      <Card className={`h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden ${featured ? 'bg-gradient-to-br from-card to-primary/5' : ''}`}>
-        {/* Thumbnail */}
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={post.thumbnail}
-            alt={isEnglish ? post.title.en : post.title.de}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-          <div className="absolute bottom-3 left-3 flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-background/80">
-              {isEnglish ? post.category.en : post.category.de}
-            </Badge>
-            {featured && (
-              <Badge variant="default" className="text-xs bg-primary">
-                Featured
-              </Badge>
-            )}
-          </div>
+    <Link
+      to={path}
+      className={cn(
+        'group relative block overflow-hidden border border-border/60 bg-card/40 backdrop-blur-sm transition-all duration-500 hover:border-primary/60 hover:shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.4)]',
+        featured && 'border-aurora'
+      )}
+    >
+      {/* Thumbnail */}
+      <div className="relative h-56 overflow-hidden">
+        <img
+          src={post.thumbnail}
+          alt={isEnglish ? post.title.en : post.title.de}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 mix-blend-luminosity opacity-80 group-hover:opacity-100 group-hover:mix-blend-normal"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+        <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+          <span className="font-editorial text-xs font-semibold tracking-[0.2em] text-foreground/90 backdrop-blur-md bg-background/40 px-3 py-1.5">
+            {num} / {(isEnglish ? post.category.en : post.category.de).toUpperCase()}
+          </span>
+          {featured && (
+            <span className="text-aurora font-editorial text-xs font-bold tracking-[0.25em]">
+              ★ FEATURED
+            </span>
+          )}
         </div>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
-            {isEnglish ? post.title.en : post.title.de}
-          </CardTitle>
-          <CardDescription className="line-clamp-2">
-            {isEnglish ? post.excerpt.en : post.excerpt.de}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                {new Date(post.date).toLocaleDateString(isEnglish ? 'en-US' : 'de-CH', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {post.readTime} min
-              </span>
-            </div>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </div>
+
+      <div className="p-6 sm:p-8">
+        <h3 className="font-editorial text-2xl sm:text-3xl font-semibold leading-[1.1] text-foreground group-hover:text-aurora transition-colors mb-3">
+          {isEnglish ? post.title.en : post.title.de}
+        </h3>
+        <p className="text-muted-foreground line-clamp-2 mb-6 leading-relaxed">
+          {isEnglish ? post.excerpt.en : post.excerpt.de}
+        </p>
+        <div className="flex items-center justify-between border-t border-border/60 pt-4">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground tracking-wider">
+            <span className="flex items-center gap-1.5">
+              <Calendar className="w-3 h-3" />
+              {new Date(post.date).toLocaleDateString(isEnglish ? 'en-US' : 'de-CH', {
+                year: 'numeric', month: 'short', day: 'numeric',
+              })}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3 h-3" />
+              {post.readTime} min
+            </span>
           </div>
-        </CardContent>
-      </Card>
+          <ArrowUpRight className="w-5 h-5 text-foreground transition-all duration-300 group-hover:rotate-45 group-hover:text-primary" />
+        </div>
+      </div>
     </Link>
   );
 }
 
-function CategoryFilter({ 
-  selectedCategory, 
-  onCategoryChange 
-}: { 
-  selectedCategory: string; 
-  onCategoryChange: (key: string) => void;
-}) {
+function CategoryFilter({
+  selectedCategory, onCategoryChange,
+}: { selectedCategory: string; onCategoryChange: (key: string) => void }) {
   const { isEnglish } = useLanguage();
-
   return (
-    <div className="flex flex-wrap items-center gap-2 justify-center">
-      <div className="flex items-center gap-2 text-muted-foreground mr-2">
-        <Filter className="w-4 h-4" />
-        <span className="text-sm font-medium hidden sm:inline">
-          {isEnglish ? 'Filter:' : 'Filter:'}
-        </span>
-      </div>
-      {categories.map((category) => (
-        <Button
-          key={category.key}
-          variant={selectedCategory === category.key ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => onCategoryChange(category.key)}
-          className={cn(
-            'transition-all',
-            selectedCategory === category.key && 'shadow-md'
-          )}
-        >
-          {isEnglish ? category.en : category.de}
-        </Button>
-      ))}
+    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+      {categories.map((category) => {
+        const active = selectedCategory === category.key;
+        return (
+          <button
+            key={category.key}
+            onClick={() => onCategoryChange(category.key)}
+            className={cn(
+              'group relative px-4 py-2 text-xs font-editorial font-semibold tracking-[0.18em] uppercase border transition-all duration-300',
+              active
+                ? 'border-aurora bg-card text-foreground shadow-[0_0_20px_hsl(var(--primary)/0.4)]'
+                : 'border-border/60 text-muted-foreground hover:border-primary/60 hover:text-foreground'
+            )}
+          >
+            {isEnglish ? category.en : category.de}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -110,7 +100,7 @@ function CategoryFilter({
 export default function BlogPage() {
   const { isEnglish } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  
+
   const featuredPosts = getFeaturedPosts();
   const filteredPosts = getPostsByCategory(selectedCategory);
 
@@ -120,133 +110,152 @@ export default function BlogPage() {
         title={isEnglish ? 'Blog & Resources | Digital Marketing Insights' : 'Blog & Ressourcen | Digital Marketing Insights'}
         description={isEnglish
           ? 'Expert insights on Local SEO, Google Ads, AI automation, and digital marketing for local service businesses in Switzerland.'
-          : 'Expertenwissen zu Local SEO, Google Ads, KI-Automatisierung und Digital Marketing für lokale Dienstleister in der Schweiz.'
-        }
+          : 'Expertenwissen zu Local SEO, Google Ads, KI-Automatisierung und Digital Marketing für lokale Dienstleister in der Schweiz.'}
       />
 
-      {/* Hero Section */}
-      <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container-section relative z-10">
-          <ScrollReveal>
-            <div className="text-center max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                <BookOpen className="w-4 h-4" />
-                {isEnglish ? 'Knowledge Hub' : 'Wissens-Hub'}
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60 py-20 sm:py-28 lg:py-36">
+        <div className="absolute inset-0 grid-pattern opacity-[0.06]" />
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-primary/15 blur-[120px]" />
+        <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[100px]" />
+        <div className="absolute inset-0 noise-overlay opacity-[0.04]" />
+
+        <div className="container-section relative">
+          <div className="grid grid-cols-12 gap-6 lg:gap-12">
+            <aside className="col-span-12 lg:col-span-3 space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-8 bg-foreground/40" />
+                <span className="font-editorial text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+                  {isEnglish ? 'Knowledge / 03' : 'Wissen / 03'}
+                </span>
               </div>
-              <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-                {isEnglish ? 'Blog & Resources' : 'Blog & Ressourcen'}
-              </h1>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                 {isEnglish
-                  ? 'Practical guides, tips, and strategies for local service businesses looking to grow with digital marketing.'
-                  : 'Praktische Guides, Tipps und Strategien für lokale Dienstleister, die mit Digital Marketing wachsen wollen.'}
+                  ? 'Field notes from the frontier of AI-powered growth, written for operators.'
+                  : 'Feldnotizen von der Front KI-gestützten Wachstums — geschrieben für Macher.'}
               </p>
+            </aside>
+
+            <div className="col-span-12 lg:col-span-9">
+              <ScrollReveal>
+                <h1 className="font-editorial text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight">
+                  {isEnglish ? (
+                    <>Insights, <em className="italic text-aurora not-italic-fix">unfiltered.</em></>
+                  ) : (
+                    <>Wissen, <em className="italic text-aurora">ungeschönt.</em></>
+                  )}
+                </h1>
+                <p className="mt-8 max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  {isEnglish
+                    ? 'Practical guides, tactical playbooks, and contrarian takes for service businesses building with AI.'
+                    : 'Praxis-Guides, taktische Playbooks und kontroverse Perspektiven für Dienstleister, die mit KI bauen.'}
+                </p>
+              </ScrollReveal>
             </div>
-          </ScrollReveal>
+          </div>
         </div>
       </section>
 
-      {/* Featured Posts */}
-      {selectedCategory === 'all' && (
-        <SectionContainer background="muted">
-          <SectionHeader
-            title={isEnglish ? 'Featured Articles' : 'Empfohlene Artikel'}
-            subtitle={isEnglish
-              ? 'Our most popular and impactful content'
-              : 'Unsere beliebtesten und wirkungsvollsten Inhalte'}
-          />
-          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredPosts.map((post) => (
-              <StaggerItem key={post.slug}>
-                <BlogCard post={post} featured />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </SectionContainer>
+      {/* Featured */}
+      {selectedCategory === 'all' && featuredPosts.length > 0 && (
+        <section className="border-b border-border/60 py-20 sm:py-28">
+          <div className="container-section">
+            <div className="mb-12 flex items-end justify-between gap-6 flex-wrap">
+              <div>
+                <span className="font-editorial text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+                  01 — {isEnglish ? 'Featured' : 'Empfohlen'}
+                </span>
+                <h2 className="mt-3 font-editorial text-4xl sm:text-5xl font-bold leading-tight">
+                  {isEnglish ? 'Editor\u2019s picks' : 'Redaktions-Picks'}
+                </h2>
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredPosts.map((post, i) => (
+                <BlogCard key={post.slug} post={post} index={i} featured />
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* Category Filter & All Posts */}
-      <SectionContainer>
-        <div className="mb-10">
-          <ScrollReveal>
-            <CategoryFilter 
-              selectedCategory={selectedCategory} 
-              onCategoryChange={setSelectedCategory} 
-            />
-          </ScrollReveal>
-        </div>
-
-        <SectionHeader
-          title={selectedCategory === 'all' 
-            ? (isEnglish ? 'All Articles' : 'Alle Artikel')
-            : (isEnglish 
-                ? categories.find(c => c.key === selectedCategory)?.en || 'Articles'
-                : categories.find(c => c.key === selectedCategory)?.de || 'Artikel'
-              )
-          }
-          subtitle={selectedCategory === 'all'
-            ? (isEnglish
-                ? 'Browse our complete collection of guides and insights'
-                : 'Durchstöbere unsere komplette Sammlung an Guides und Insights')
-            : (isEnglish
-                ? `${filteredPosts.length} article${filteredPosts.length !== 1 ? 's' : ''} in this category`
-                : `${filteredPosts.length} Artikel in dieser Kategorie`)
-          }
-        />
-        
-        {filteredPosts.length > 0 ? (
-          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredPosts.map((post) => (
-              <StaggerItem key={post.slug}>
-                <BlogCard post={post} />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {isEnglish 
-                ? 'No articles found in this category.' 
-                : 'Keine Artikel in dieser Kategorie gefunden.'}
-            </p>
+      {/* All posts + filter */}
+      <section className="py-20 sm:py-28">
+        <div className="container-section">
+          <div className="mb-12 grid grid-cols-12 gap-6 items-end">
+            <div className="col-span-12 lg:col-span-6">
+              <span className="font-editorial text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+                02 — {isEnglish ? 'Archive' : 'Archiv'}
+              </span>
+              <h2 className="mt-3 font-editorial text-4xl sm:text-5xl font-bold leading-tight">
+                {selectedCategory === 'all'
+                  ? (isEnglish ? 'Every article' : 'Alle Artikel')
+                  : (isEnglish
+                      ? categories.find(c => c.key === selectedCategory)?.en || 'Articles'
+                      : categories.find(c => c.key === selectedCategory)?.de || 'Artikel')}
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                {filteredPosts.length} {isEnglish ? `article${filteredPosts.length !== 1 ? 's' : ''}` : 'Artikel'}
+              </p>
+            </div>
+            <div className="col-span-12 lg:col-span-6 lg:flex lg:justify-end">
+              <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+            </div>
           </div>
-        )}
-      </SectionContainer>
 
-      {/* Newsletter Section */}
-      <SectionContainer>
-        <ScrollReveal>
+          {filteredPosts.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredPosts.map((post, i) => (
+                <BlogCard key={post.slug} post={post} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 border border-border/60 bg-card/30">
+              <p className="text-muted-foreground">
+                {isEnglish ? 'No articles found in this category.' : 'Keine Artikel in dieser Kategorie gefunden.'}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="border-y border-border/60 py-20 sm:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 noise-overlay opacity-[0.03]" />
+        <div className="container-section relative">
           <div className="max-w-2xl mx-auto">
             <NewsletterSignup />
           </div>
-        </ScrollReveal>
-      </SectionContainer>
+        </div>
+      </section>
 
-      {/* CTA Section */}
-      <SectionContainer background="accent" padding="large">
-        <ScrollReveal>
-          <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold mb-4">
-              {isEnglish
-                ? 'Ready to Put This Knowledge Into Action?'
-                : 'Bereit, dieses Wissen in die Tat umzusetzen?'}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              {isEnglish
-                ? 'Get a free audit and see how we can help you grow your local service business.'
-                : 'Hol dir ein kostenloses Audit und erfahre, wie wir dir helfen können, dein lokales Unternehmen zu wachsen.'}
-            </p>
-            <Link
-              to={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-            >
-              {isEnglish ? 'Get Free Audit' : 'Gratis Audit holen'}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+      {/* CTA */}
+      <section className="relative overflow-hidden py-20 sm:py-28 lg:py-36">
+        <div className="absolute inset-0" style={{ background: 'var(--gradient-sunset)' }} />
+        <div className="absolute inset-0 noise-overlay opacity-[0.05]" />
+        <div className="container-section relative">
+          <div className="grid grid-cols-12 gap-6 items-end">
+            <div className="col-span-12 lg:col-span-8">
+              <h2 className="font-editorial text-5xl sm:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight">
+                {isEnglish ? (
+                  <>Knowledge is cheap. <em className="italic text-aurora">Action compounds.</em></>
+                ) : (
+                  <>Wissen ist günstig. <em className="italic text-aurora">Handeln zahlt sich aus.</em></>
+                )}
+              </h2>
+            </div>
+            <div className="col-span-12 lg:col-span-4 lg:text-right">
+              <Link
+                to={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+                className="group inline-flex items-center gap-3 border border-foreground/40 bg-background/40 backdrop-blur-md px-6 py-4 font-editorial text-sm font-semibold tracking-[0.2em] uppercase hover:border-aurora hover:bg-background/60 transition-all"
+              >
+                {isEnglish ? 'Get Free Audit' : 'Gratis Audit holen'}
+                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:rotate-45" />
+              </Link>
+            </div>
           </div>
-        </ScrollReveal>
-      </SectionContainer>
+        </div>
+      </section>
     </Layout>
   );
 }
