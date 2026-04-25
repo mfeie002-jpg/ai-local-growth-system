@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { scoreTextColors } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface BacklogIssue {
   title: string;
@@ -224,6 +225,7 @@ export default function AdminReportDetailPage() {
         { label: report.site_name }
       ]}
     >
+      <NoIndex />
       {/* Action buttons */}
       <div className="flex items-center gap-3 mb-6">
         <Button variant="outline" size="sm" onClick={copyReportLink}>

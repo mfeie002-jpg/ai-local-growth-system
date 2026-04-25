@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { callStatusColors, formatDuration } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface Call {
   id: string;
@@ -105,6 +106,7 @@ export default function AdminCallsPage() {
 
   return (
     <AdminLayout title="Voice Calls" subtitle={`${filteredCalls.length} Call${filteredCalls.length !== 1 ? 's' : ''} gefunden`}>
+      <NoIndex />
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="relative">

@@ -26,6 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { statusColors, statusLabels, bucketColors } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface Lead {
   id: string;
@@ -150,6 +151,7 @@ export default function AdminLeadsPage() {
 
   return (
     <AdminLayout title="Leads" subtitle={`${filteredLeads.length} Lead${filteredLeads.length !== 1 ? 's' : ''} gefunden`}>
+      <NoIndex />
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="relative">

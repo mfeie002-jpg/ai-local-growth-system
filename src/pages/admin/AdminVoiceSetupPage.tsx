@@ -21,6 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
+import { NoIndex } from '@/components/NoIndex';
 
 export default function AdminVoiceSetupPage() {
   const { isAdmin, isLoading: authLoading, signOut } = useAuth();
@@ -74,6 +75,7 @@ export default function AdminVoiceSetupPage() {
 
   return (
     <div className="min-h-screen bg-muted/30">
+      <NoIndex />
       {/* Header */}
       <header className="bg-background border-b border-border sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

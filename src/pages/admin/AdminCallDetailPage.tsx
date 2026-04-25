@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { siteConfig } from '@/config/site';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { formatDuration } from '@/lib/admin-constants';
+import { NoIndex } from '@/components/NoIndex';
 
 interface CallDetail {
   id: string;
@@ -142,6 +143,7 @@ export default function AdminCallDetailPage() {
         { label: call.direction === 'inbound' ? 'Inbound Call' : 'Outbound Call' }
       ]}
     >
+      <NoIndex />
       <div className="max-w-4xl mx-auto">
         <div className="grid gap-6">
           {/* Header Card */}
