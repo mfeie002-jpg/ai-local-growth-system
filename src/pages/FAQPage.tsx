@@ -1,154 +1,136 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead, FAQSchema } from '@/components/SEOHead';
-import { SectionContainer } from '@/components/SectionContainer';
 import { FAQAccordion } from '@/components/FAQAccordion';
 import { CTAButton } from '@/components/CTAButton';
-import { ArrowRight, MessageCircleQuestion } from 'lucide-react';
+import {
+  EditorialHero,
+  SectionMarker,
+  RevealText,
+  FunnelNav,
+  getFunnelSteps,
+} from '@/components/neural';
+import { ArrowRight } from 'lucide-react';
 
+/**
+ * FAQPage — Funnel step 05 / 05 · Clarify (loop-back).
+ * Two CTAs at the end: re-enter via audit (first turn of the loop)
+ * or talk via call. Previous step = Call.
+ */
 export default function FAQPage() {
   const { t, isEnglish } = useLanguage();
+  const steps = getFunnelSteps(isEnglish);
+  const me = steps[4];
+  const prev = steps[3];
+  const auditStep = steps[1];
 
   const allFAQItems = [...t.faq.items, ...t.faq.auditItems];
 
   return (
-    <Layout showPromo>
+    <Layout>
       <SEOHead
-        title={isEnglish ? 'FAQ | Frequently Asked Questions' : 'FAQ | Häufig gestellte Fragen'}
+        title={isEnglish ? 'FAQ · Frequently Asked Questions' : 'FAQ · Häufige Fragen'}
         description={isEnglish
-          ? 'Frequently asked questions about our AI growth system for local services in Switzerland. Learn about pricing, process, and results.'
-          : 'Häufig gestellte Fragen zu unserem AI Growth System für Local Services in der Schweiz. Erfahren Sie mehr über Preise, Prozesse und Ergebnisse.'}
+          ? 'Frequently asked questions about our AI growth system for local services in Switzerland.'
+          : 'Häufig gestellte Fragen zu unserem KI-Growth-System für Schweizer Dienstleister.'}
       />
       <FAQSchema items={allFAQItems} />
 
-      {/* Hero — Editorial */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-30" aria-hidden />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
-          aria-hidden
-        />
-        <div
-          className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent) / 0.4), transparent 70%)' }}
-          aria-hidden
-        />
+      {/* Hero */}
+      <EditorialHero
+        eyebrow={`${me.hint} · ${me.label}`}
+        title={
+          isEnglish ? (
+            <>Questions, <em className="font-editorial">answered.</em></>
+          ) : (
+            <>Fragen, <em className="font-editorial">beantwortet.</em></>
+          )
+        }
+        lede={isEnglish
+          ? `${allFAQItems.length} curated answers — distilled from hundreds of conversations with Swiss founders and operators. No fluff, no sales script.`
+          : `${allFAQItems.length} kuratierte Antworten — destilliert aus hunderten Gesprächen mit Schweizer Gründern und Operators. Kein Fluff, kein Verkaufsskript.`}
+        annotation={isEnglish
+          ? 'Tap any question to expand. Still missing something? Step back to the call.'
+          : 'Tippe eine Frage zum Aufklappen. Fehlt etwas? Zurück zum Call.'}
+      />
 
-        <SectionContainer padding="large">
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-            {/* Meta sidebar */}
-            <aside className="lg:col-span-3 order-2 lg:order-1 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8 bg-aurora" style={{ background: 'var(--gradient-aurora)' }} />
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isEnglish ? '§ 04 / Support' : '§ 04 / Support'}
-                </span>
-              </div>
-              <div className="glass-panel rounded-2xl p-5 space-y-3">
-                <MessageCircleQuestion className="h-6 w-6 text-aurora" />
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {isEnglish
-                    ? `${allFAQItems.length} curated answers — distilled from hundreds of conversations with founders and operators.`
-                    : `${allFAQItems.length} kuratierte Antworten — destilliert aus hunderten Gesprächen mit Gründern und Operators.`}
-                </p>
-              </div>
-            </aside>
-
-            {/* Hero copy */}
-            <div className="lg:col-span-9 order-1 lg:order-2">
-              <h1 className="font-editorial font-semibold leading-[0.9] tracking-tight text-5xl sm:text-7xl md:text-8xl">
-                <span className="block text-foreground">{isEnglish ? 'Questions,' : 'Fragen,'}</span>
-                <span className="block italic text-aurora">{isEnglish ? 'answered.' : 'beantwortet.'}</span>
-              </h1>
-              <p className="mt-8 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                {isEnglish
-                  ? 'Everything you need to know before working with us. No fluff, no sales script — just clear answers.'
-                  : 'Alles was du wissen musst, bevor wir zusammenarbeiten. Kein Fluff, kein Verkaufsskript — nur klare Antworten.'}
-              </p>
-            </div>
-          </div>
-        </SectionContainer>
-      </section>
+      <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* FAQ list */}
-      <section className="relative">
-        <div className="absolute inset-0 noise-overlay opacity-50" aria-hidden />
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            <aside className="lg:col-span-3 hidden lg:block">
-              <div className="sticky top-32 space-y-4">
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isEnglish ? 'Index' : 'Index'}
-                </span>
-                <h2 className="font-editorial text-3xl font-semibold leading-tight">
-                  {isEnglish ? (
-                    <>The most asked, <span className="italic text-aurora">unfiltered.</span></>
-                  ) : (
-                    <>Die meistgestellten, <span className="italic text-aurora">ungefiltert.</span></>
-                  )}
-                </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+      <section className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={1} total={2} label={isEnglish ? 'The questions' : 'Die Fragen'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <aside className="col-span-12 lg:col-span-4">
+              <div className="lg:sticky lg:top-28 space-y-6">
+                <RevealText>
+                  <h2 className="text-balance">
+                    {isEnglish ? (
+                      <>The most asked, <em className="font-editorial">unfiltered.</em></>
+                    ) : (
+                      <>Die meistgestellten, <em className="font-editorial">ungefiltert.</em></>
+                    )}
+                  </h2>
+                </RevealText>
+                <p className="text-base text-foreground/65 max-w-sm">
                   {isEnglish
-                    ? 'Tap any question to expand. Still missing something? Book a free call below.'
-                    : 'Klicke eine Frage zum Aufklappen. Fehlt etwas? Buche unten einen Gratis Call.'}
+                    ? 'If your question isn\'t here, the 20-minute call almost certainly covers it.'
+                    : 'Steht deine Frage nicht hier, beantwortet sie der 20-Minuten-Call fast sicher.'}
                 </p>
               </div>
             </aside>
-            <div className="lg:col-span-9">
+            <div className="col-span-12 lg:col-span-8">
               <FAQAccordion items={allFAQItems} />
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* Closing CTA */}
-      <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-50"
-          style={{ background: 'var(--gradient-sunset)' }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <SectionContainer>
-          <div className="relative max-w-4xl mx-auto text-center">
-            <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-              {isEnglish ? '— Still curious?' : '— Noch neugierig?'}
-            </span>
-            <h2 className="mt-6 font-editorial font-semibold leading-[0.95] tracking-tight text-4xl sm:text-6xl md:text-7xl">
-              {isEnglish ? (
-                <>Let's talk it <span className="italic text-aurora">through.</span></>
-              ) : (
-                <>Reden wir <span className="italic text-aurora">drüber.</span></>
-              )}
-            </h2>
-            <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-              {isEnglish
-                ? 'Book a free call and we\'ll answer everything personally — no obligations.'
-                : 'Buche einen Gratis Call und wir beantworten alles persönlich — unverbindlich.'}
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <CTAButton
-                variant="primary"
-                size="lg"
-                href={isEnglish ? '/en/free-call' : '/gratis-call'}
-                location="faq-cta"
-              >
-                {t.cta.bookCall}
-                <ArrowRight className="ml-2 w-5 h-5" />
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* Loop-back */}
+      <section className="section-padding bg-secondary/40">
+        <div className="container-section">
+          <SectionMarker index={2} total={2} label={isEnglish ? 'Two ways forward' : 'Zwei Wege weiter'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
+            <RevealText className="col-span-12 lg:col-span-8">
+              <h2 className="text-balance">
+                {isEnglish ? (
+                  <>Now you've read everything. <em className="font-editorial">Pick a door.</em></>
+                ) : (
+                  <>Jetzt weißt du alles. <em className="font-editorial">Such dir eine Tür aus.</em></>
+                )}
+              </h2>
+              <p className="mt-6 text-lg text-foreground/75 max-w-xl">
+                {isEnglish
+                  ? 'Run the AI audit and get the score yourself, or talk it through with us first.'
+                  : 'Starte das KI-Audit und hol dir den Score, oder besprich es zuerst mit uns.'}
+              </p>
+            </RevealText>
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-3 lg:items-end">
+              <CTAButton variant="primary" size="lg" href={auditStep.href} location="faq-loop-audit">
+                {isEnglish ? 'Run free audit' : 'Gratis-Audit starten'}
+                <ArrowRight className="ml-2 w-4 h-4" />
               </CTAButton>
-              <CTAButton
-                variant="secondary"
-                href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                location="faq-cta"
-              >
-                {t.cta.getAudit}
+              <CTAButton variant="ghost" size="lg" href={prev.href} location="faq-loop-call">
+                ← {prev.label}
               </CTAButton>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
+
+      {/* Funnel nav (no next — loops back) */}
+      <FunnelNav
+        current={{ index: 5, total: 5, label: me.label }}
+        prev={prev}
+        next={auditStep}
+        nextCtaLabel={isEnglish ? 'Run free audit →' : 'Gratis-Audit starten →'}
+        copy={isEnglish
+          ? 'You\'ve reached the end of the funnel. The audit is the door back in.'
+          : 'Du bist am Ende des Funnels. Das Audit ist die Tür zurück.'}
+        location="faq"
+      />
     </Layout>
   );
 }
