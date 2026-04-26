@@ -11,9 +11,9 @@ interface SignalStreamProps {
 }
 
 export function SignalStream({ stages, className = '' }: SignalStreamProps) {
-  // Generate a few stable token positions for the streaming pulses
+  // Fewer pulses + simpler positions = lighter main thread on mobile
   const pulses = useMemo(
-    () => Array.from({ length: 6 }, (_, i) => ({ delay: i * 0.55, top: 30 + (i * 17) % 40 })),
+    () => Array.from({ length: 3 }, (_, i) => ({ delay: i * 0.9, top: 30 + i * 20 })),
     []
   );
 
