@@ -1,688 +1,458 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
-import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
 import { AnalysisRequestForm } from '@/components/forms/AnalysisRequestForm';
-import { 
-  FileOutput, 
-  Bot, 
-  Sparkles, 
-  CheckCircle,
-  ArrowRight,
-  Globe,
-  BarChart3,
-  Lightbulb,
-  Search,
-  Code,
-  Palette,
-  TrendingUp,
-  Users,
-  Target,
-  ExternalLink,
-  Rocket,
-  FileCheck,
-  Wrench,
-  Eye,
-  AlertTriangle,
-  Zap
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { AIScannerDemo } from '@/components/AIScannerDemo';
 import { CTAButton } from '@/components/CTAButton';
+import { EditorialHero, FunnelNav, getFunnelSteps, ScoreCard, AIAnnotation } from '@/components/neural';
+import { ArrowRight, ArrowUpRight, ExternalLink } from 'lucide-react';
 
 export default function UltimatePackagePage() {
   const { isEnglish } = useLanguage();
+  const isDE = !isEnglish;
 
-  const content = isEnglish ? {
-    hero: {
-      badge: 'Free Website Analysis',
-      title: 'Discover Your Optimization Potential',
-      subtitle: 'Our AI reveals every improvement opportunity — for free.',
-      description: 'Get a comprehensive analysis of your website with actionable insights. See exactly what\'s holding you back and how to fix it.',
-    },
-    funnel: {
-      title: 'How It Works',
-      subtitle: '3 simple steps from analysis to implementation.',
-      steps: [
-        {
-          icon: Search,
-          number: '1',
-          title: 'Free Analysis',
-          subtitle: 'You get',
-          description: 'Enter your website URL and receive a complete AI-powered audit within 24-48 hours.',
-          highlight: '100% FREE',
-          details: ['50+ ranking factors checked', 'Competitor comparison', 'Opportunity detection'],
-        },
-        {
-          icon: FileCheck,
-          number: '2',
-          title: 'Detailed Results',
-          subtitle: 'You receive',
-          description: 'A comprehensive report showing every issue, prioritized by impact with clear explanations.',
-          highlight: 'OVERWHELMING',
-          details: ['Priority-ranked action list', 'Technical specifications', 'Quick wins identified'],
-          demoLink: '/en/demo',
-        },
-        {
-          icon: Wrench,
-          number: '3',
-          title: 'Implementation',
-          subtitle: 'We deliver',
-          description: 'We implement all the improvements for you. Professional execution, guaranteed results.',
-          highlight: 'DONE FOR YOU',
-          details: ['Expert implementation', 'Quality assurance', 'Ongoing optimization'],
-        },
-      ],
-    },
-    overwhelming: {
-      title: 'Why Clients Choose Us',
-      subtitle: 'The analysis reveals so much potential — implementation becomes the logical next step.',
-      stats: [
-        { value: '50+', label: 'Factors Analyzed' },
-        { value: '24h', label: 'Analysis Time' },
-        { value: '200%', label: 'Avg. Improvement' },
-        { value: '100%', label: 'Actionable' },
-      ],
-      points: [
-        { icon: Eye, text: 'See every hidden issue on your website' },
-        { icon: AlertTriangle, text: 'Understand what\'s costing you customers' },
-        { icon: Target, text: 'Get a clear roadmap to success' },
-        { icon: Zap, text: 'Skip the guesswork with expert implementation' },
-      ],
-    },
-    features: {
-      title: 'What Gets Analyzed',
-      subtitle: 'A deep-dive into every aspect of your online presence.',
-      categories: [
-        {
-          icon: Search,
-          title: 'SEO Analysis',
-          items: ['Technical SEO audit', 'Keyword opportunities', 'Content gaps', 'Backlink profile', 'Local SEO'],
-        },
-        {
-          icon: Palette,
-          title: 'UX & Design',
-          items: ['User experience', 'Mobile responsiveness', 'Page speed', 'Visual hierarchy', 'Conversion paths'],
-        },
-        {
-          icon: Code,
-          title: 'Technical Stack',
-          items: ['Performance metrics', 'Core Web Vitals', 'Security assessment', 'Structured data', 'Accessibility'],
-        },
-        {
-          icon: TrendingUp,
-          title: 'Conversion',
-          items: ['CTA effectiveness', 'Trust signals', 'Form optimization', 'Sales funnel', 'A/B opportunities'],
-        },
-        {
-          icon: Users,
-          title: 'Competition',
-          items: ['Competitor benchmarking', 'Market positioning', 'Content comparison', 'Feature gaps', 'Pricing intel'],
-        },
-        {
-          icon: Target,
-          title: 'Strategy',
-          items: ['Growth roadmap', 'Quick wins', 'Long-term initiatives', 'Resource priorities', 'Timeline'],
-        },
-      ],
-    },
-    deliverables: {
-      title: 'What You Get',
-      subtitle: 'Everything included in your free analysis.',
-      items: [
-        { icon: FileOutput, title: 'Complete Analysis Report', description: 'All findings, metrics, and recommendations in one document.' },
-        { icon: Lightbulb, title: 'AI Implementation Prompts', description: 'Ready-to-use prompts to implement every recommendation.' },
-        { icon: BarChart3, title: 'Priority Action Plan', description: 'Tasks ranked by impact for maximum ROI.' },
-        { icon: Target, title: 'Competitor Benchmark', description: 'How you compare with specific improvement targets.' },
-      ],
-    },
-    caseStudies: {
-      title: 'Real Results',
-      subtitle: 'See how businesses transformed their online presence.',
-    },
-    demo: {
-      title: 'See the AI in Action',
-      subtitle: 'Watch how our analyzer scans and evaluates websites in real-time.',
-    },
-    cta: {
-      title: 'Ready to See Your Potential?',
-      subtitle: 'Start your free analysis today. No credit card required.',
-    },
-  } : {
-    hero: {
-      badge: 'Kostenlose Website-Analyse',
-      title: 'Entdecke dein Optimierungspotenzial',
-      subtitle: 'Unsere KI zeigt jede Verbesserungsmöglichkeit — komplett gratis.',
-      description: 'Erhalte eine umfassende Analyse deiner Website mit umsetzbaren Insights. Sieh genau, was dich zurückhält und wie du es beheben kannst.',
-    },
-    funnel: {
-      title: 'So funktioniert\'s',
-      subtitle: '3 einfache Schritte von der Analyse zur Umsetzung.',
-      steps: [
-        {
-          icon: Search,
-          number: '1',
-          title: 'Gratis-Analyse',
-          subtitle: 'Du bekommst',
-          description: 'Gib deine Website-URL ein und erhalte ein komplettes KI-gestütztes Audit innerhalb von 24-48 Stunden.',
-          highlight: '100% GRATIS',
-          details: ['50+ Ranking-Faktoren geprüft', 'Konkurrenzvergleich', 'Chancen-Erkennung'],
-        },
-        {
-          icon: FileCheck,
-          number: '2',
-          title: 'Detaillierte Resultate',
-          subtitle: 'Du erhältst',
-          description: 'Einen umfassenden Report mit jedem Problem, nach Impact priorisiert mit klaren Erklärungen.',
-          highlight: 'ÜBERWÄLTIGEND',
-          details: ['Priorisierte Aktionsliste', 'Technische Spezifikationen', 'Quick Wins identifiziert'],
-          demoLink: '/demo',
-        },
-        {
-          icon: Wrench,
-          number: '3',
-          title: 'Implementierung',
-          subtitle: 'Wir liefern',
-          description: 'Wir implementieren alle Verbesserungen für dich. Professionelle Ausführung, garantierte Resultate.',
-          highlight: 'FÜR DICH ERLEDIGT',
-          details: ['Experten-Implementierung', 'Qualitätssicherung', 'Laufende Optimierung'],
-        },
-      ],
-    },
-    overwhelming: {
-      title: 'Warum Kunden uns wählen',
-      subtitle: 'Die Analyse zeigt so viel Potenzial — die Implementierung wird zum logischen nächsten Schritt.',
-      stats: [
-        { value: '50+', label: 'Faktoren analysiert' },
-        { value: '24h', label: 'Analyse-Zeit' },
-        { value: '200%', label: 'Durchschn. Verbesserung' },
-        { value: '100%', label: 'Umsetzbar' },
-      ],
-      points: [
-        { icon: Eye, text: 'Sieh jedes versteckte Problem auf deiner Website' },
-        { icon: AlertTriangle, text: 'Versteh, was dich Kunden kostet' },
-        { icon: Target, text: 'Erhalte eine klare Roadmap zum Erfolg' },
-        { icon: Zap, text: 'Überspring das Rätselraten mit Experten-Implementierung' },
-      ],
-    },
-    features: {
-      title: 'Was analysiert wird',
-      subtitle: 'Ein Deep-Dive in jeden Aspekt deiner Online-Präsenz.',
-      categories: [
-        {
-          icon: Search,
-          title: 'SEO-Analyse',
-          items: ['Technisches SEO-Audit', 'Keyword-Chancen', 'Content-Lücken', 'Backlink-Profil', 'Local SEO'],
-        },
-        {
-          icon: Palette,
-          title: 'UX & Design',
-          items: ['User Experience', 'Mobile Responsiveness', 'Ladezeit', 'Visuelle Hierarchie', 'Conversion-Pfade'],
-        },
-        {
-          icon: Code,
-          title: 'Technischer Stack',
-          items: ['Performance-Metriken', 'Core Web Vitals', 'Sicherheits-Check', 'Strukturierte Daten', 'Accessibility'],
-        },
-        {
-          icon: TrendingUp,
-          title: 'Conversion',
-          items: ['CTA-Effektivität', 'Trust-Signale', 'Formular-Optimierung', 'Sales-Funnel', 'A/B-Chancen'],
-        },
-        {
-          icon: Users,
-          title: 'Wettbewerb',
-          items: ['Konkurrenz-Benchmarking', 'Marktpositionierung', 'Content-Vergleich', 'Feature-Lücken', 'Preis-Intel'],
-        },
-        {
-          icon: Target,
-          title: 'Strategie',
-          items: ['Wachstums-Roadmap', 'Quick Wins', 'Langzeit-Initiativen', 'Ressourcen-Prioritäten', 'Timeline'],
-        },
-      ],
-    },
-    deliverables: {
-      title: 'Was du bekommst',
-      subtitle: 'Alles inklusive in deiner Gratis-Analyse.',
-      items: [
-        { icon: FileOutput, title: 'Kompletter Analyse-Report', description: 'Alle Erkenntnisse, Metriken und Empfehlungen in einem Dokument.' },
-        { icon: Lightbulb, title: 'KI-Implementierungs-Prompts', description: 'Sofort einsetzbare Prompts für jede Empfehlung.' },
-        { icon: BarChart3, title: 'Prioritäts-Aktionsplan', description: 'Tasks nach Impact gerankt für maximalen ROI.' },
-        { icon: Target, title: 'Konkurrenz-Benchmark', description: 'Wie du im Vergleich stehst mit konkreten Verbesserungszielen.' },
-      ],
-    },
-    caseStudies: {
-      title: 'Echte Resultate',
-      subtitle: 'Sieh, wie Unternehmen ihre Online-Präsenz transformiert haben.',
-    },
-    demo: {
-      title: 'Sieh die KI in Aktion',
-      subtitle: 'Beobachte, wie unser Analyzer Websites in Echtzeit scannt und bewertet.',
-    },
-    cta: {
-      title: 'Bereit, dein Potenzial zu sehen?',
-      subtitle: 'Starte deine Gratis-Analyse heute. Keine Kreditkarte nötig.',
-    },
-  };
+  // The Ultimate Package sits between the funnel proper (audit→pricing→call)
+  // and the deeper system narrative. We anchor it as a sibling to the funnel
+  // so users can drop in here and still see where they are.
+  const steps = getFunnelSteps(isEnglish);
+  const auditStep = steps.find((s) => s.id === 'audit')!;
+  const callStep = steps.find((s) => s.id === 'call')!;
 
-  // Case Studies data
-  const caseStudies = [
-    {
-      name: 'Umzugscheck.ch',
-      url: 'https://umzugscheck.ch',
-      industry: isEnglish ? 'Moving Services' : 'Umzugsdienstleistungen',
-      improvements: [
-        { metric: isEnglish ? 'Organic Traffic' : 'Organischer Traffic', before: '1,200', after: '4,800', change: '+300%' },
-        { metric: isEnglish ? 'Lead Conversion' : 'Lead-Conversion', before: '2.1%', after: '6.8%', change: '+224%' },
-        { metric: isEnglish ? 'Page Speed' : 'Ladezeit', before: '4.2s', after: '1.1s', change: '-74%' },
-      ],
-      testimonial: isEnglish 
-        ? 'The analysis revealed optimization opportunities we never knew existed.'
-        : 'Die Analyse deckte Optimierungsmöglichkeiten auf, von denen wir nichts wussten.',
-    },
-    {
-      name: 'Zügelhelden.ch',
-      url: 'https://zuegelhelden.ch',
-      industry: isEnglish ? 'Moving Company' : 'Umzugsfirma',
-      improvements: [
-        { metric: isEnglish ? 'Google Ranking' : 'Google-Ranking', before: 'Page 3', after: 'Top 3', change: 'Top 3' },
-        { metric: isEnglish ? 'Monthly Leads' : 'Monatliche Leads', before: '45', after: '156', change: '+247%' },
-        { metric: isEnglish ? 'Cost per Lead' : 'Kosten pro Lead', before: 'CHF 89', after: 'CHF 31', change: '-65%' },
-      ],
-      testimonial: isEnglish
-        ? 'Within 90 days, we tripled our organic leads.'
-        : 'Innerhalb von 90 Tagen haben wir unsere organischen Leads verdreifacht.',
-    },
-    {
-      name: 'SBPI.ch',
-      url: 'https://sbpi.ch',
-      industry: isEnglish ? 'Business Services' : 'Business Services',
-      improvements: [
-        { metric: isEnglish ? 'SEO Score' : 'SEO-Score', before: '42/100', after: '91/100', change: '+117%' },
-        { metric: isEnglish ? 'Bounce Rate' : 'Absprungrate', before: '68%', after: '34%', change: '-50%' },
-        { metric: isEnglish ? 'Avg. Session' : 'Durchschn. Session', before: '1:24', after: '4:12', change: '+196%' },
-      ],
-      testimonial: isEnglish
-        ? 'The technical specifications alone saved us months of consulting time.'
-        : 'Allein die technischen Spezifikationen haben uns Monate an Beratungszeit gespart.',
-    },
-    {
-      name: 'Feierabend-Umzug.ch',
-      url: 'https://feierabend-umzug.ch',
-      industry: isEnglish ? 'Moving Services' : 'Umzugsservice',
-      improvements: [
-        { metric: isEnglish ? 'Conversion Rate' : 'Conversion-Rate', before: '1.8%', after: '7.2%', change: '+300%' },
-        { metric: isEnglish ? 'Mobile Score' : 'Mobile Score', before: '34/100', after: '96/100', change: '+182%' },
-        { metric: isEnglish ? 'Call Bookings' : 'Anruf-Buchungen', before: '12/week', after: '41/week', change: '+242%' },
-      ],
-      testimonial: isEnglish
-        ? 'Our mobile experience was terrible. The blueprint fixed everything.'
-        : 'Unsere Mobile Experience war schrecklich. Der Blueprint hat alles gefixt.',
-    },
-    {
-      name: 'Reride.ch',
-      url: 'https://reride.ch',
-      industry: isEnglish ? 'E-Commerce' : 'E-Commerce',
-      improvements: [
-        { metric: isEnglish ? 'Page Views' : 'Seitenaufrufe', before: '8k', after: '34k', change: '+325%' },
-        { metric: isEnglish ? 'Cart Abandonment' : 'Warenkorbabbruch', before: '78%', after: '42%', change: '-46%' },
-        { metric: isEnglish ? 'AOV' : 'Durchschn. Bestellwert', before: 'CHF 89', after: 'CHF 156', change: '+75%' },
-      ],
-      testimonial: isEnglish
-        ? 'E-commerce specific insights transformed our funnel.'
-        : 'E-Commerce-spezifische Insights haben unseren Funnel transformiert.',
-    },
-    {
-      name: 'Gentlehands.ch',
-      url: 'https://gentlehands.ch',
-      industry: isEnglish ? 'Wellness & Care' : 'Wellness & Pflege',
-      improvements: [
-        { metric: isEnglish ? 'Organic Keywords' : 'Organische Keywords', before: '45', after: '312', change: '+593%' },
-        { metric: isEnglish ? 'Booking Rate' : 'Buchungsrate', before: '3.2%', after: '11.4%', change: '+256%' },
-        { metric: isEnglish ? 'Trust Score' : 'Vertrauens-Score', before: '52/100', after: '94/100', change: '+81%' },
-      ],
-      testimonial: isEnglish
-        ? 'Our trust signals were missing. The analysis showed exactly where to place them.'
-        : 'Unsere Trust-Signale fehlten. Die Analyse zeigte genau, wo wir sie platzieren sollten.',
-    },
+  const t = isDE
+    ? {
+        eyebrow: '§ Ultimate Package · Vollständige KI-Analyse',
+        title: (
+          <>
+            Eine Analyse, die <em className="italic text-signal">jede Stellschraube</em> deiner
+            Website sichtbar macht.
+          </>
+        ),
+        lede:
+          'Der Reifegrad-Check liefert dir den ersten Score — das Ultimate Package geht den ganzen Weg: jede Schwachstelle, jede Chance, jeder Hebel, dokumentiert und priorisiert.',
+        ctaPrimary: 'Gratis Reifegrad-Check starten',
+        ctaSecondary: 'Beispiel-Report öffnen',
+        annotation:
+          'Die KI durchleuchtet 50+ Faktoren und schreibt dir die Aktionsliste so, dass du sofort umsetzen oder uns übergeben kannst.',
+        meta: ['Resultate in 24–48 h', '50+ Faktoren', 'Konkurrenzvergleich', '100 % gratis'],
+
+        flow: {
+          eyebrow: '— Ablauf',
+          title: (
+            <>
+              Drei Schritte. Vom Score zur <em className="italic text-signal">Umsetzung</em>.
+            </>
+          ),
+          steps: [
+            {
+              n: '01',
+              tag: '100 % gratis',
+              title: 'Gratis-Analyse',
+              body:
+                'URL eingeben — die KI scannt SEO, UX, Speed, Trust-Signale und Konkurrenz. Innerhalb von 24–48 h.',
+              points: ['50+ Ranking-Faktoren', 'Konkurrenz-Benchmark', 'Quick-Wins identifiziert'],
+            },
+            {
+              n: '02',
+              tag: 'Überwältigend',
+              title: 'Detaillierter Report',
+              body:
+                'Jeder Befund priorisiert nach Wirkung. Mit Begründung, Spec und KI-Prompt zur Umsetzung.',
+              points: ['Prioritäts-Roadmap', 'Technische Specs', 'Sofort einsetzbare Prompts'],
+              link: { href: '/demo', label: 'Beispiel-Report ansehen' },
+            },
+            {
+              n: '03',
+              tag: 'Für dich erledigt',
+              title: 'Implementierung',
+              body:
+                'Wir bauen die Verbesserungen — sauber, dokumentiert, mit Qualitätssicherung. Optional und ohne Druck.',
+              points: ['Experten-Umsetzung', 'QA inklusive', 'Laufende Optimierung'],
+            },
+          ],
+        },
+
+        scope: {
+          eyebrow: '— Was geprüft wird',
+          title: (
+            <>
+              Sechs Ebenen. <em className="italic text-signal">Eine Geschichte.</em>
+            </>
+          ),
+          areas: [
+            { id: 'SEO', label: 'Sichtbarkeit', items: ['Tech-SEO-Audit', 'Keyword-Chancen', 'Content-Lücken', 'Backlink-Profil', 'Local SEO'] },
+            { id: 'UX', label: 'Erlebnis', items: ['User Experience', 'Mobile Responsiveness', 'Page Speed', 'Visuelle Hierarchie', 'Conversion-Pfade'] },
+            { id: 'TEC', label: 'Technik', items: ['Performance-Metriken', 'Core Web Vitals', 'Sicherheit', 'Strukturierte Daten', 'Accessibility'] },
+            { id: 'CVR', label: 'Conversion', items: ['CTA-Effektivität', 'Trust-Signale', 'Formulare', 'Sales-Funnel', 'A/B-Chancen'] },
+            { id: 'CMP', label: 'Wettbewerb', items: ['Konkurrenz-Benchmark', 'Marktposition', 'Content-Vergleich', 'Feature-Lücken', 'Preis-Intel'] },
+            { id: 'STR', label: 'Strategie', items: ['Wachstums-Roadmap', 'Quick Wins', 'Langzeit-Initiativen', 'Ressourcen-Prio', 'Timeline'] },
+          ],
+        },
+
+        proof: {
+          eyebrow: '— Ausgewählte Ergebnisse',
+          title: (
+            <>
+              Reale Schweizer KMU. <em className="italic text-signal">Reale Verschiebungen.</em>
+            </>
+          ),
+        },
+
+        sample: {
+          eyebrow: '— Score-Auszug',
+          title: (
+            <>
+              So sieht dein <em className="italic text-signal">Reifegrad</em> aus.
+            </>
+          ),
+          body:
+            'Eine kompakte Zahl, sechs Bereiche, drei priorisierte Hebel. Genug, um in einem Atemzug zu erfassen, wo du stehst — und wo der nächste Sprint hingeht.',
+        },
+
+        cta: {
+          eyebrow: '— Start',
+          title: (
+            <>
+              Bereit, dein <em className="italic text-signal">Potenzial</em> zu sehen?
+            </>
+          ),
+          body: 'Keine Kreditkarte. Keine Verpflichtung. Nur die Insights.',
+        },
+      }
+    : {
+        eyebrow: '§ Ultimate Package · Full AI Analysis',
+        title: (
+          <>
+            One analysis that surfaces <em className="italic text-signal">every lever</em> on your
+            website.
+          </>
+        ),
+        lede:
+          'The maturity check gives you the first score. The Ultimate Package goes the whole way — every gap, every opportunity, documented and prioritised.',
+        ctaPrimary: 'Start the free maturity check',
+        ctaSecondary: 'Open sample report',
+        annotation:
+          'The AI examines 50+ factors and writes the action list so you can ship it yourself or hand it to us.',
+        meta: ['Results in 24–48 h', '50+ factors', 'Competitor benchmark', '100 % free'],
+
+        flow: {
+          eyebrow: '— Flow',
+          title: (
+            <>
+              Three steps. From score to <em className="italic text-signal">shipped</em>.
+            </>
+          ),
+          steps: [
+            {
+              n: '01',
+              tag: '100% free',
+              title: 'Free analysis',
+              body:
+                'Enter a URL — the AI scans SEO, UX, speed, trust signals and competitors. Within 24–48 h.',
+              points: ['50+ ranking factors', 'Competitor benchmark', 'Quick wins surfaced'],
+            },
+            {
+              n: '02',
+              tag: 'Overwhelming',
+              title: 'Detailed report',
+              body:
+                'Every finding prioritised by impact — with reasoning, spec and a ready-to-run AI prompt.',
+              points: ['Priority roadmap', 'Technical specs', 'Drop-in prompts'],
+              link: { href: '/en/demo', label: 'See sample report' },
+            },
+            {
+              n: '03',
+              tag: 'Done for you',
+              title: 'Implementation',
+              body:
+                'We ship the improvements — cleanly, documented, with QA. Optional, no pressure.',
+              points: ['Expert execution', 'QA included', 'Ongoing optimisation'],
+            },
+          ],
+        },
+
+        scope: {
+          eyebrow: '— What gets checked',
+          title: (
+            <>
+              Six layers. <em className="italic text-signal">One story.</em>
+            </>
+          ),
+          areas: [
+            { id: 'SEO', label: 'Visibility', items: ['Technical SEO audit', 'Keyword opportunities', 'Content gaps', 'Backlink profile', 'Local SEO'] },
+            { id: 'UX', label: 'Experience', items: ['User experience', 'Mobile responsiveness', 'Page speed', 'Visual hierarchy', 'Conversion paths'] },
+            { id: 'TEC', label: 'Technical', items: ['Performance', 'Core Web Vitals', 'Security', 'Structured data', 'Accessibility'] },
+            { id: 'CVR', label: 'Conversion', items: ['CTA effectiveness', 'Trust signals', 'Forms', 'Sales funnel', 'A/B opportunities'] },
+            { id: 'CMP', label: 'Competition', items: ['Competitor benchmark', 'Market position', 'Content comparison', 'Feature gaps', 'Pricing intel'] },
+            { id: 'STR', label: 'Strategy', items: ['Growth roadmap', 'Quick wins', 'Long-term plays', 'Resource priorities', 'Timeline'] },
+          ],
+        },
+
+        proof: {
+          eyebrow: '— Selected outcomes',
+          title: (
+            <>
+              Real Swiss SMBs. <em className="italic text-signal">Real shifts.</em>
+            </>
+          ),
+        },
+
+        sample: {
+          eyebrow: '— Score sample',
+          title: (
+            <>
+              This is what your <em className="italic text-signal">maturity</em> looks like.
+            </>
+          ),
+          body:
+            'One compact number, six areas, three prioritised levers. Enough to grasp where you stand — and where the next sprint goes.',
+        },
+
+        cta: {
+          eyebrow: '— Start',
+          title: (
+            <>
+              Ready to see your <em className="italic text-signal">potential</em>?
+            </>
+          ),
+          body: 'No credit card. No obligation. Just the insights.',
+        },
+      };
+
+  // Real Swiss case studies — referenced explicitly per brand memory.
+  const cases = [
+    { name: 'Umzugscheck.ch', url: 'https://umzugscheck.ch', industry: isDE ? 'Umzug' : 'Moving' },
+    { name: 'Zügelhelden.ch', url: 'https://zuegelhelden.ch', industry: isDE ? 'Umzug' : 'Moving' },
+    { name: 'SBPI.ch', url: 'https://sbpi.ch', industry: 'B2B Services' },
+    { name: 'Feierabend-Umzug.ch', url: 'https://feierabend-umzug.ch', industry: isDE ? 'Umzug' : 'Moving' },
+    { name: 'Reride.ch', url: 'https://reride.ch', industry: 'E-Commerce' },
+    { name: 'Gentlehands.ch', url: 'https://gentlehands.ch', industry: isDE ? 'Wellness' : 'Wellness' },
   ];
 
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'Free Website Analysis - AI-Powered Optimization' : 'Kostenlose Website-Analyse - KI-gestützte Optimierung'}
-        description={isEnglish 
-          ? 'Get a free comprehensive AI-powered analysis of your website. Discover hidden opportunities and get a clear action plan.'
-          : 'Erhalte eine kostenlose umfassende KI-gestützte Analyse deiner Website. Entdecke versteckte Chancen und erhalte einen klaren Aktionsplan.'}
+        title={isDE ? 'Ultimate Package — KI-Reifegrad-Analyse' : 'Ultimate Package — AI Maturity Analysis'}
+        description={
+          isDE
+            ? 'Vollständige KI-gestützte Analyse deiner Website. Jede Schwachstelle, jede Chance, priorisiert und umsetzbar.'
+            : 'Full AI-powered analysis of your website. Every gap and every opportunity, prioritised and ready to ship.'
+        }
       />
 
-      {/* Hero Section with Form */}
-      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-ai/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        
-        <SectionContainer padding="large" background="none" className="relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Content */}
-            <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 backdrop-blur-sm border border-ai/20 animate-fade-in">
-                <Sparkles className="w-4 h-4 text-ai" />
-                <span className="text-sm font-medium text-ai">{content.hero.badge}</span>
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
-                <span className="text-gradient-ai">{content.hero.title}</span>
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-muted-foreground mb-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                {content.hero.subtitle}
-              </p>
-              
-              <p className="text-lg text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: '300ms' }}>
-                {content.hero.description}
-              </p>
+      {/* HERO — editorial */}
+      <EditorialHero
+        eyebrow={t.eyebrow}
+        title={t.title}
+        lede={t.lede}
+        annotation={t.annotation}
+        cta={
+          <>
+            <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-audit' : '/gratis-audit'} location="ultimate-hero-primary">
+              {t.ctaPrimary}
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </CTAButton>
+            <CTAButton variant="ghost" size="lg" href={isEnglish ? '/en/demo' : '/demo'} location="ultimate-hero-secondary">
+              {t.ctaSecondary}
+            </CTAButton>
+          </>
+        }
+        meta={t.meta.map((m, i) => (
+          <span key={i}>{m}</span>
+        ))}
+      />
 
-              {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-4 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '400ms' }}>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-ai" />
-                  <span>{isEnglish ? 'No credit card required' : 'Keine Kreditkarte nötig'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-ai" />
-                  <span>{isEnglish ? 'Results in 24-48h' : 'Resultate in 24-48h'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-ai" />
-                  <span>{isEnglish ? '100% free' : '100% kostenlos'}</span>
-                </div>
-              </div>
+      {/* SCORE SAMPLE — visual anchor */}
+      <section className="border-t border-border">
+        <div className="container-section py-20 md:py-28">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-center">
+            <div className="col-span-12 lg:col-span-5 flex justify-center lg:justify-start">
+              <ScoreCard score={74} label={isDE ? 'Reifegrad' : 'Maturity'} />
             </div>
-
-            {/* Right: Form */}
-            <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <AnalysisRequestForm variant="hero" />
+            <div className="col-span-12 lg:col-span-7">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="signal-dot" aria-hidden />
+                <span className="section-marker">{t.sample.eyebrow}</span>
+              </div>
+              <h2 className="text-balance text-4xl md:text-5xl font-editorial font-semibold leading-[1.05]">
+                {t.sample.title}
+              </h2>
+              <p className="mt-6 max-w-xl text-lg text-foreground/75 leading-[1.55]">{t.sample.body}</p>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* 3-Step Funnel */}
-      <SectionContainer background="default" className="relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.funnel.title}
-              subtitle={content.funnel.subtitle}
-            />
-          </ScrollReveal>
-          
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connection line */}
-            <div className="hidden md:block absolute top-32 left-[20%] right-[20%] h-1 bg-gradient-to-r from-ai via-primary to-ai rounded-full" />
-            
-            {content.funnel.steps.map((step, index) => (
-              <ScrollReveal key={index}>
-                <div className="relative flex flex-col items-center text-center p-8 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-ai/30 transition-all duration-300 group h-full">
-                  {/* Step number badge */}
-                  <div className="absolute -top-5 w-12 h-12 rounded-full bg-gradient-to-br from-ai to-primary text-white flex items-center justify-center font-bold text-xl z-10 shadow-lg shadow-ai/30">
-                    {step.number}
-                  </div>
-                  
-                  {/* Icon */}
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-ai/20 flex items-center justify-center mb-4 mt-6 group-hover:scale-110 transition-transform">
-                    <step.icon className="w-10 h-10 text-ai" />
-                  </div>
+      {/* FLOW — three editorial steps */}
+      <section className="border-t border-border">
+        <div className="container-section py-20 md:py-28">
+          <div className="max-w-2xl mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="signal-dot" aria-hidden />
+              <span className="section-marker">{t.flow.eyebrow}</span>
+            </div>
+            <h2 className="text-balance text-4xl md:text-5xl lg:text-6xl font-editorial font-semibold leading-[1.05]">
+              {t.flow.title}
+            </h2>
+          </div>
 
-                  {/* Highlight badge */}
-                  <div className="inline-flex items-center px-3 py-1 mb-3 rounded-full bg-ai/10 border border-ai/20">
-                    <span className="text-xs font-bold text-ai">{step.highlight}</span>
+          <ol className="grid grid-cols-12 gap-x-6 gap-y-12">
+            {t.flow.steps.map((step) => (
+              <li key={step.n} className="col-span-12 md:col-span-4 group">
+                <div className="border-t border-foreground pt-6">
+                  <div className="flex items-baseline justify-between mb-6">
+                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-foreground/55">
+                      {step.n}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-signal">
+                      {step.tag}
+                    </span>
                   </div>
-                  
-                  <p className="text-sm text-muted-foreground mb-1">{step.subtitle}</p>
-                  <h3 className="text-xl font-bold font-display mb-3">{step.title}</h3>
-                  <p className="text-muted-foreground mb-6">{step.description}</p>
-                  
-                  <ul className="space-y-2 mt-auto">
-                    {step.details.map((detail, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CheckCircle className="w-4 h-4 text-ai flex-shrink-0" />
-                        {detail}
+                  <h3 className="font-editorial text-2xl md:text-3xl leading-[1.15] mb-4">
+                    {step.title}
+                  </h3>
+                  <p className="text-foreground/75 leading-[1.55] mb-6">{step.body}</p>
+                  <ul className="space-y-2 text-sm text-foreground/70">
+                    {step.points.map((p) => (
+                      <li key={p} className="flex gap-3">
+                        <span className="text-signal mt-1.5 inline-block w-1 h-1 rounded-full bg-signal" />
+                        <span>{p}</span>
                       </li>
                     ))}
                   </ul>
-                  
-                  {/* Demo Link for Step 2 */}
-                  {(step as any).demoLink && (
-                    <a 
-                      href={(step as any).demoLink}
-                      className="mt-4 inline-flex items-center gap-2 text-sm text-ai hover:text-ai/80 transition-colors font-medium"
+                  {(step as any).link && (
+                    <a
+                      href={(step as any).link.href}
+                      className="mt-6 inline-flex items-center gap-2 text-sm font-mono uppercase tracking-[0.16em] text-signal hover:text-foreground transition-colors"
                     >
-                      <ExternalLink className="w-4 h-4" />
-                      {isEnglish ? 'See sample report' : 'Beispiel-Report ansehen'}
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      {(step as any).link.label}
                     </a>
                   )}
                 </div>
-              </ScrollReveal>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* Why Choose Us / Overwhelming Effect */}
-      <SectionContainer background="muted" className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.overwhelming.title}
-              subtitle={content.overwhelming.subtitle}
-            />
-          </ScrollReveal>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            {content.overwhelming.stats.map((stat, index) => (
-              <ScrollReveal key={index}>
-                <div className="text-center p-6 rounded-2xl bg-card/50 border border-border/50">
-                  <div className="text-4xl md:text-5xl font-bold font-display text-gradient-ai mb-2">
-                    {stat.value}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          {/* Points */}
-          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {content.overwhelming.points.map((point, index) => (
-              <ScrollReveal key={index}>
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-card/50 border border-border/50">
-                  <div className="w-12 h-12 rounded-xl bg-ai/10 flex items-center justify-center flex-shrink-0">
-                    <point.icon className="w-6 h-6 text-ai" />
-                  </div>
-                  <p className="font-medium">{point.text}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* Interactive Demo Section */}
-      <SectionContainer id="demo" background="default" className="relative overflow-hidden">
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.demo.title}
-              subtitle={content.demo.subtitle}
-            />
-          </ScrollReveal>
-          
-          <ScrollReveal>
-            <AIScannerDemo />
-          </ScrollReveal>
-        </div>
-      </SectionContainer>
-
-      {/* What's Analyzed */}
-      <SectionContainer background="muted" className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.features.title}
-              subtitle={content.features.subtitle}
-            />
-          </ScrollReveal>
-          
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" staggerDelay={0.1}>
-            {content.features.categories.map((category, index) => (
-              <StaggerItem key={index}>
-                <div className="p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <category.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-bold font-display">{category.title}</h3>
-                  </div>
-                  <ul className="space-y-2">
-                    {category.items.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </SectionContainer>
-
-      {/* What You Receive */}
-      <SectionContainer background="default" className="relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-ai/5 rounded-full blur-3xl" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.deliverables.title}
-              subtitle={content.deliverables.subtitle}
-            />
-          </ScrollReveal>
-          
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
-            {content.deliverables.items.map((item, index) => (
-              <StaggerItem key={index}>
-                <div className="p-6 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border/50 hover:border-ai/30 transition-all duration-300 group h-full">
-                  <div className="w-14 h-14 rounded-xl bg-ai/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <item.icon className="w-7 h-7 text-ai" />
-                  </div>
-                  <h3 className="text-lg font-bold font-display mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </SectionContainer>
-
-      {/* Case Studies */}
-      <SectionContainer background="muted" className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={content.caseStudies.title}
-              subtitle={content.caseStudies.subtitle}
-            />
-          </ScrollReveal>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {caseStudies.map((study, index) => (
-              <ScrollReveal key={index}>
-                <div className="p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 group h-full flex flex-col">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="font-bold font-display group-hover:text-primary transition-colors">{study.name}</h3>
-                      <p className="text-xs text-muted-foreground">{study.industry}</p>
-                    </div>
-                    <a 
-                      href={study.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                    </a>
-                  </div>
-                  
-                  {/* Metrics */}
-                  <div className="space-y-3 mb-4 flex-1">
-                    {study.improvements.map((imp, i) => (
-                      <div key={i} className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">{imp.metric}</span>
-                        <span className="font-bold text-primary">{imp.change}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Testimonial */}
-                  <div className="pt-4 border-t border-border/50">
-                    <p className="text-xs text-muted-foreground italic">"{study.testimonial}"</p>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* Final CTA with Form */}
-      <SectionContainer background="default" className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh opacity-50" />
-        
-        <div className="relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-            <ScrollReveal>
-              <div className="text-center lg:text-left">
-                <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
-                  {content.cta.title}
-                </h2>
-                <p className="text-xl text-muted-foreground mb-6">
-                  {content.cta.subtitle}
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-ai" />
-                    <span>{isEnglish ? 'Free forever' : 'Für immer gratis'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-ai" />
-                    <span>{isEnglish ? 'No obligations' : 'Keine Verpflichtungen'}</span>
-                  </div>
-                </div>
+      {/* SCOPE — six layers as editorial table */}
+      <section className="border-t border-border bg-muted/20">
+        <div className="container-section py-20 md:py-28">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <div className="col-span-12 lg:col-span-4">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="signal-dot" aria-hidden />
+                <span className="section-marker">{t.scope.eyebrow}</span>
               </div>
-            </ScrollReveal>
+              <h2 className="text-balance text-4xl md:text-5xl font-editorial font-semibold leading-[1.05]">
+                {t.scope.title}
+              </h2>
+              <div className="hidden lg:block mt-10">
+                <AIAnnotation>
+                  {isDE
+                    ? 'Jede Ebene wird einzeln gescort und im Report mit Quelle und Vertrauensgrad dokumentiert.'
+                    : 'Each layer is scored separately and documented with source and confidence in the report.'}
+                </AIAnnotation>
+              </div>
+            </div>
 
-            <ScrollReveal>
-              <AnalysisRequestForm />
-            </ScrollReveal>
+            <div className="col-span-12 lg:col-span-8">
+              <ul className="divide-y divide-border">
+                {t.scope.areas.map((area) => (
+                  <li key={area.id} className="grid grid-cols-12 gap-x-6 py-6">
+                    <div className="col-span-12 md:col-span-3">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-foreground/55">
+                        {area.id}
+                      </div>
+                      <div className="font-editorial text-xl mt-1">{area.label}</div>
+                    </div>
+                    <div className="col-span-12 md:col-span-9">
+                      <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-foreground/75">
+                        {area.items.map((it) => (
+                          <li key={it}>{it}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-      </SectionContainer>
+      </section>
+
+      {/* PROOF — Swiss case-study list */}
+      <section className="border-t border-border">
+        <div className="container-section py-20 md:py-28">
+          <div className="max-w-2xl mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="signal-dot" aria-hidden />
+              <span className="section-marker">{t.proof.eyebrow}</span>
+            </div>
+            <h2 className="text-balance text-4xl md:text-5xl font-editorial font-semibold leading-[1.05]">
+              {t.proof.title}
+            </h2>
+          </div>
+
+          <ul className="divide-y divide-border border-y border-border">
+            {cases.map((c, i) => (
+              <li key={c.name}>
+                <a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="grid grid-cols-12 gap-x-6 items-center py-6 group hover:bg-muted/30 transition-colors px-2 -mx-2"
+                >
+                  <span className="col-span-2 md:col-span-1 font-mono text-xs text-foreground/55">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="col-span-7 md:col-span-6 font-editorial text-xl md:text-2xl">
+                    {c.name}
+                  </span>
+                  <span className="col-span-3 md:col-span-4 font-mono text-xs uppercase tracking-[0.16em] text-foreground/55">
+                    {c.industry}
+                  </span>
+                  <ArrowUpRight className="col-span-12 md:col-span-1 w-4 h-4 text-foreground/55 group-hover:text-signal transition-colors justify-self-end" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* CTA + Form */}
+      <section className="border-t border-border">
+        <div className="container-section py-20 md:py-28">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
+            <div className="col-span-12 lg:col-span-6">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="signal-dot" aria-hidden />
+                <span className="section-marker">{t.cta.eyebrow}</span>
+              </div>
+              <h2 className="text-balance text-4xl md:text-5xl lg:text-6xl font-editorial font-semibold leading-[1.05]">
+                {t.cta.title}
+              </h2>
+              <p className="mt-6 max-w-md text-lg text-foreground/75 leading-[1.55]">{t.cta.body}</p>
+            </div>
+            <div className="col-span-12 lg:col-span-6">
+              <AnalysisRequestForm />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Funnel nav — push toward audit / call */}
+      <FunnelNav
+        current={{ index: 3, total: 5, label: isDE ? 'Ultimate Package' : 'Ultimate Package' }}
+        prev={auditStep}
+        next={callStep}
+        nextCtaLabel={isDE ? 'Gespräch buchen' : 'Book a call'}
+        copy={
+          isDE
+            ? 'Du hast den Score gesehen. Jetzt entscheidest du: selbst umsetzen oder gemeinsam.'
+            : 'You have seen the score. Now you choose: ship it yourself or with us.'
+        }
+        location="ultimate-funnel"
+      />
     </Layout>
   );
 }
