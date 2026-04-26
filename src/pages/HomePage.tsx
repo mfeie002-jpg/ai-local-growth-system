@@ -1,578 +1,411 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
-import { SectionContainer, SectionHeader } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
-import { ServicesSection } from '@/components/ServicesSection';
-import { UltimatePackageSection } from '@/components/UltimatePackageSection';
-import { AIChatbotDemo } from '@/components/AIChatbotDemo';
-import { SocialProofSection } from '@/components/SocialProofSection';
-import { PricingCard } from '@/components/PricingCard';
-import { FAQAccordion } from '@/components/FAQAccordion';
-import { ScrollReveal, StaggerContainer, StaggerItem } from '@/components/motion/ScrollReveal';
-import { siteConfig } from '@/config/site';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowRight,
-  Play,
-  Bot,
-  Zap,
-  Target,
-  TrendingUp,
-  Users,
-  Award,
-  CheckCircle,
-  Sparkles
-} from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import heroHumanAI from '@/assets/hero-human-ai-enhanced.jpg';
-import aiCollaborationImg from '@/assets/ai-collaboration.jpg';
-import servicesOverviewImg from '@/assets/services-overview.jpg';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import {
+  EditorialHero,
+  SectionMarker,
+  SignalStream,
+  ScoreCard,
+  AIAnnotation,
+  RevealText,
+} from '@/components/neural';
 
-// Process step images
-import discoveryImg from '@/assets/process/discovery.jpg';
-import aiStrategyImg from '@/assets/process/ai-strategy.jpg';
-import implementationImg from '@/assets/process/implementation.jpg';
-import optimizationImg from '@/assets/process/optimization.jpg';
-
+/**
+ * HomePage — Neural Editorial.
+ * 6 numbered sections, AI-first manifesto, single funnel CTA throughout.
+ * No fabricated proof, no aurora chrome.
+ */
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
-  const [audioState, setAudioState] = useState<'idle' | 'playing' | 'paused'>('idle');
-  const [audioExists, setAudioExists] = useState(true);
+  const auditPath = isEnglish ? '/en/free-audit' : '/gratis-audit';
+  const ultimatePath = isEnglish ? '/en/ultimate-package' : '/ultimate-package';
+  const callPath = isEnglish ? '/en/free-call' : '/gratis-call';
+  const casesPath = isEnglish ? '/en/case-studies' : '/fallstudien';
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // ---- Section 02 — engine stages ----
+  const stages = isEnglish
+    ? ['Collect', 'Normalize', 'Score', 'Interpret']
+    : ['Erfassen', 'Normalisieren', 'Bewerten', 'Interpretieren'];
 
-  useEffect(() => {
-    const audio = new Audio('/audio/lead-concierge-demo.mp3');
-    audio.addEventListener('error', () => setAudioExists(false));
-    audio.addEventListener('canplaythrough', () => setAudioExists(true));
-    audioRef.current = audio;
-    
-    return () => {
-      audio.pause();
-      audio.src = '';
-    };
-  }, []);
+  // ---- Section 03 — Ultimate Package teaser bullets ----
+  const ultimateBullets = isEnglish
+    ? [
+        'Full AI scan of your digital presence',
+        'A scoring model that grades 25+ signals — deterministic, not invented',
+        'Top 3 opportunities, ranked by impact-over-effort',
+        'A done-for-you implementation path',
+      ]
+    : [
+        'Vollständiger KI-Scan Ihrer digitalen Präsenz',
+        'Scoring-Modell mit 25+ Signalen — deterministisch, nicht erfunden',
+        'Top 3 Chancen, geordnet nach Wirkung-pro-Aufwand',
+        'Ein für Sie umgesetzter Pfad zur Implementierung',
+      ];
 
-  const handlePlayDemo = () => {
-    if (!audioRef.current || !audioExists) return;
-    
-    if (audioState === 'playing') {
-      audioRef.current.pause();
-      setAudioState('paused');
-    } else {
-      audioRef.current.play();
-      setAudioState('playing');
-    }
-  };
-
-  // Value pillars (no fabricated metrics — methodology-based)
-  const pillars = isEnglish ? [
-    { icon: Bot, label: 'AI-First', sub: 'Built into every layer' },
-    { icon: Target, label: 'Measurable', sub: 'Evidence-based scoring' },
-    { icon: Zap, label: 'Fast', sub: 'Weeks, not quarters' },
-    { icon: Users, label: 'Human', sub: 'Machine meets craft' },
-  ] : [
-    { icon: Bot, label: 'KI-First', sub: 'In jeder Ebene verankert' },
-    { icon: Target, label: 'Messbar', sub: 'Evidenzbasiertes Scoring' },
-    { icon: Zap, label: 'Schnell', sub: 'Wochen, keine Quartale' },
-    { icon: Users, label: 'Menschlich', sub: 'Maschine trifft Handwerk' },
-  ];
-
-  // Process steps with images
-  const processSteps = isEnglish ? [
-    { 
-      image: discoveryImg, 
-      title: 'Discovery & Analysis', 
-      description: 'We dive deep into your business, analyzing your current digital presence, competitors, and market opportunities.',
-      details: ['Complete website & SEO audit', 'Competitor analysis', 'Market opportunity mapping', 'Goal definition workshop'],
-      href: '/en/free-audit'
-    },
-    { 
-      image: aiStrategyImg, 
-      title: 'AI Strategy', 
-      description: 'We design custom AI-powered solutions tailored to your specific business needs and growth objectives.',
-      details: ['Custom AI solution design', 'Technology stack selection', 'Integration planning', 'ROI projections'],
-      href: '/en/services/ai-implementation'
-    },
-    { 
-      image: implementationImg, 
-      title: 'Rapid Implementation', 
-      description: 'Our expert team deploys your digital marketing and AI systems with speed and precision.',
-      details: ['Agile development sprints', 'Quality assurance testing', 'Staff training & onboarding', 'Go-live support'],
-      href: '/en/services/design-development'
-    },
-    { 
-      image: optimizationImg, 
-      title: 'Continuous Optimization', 
-      description: 'We continuously improve performance using data analytics and machine learning insights.',
-      details: ['A/B testing campaigns', 'Performance monitoring', 'Monthly strategy reviews', 'Scaling recommendations'],
-      href: '/en/services/seo'
-    },
-  ] : [
-    { 
-      image: discoveryImg, 
-      title: 'Discovery & Analyse', 
-      description: 'Wir tauchen tief in Ihr Geschäft ein und analysieren Ihre digitale Präsenz, Wettbewerber und Marktchancen.',
-      details: ['Komplettes Website- & SEO-Audit', 'Wettbewerbsanalyse', 'Marktchancen-Mapping', 'Zieldefinitions-Workshop'],
-      href: '/gratis-audit'
-    },
-    { 
-      image: aiStrategyImg, 
-      title: 'KI-Strategie', 
-      description: 'Wir entwickeln maßgeschneiderte KI-gestützte Lösungen für Ihre spezifischen Geschäftsanforderungen.',
-      details: ['Individuelle KI-Lösungsgestaltung', 'Technologie-Stack Auswahl', 'Integrationsplanung', 'ROI-Prognosen'],
-      href: '/services/ki-implementierung'
-    },
-    { 
-      image: implementationImg, 
-      title: 'Schnelle Implementierung', 
-      description: 'Unser Expertenteam setzt Ihre digitalen Marketing- und KI-Systeme schnell und präzise um.',
-      details: ['Agile Entwicklungssprints', 'Qualitätssicherungstests', 'Mitarbeiterschulung', 'Go-Live Support'],
-      href: '/services/design-entwicklung'
-    },
-    { 
-      image: optimizationImg, 
-      title: 'Kontinuierliche Optimierung', 
-      description: 'Wir verbessern kontinuierlich die Leistung durch Datenanalyse und Machine-Learning-Erkenntnisse.',
-      details: ['A/B-Testing Kampagnen', 'Performance-Monitoring', 'Monatliche Strategie-Reviews', 'Skalierungsempfehlungen'],
-      href: '/services/seo'
-    },
-  ];
-
-  // Why choose us
-  const whyUs = isEnglish ? [
-    { icon: Bot, title: 'AI-First Expertise', description: 'AI isn\'t an afterthought — it\'s our foundation.' },
-    { icon: Award, title: 'Proven Results', description: 'Data-driven strategies that deliver measurable ROI.' },
-    { icon: Users, title: 'Dedicated Team', description: 'Your success is powered by specialists, not generalists.' },
-    { icon: Zap, title: 'Fast Execution', description: 'From strategy to launch in weeks, not months.' },
-  ] : [
-    { icon: Bot, title: 'KI-First Expertise', description: 'KI ist kein Nachgedanke — sie ist unser Fundament.' },
-    { icon: Award, title: 'Bewiesene Ergebnisse', description: 'Datengetriebene Strategien mit messbarem ROI.' },
-    { icon: Users, title: 'Dediziertes Team', description: 'Ihr Erfolg wird von Spezialisten angetrieben.' },
-    { icon: Zap, title: 'Schnelle Umsetzung', description: 'Von Strategie bis Launch in Wochen, nicht Monaten.' },
-  ];
-
-  // FAQ items
-  const faqItems = [
-    ...t.faq.items,
-    ...(isEnglish ? [
-      { question: 'How is AI integrated into your services?', answer: 'AI powers everything we do — from automated campaign optimization to intelligent chatbots and predictive analytics.' },
-      { question: 'Do I need technical knowledge?', answer: 'Absolutely not. We handle all the technical complexity. You focus on your business.' },
-    ] : [
-      { question: 'Wie wird KI in Ihre Dienste integriert?', answer: 'KI treibt alles an — von automatisierter Kampagnenoptimierung bis hin zu intelligenten Chatbots und Predictive Analytics.' },
-      { question: 'Brauche ich technisches Wissen?', answer: 'Absolut nicht. Wir kümmern uns um die gesamte technische Komplexität. Sie konzentrieren sich auf Ihr Geschäft.' },
-    ]),
-  ];
+  // ---- Section 04 — services list (editorial, not card grid) ----
+  const services = isEnglish
+    ? [
+        { num: '01', name: 'AI Implementation', desc: 'Voice agents, scanners, autonomous funnels.', path: '/en/services/ai-implementation', anchor: true },
+        { num: '02', name: 'SEO',                desc: 'Local rankings, evergreen organic traffic.',  path: '/en/services/seo' },
+        { num: '03', name: 'SEA / PPC',          desc: 'Performance ads with measurable ROAS.',     path: '/en/services/sea' },
+        { num: '04', name: 'Reputation',         desc: 'Reviews, response systems, trust capital.', path: '/en/services/reputation' },
+        { num: '05', name: 'Design & Dev',       desc: 'Sites that convert by construction.',       path: '/en/services/design-development' },
+        { num: '06', name: 'Brand Deployment',   desc: 'Identity systems shipped at speed.',        path: '/en/services/brand-deployment' },
+        { num: '07', name: 'Social Media',       desc: 'Channels with editorial discipline.',       path: '/en/services/social-media' },
+      ]
+    : [
+        { num: '01', name: 'KI-Implementierung', desc: 'Voice-Agents, Scanner, autonome Funnels.',     path: '/services/ki-implementierung', anchor: true },
+        { num: '02', name: 'SEO',                desc: 'Lokale Rankings, nachhaltiger Traffic.',        path: '/services/seo' },
+        { num: '03', name: 'SEA / PPC',          desc: 'Performance-Ads mit messbarem ROAS.',           path: '/services/sea' },
+        { num: '04', name: 'Reputation',         desc: 'Bewertungen, Antwortsysteme, Vertrauen.',       path: '/services/reputation' },
+        { num: '05', name: 'Design & Entwicklung', desc: 'Websites, die per Konstruktion konvertieren.', path: '/services/design-entwicklung' },
+        { num: '06', name: 'Brand Deployment',   desc: 'Identitätssysteme, schnell ausgerollt.',         path: '/services/brand-deployment' },
+        { num: '07', name: 'Social Media',       desc: 'Kanäle mit redaktioneller Disziplin.',           path: '/services/social-media' },
+      ];
 
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'AI-Powered Digital Marketing Agency' : 'KI-gestützte Digital Marketing Agentur'}
-        description={isEnglish 
-          ? 'We help businesses grow with AI-powered digital marketing. SEO, SEA, brand management, design, and more — all enhanced by artificial intelligence.'
-          : 'Wir helfen Unternehmen mit KI-gestütztem digitalem Marketing zu wachsen. SEO, SEA, Markenmanagement, Design und mehr — alles verstärkt durch künstliche Intelligenz.'}
+        title={isEnglish ? 'AI-First Digital Growth · itsFeierabend.ch' : 'KI-First Digital Growth · itsFeierabend.ch'}
+        description={isEnglish
+          ? 'A scoring engine for your digital presence — and a team that turns the score into growth. Free AI audit for Swiss service businesses.'
+          : 'Eine Scoring-Engine für Ihre digitale Präsenz — und ein Team, das aus der Bewertung Wachstum macht. Gratis KI-Audit für Schweizer Dienstleister.'}
       />
       <OrganizationSchema description={t.siteDescription} />
 
-      {/* Hero Section — Maximalist Push */}
-      <section className="relative overflow-hidden min-h-screen flex items-center noise-overlay-lite">
-        {/* Layered backgrounds */}
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="absolute inset-0 grid-pattern opacity-[0.12]" />
+      {/* ============================================================ */}
+      {/* 01 — Manifesto Hero                                          */}
+      {/* ============================================================ */}
+      <EditorialHero
+        eyebrow={isEnglish ? '01 / 06 · Manifesto' : '01 / 06 · Manifest'}
+        title={
+          isEnglish ? (
+            <>
+              Your website is <em className="font-editorial">already</em> talking.
+              <br />
+              We taught the AI how to <em className="font-editorial">listen</em>.
+            </>
+          ) : (
+            <>
+              Ihre Website <em className="font-editorial">spricht</em> bereits.
+              <br />
+              Wir haben der KI beigebracht, <em className="font-editorial">zuzuhören</em>.
+            </>
+          )
+        }
+        lede={
+          isEnglish
+            ? 'A scoring engine reads 25+ signals on your digital presence — visibility, trust, conversion, technical health, automation readiness — and tells you exactly what to fix first. No invented metrics. No fluff.'
+            : 'Eine Scoring-Engine liest 25+ Signale Ihrer digitalen Präsenz — Sichtbarkeit, Vertrauen, Conversion, technische Gesundheit, Automatisierungsreife — und sagt Ihnen genau, was zuerst zu tun ist. Keine erfundenen Kennzahlen. Kein Bullshit.'
+        }
+        cta={
+          <>
+            <CTAButton variant="primary" size="lg" href={auditPath} location="hero">
+              {isEnglish ? 'Run my free AI audit' : 'Gratis KI-Audit starten'}
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </CTAButton>
+            <CTAButton variant="ghost" size="lg" href={ultimatePath} location="hero">
+              {isEnglish ? 'See the Ultimate Package →' : 'Ultimate Package ansehen →'}
+            </CTAButton>
+          </>
+        }
+        annotation={
+          isEnglish
+            ? 'gemini-2.5-flash · interprets 25+ signals · deterministic scoring · partial-result aware'
+            : 'gemini-2.5-flash · interpretiert 25+ Signale · deterministisches Scoring · liefert auch Teilergebnisse'
+        }
+        meta={
+          <>
+            <span>{isEnglish ? 'No commitment' : 'Keine Verpflichtung'}</span>
+            <span aria-hidden>·</span>
+            <span>{isEnglish ? 'Results in minutes' : 'Ergebnis in Minuten'}</span>
+            <span aria-hidden>·</span>
+            <span>{isEnglish ? 'Swiss-based' : 'In der Schweiz gemacht'}</span>
+          </>
+        }
+      />
 
-        {/* Hero image with stronger gradient mask */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={heroHumanAI}
-            alt={isEnglish ? 'Human-AI connection' : 'Mensch-KI-Verbindung'}
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-50 mix-blend-luminosity"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
-        </div>
+      {/* Hairline divider */}
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-        {/* Aurora orbs */}
-        <div className="absolute -top-32 -right-32 w-[40rem] h-[40rem] rounded-full blur-3xl opacity-40 animate-float"
-             style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }} />
-        <div className="absolute -bottom-32 -left-32 w-[36rem] h-[36rem] rounded-full blur-3xl opacity-30 animate-float"
-             style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.4), transparent 70%)', animationDelay: '2s' }} />
-        <div className="absolute top-1/3 left-1/2 w-72 h-72 rounded-full blur-3xl opacity-20 animate-pulse-glow"
-             style={{ background: 'radial-gradient(circle, hsl(190 90% 50% / 0.5), transparent 70%)' }} />
+      {/* ============================================================ */}
+      {/* 02 — The Engine                                              */}
+      {/* ============================================================ */}
+      <section className="section-padding">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <div className="col-span-12 lg:col-span-5">
+              <SectionMarker index={2} total={6} label={isEnglish ? 'The Engine' : 'Die Engine'} />
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>Four layers. <em className="font-editorial">One verdict.</em></>
+                  ) : (
+                    <>Vier Schichten. <em className="font-editorial">Ein Urteil.</em></>
+                  )}
+                </h2>
+                <p className="mt-6 text-lg text-foreground/75 max-w-md">
+                  {isEnglish
+                    ? 'Evidence is collected from public sources, normalized into typed signals, scored by deterministic rules, then interpreted by an AI that is not allowed to invent.'
+                    : 'Evidenz wird aus öffentlichen Quellen gesammelt, in typisierte Signale normalisiert, von deterministischen Regeln bewertet und dann von einer KI interpretiert, die nichts erfinden darf.'}
+                </p>
+              </RevealText>
 
-        <SectionContainer padding="large" background="none" className="relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Left — Content (7 cols) */}
-            <div className="lg:col-span-7 max-w-3xl">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 rounded-full glass-panel border-aurora animate-fade-in">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium tracking-wide uppercase">
-                  {isEnglish ? 'AI-Powered Growth Partner' : 'KI-gestützter Wachstumspartner'}
-                </span>
-              </div>
-
-              {/* Editorial headline */}
-              <h1 className="mb-8 animate-fade-in font-editorial font-light text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight"
-                  style={{ animationDelay: '100ms' }}>
-                {isEnglish ? (
-                  <>
-                    <span className="block text-foreground">Digital marketing,</span>
-                    <span className="block italic text-aurora">supercharged</span>
-                    <span className="block text-foreground">by AI.</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="block text-foreground">Digital Marketing,</span>
-                    <span className="block italic text-aurora">verstärkt</span>
-                    <span className="block text-foreground">durch KI.</span>
-                  </>
-                )}
-              </h1>
-
-              {/* Subheadline */}
-              <p className="text-lg md:text-2xl text-muted-foreground mb-12 max-w-2xl animate-fade-in leading-relaxed"
-                 style={{ animationDelay: '200ms' }}>
+              <AIAnnotation className="mt-8 max-w-md">
                 {isEnglish
-                  ? 'SEO, SEA, social, brand and design — orchestrated by an AI engine that turns your website into a measurable growth system.'
-                  : 'SEO, SEA, Social, Brand und Design — orchestriert von einer KI-Engine, die Ihre Website in ein messbares Wachstumssystem verwandelt.'}
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-12" style={{ animationDelay: '300ms' }}>
-                <CTAButton
-                  variant="primary"
-                  size="lg"
-                  href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                  location="hero"
-                  className="text-lg px-8 py-4 shadow-glow-intense hover:-translate-y-0.5 transition-all"
-                >
-                  {isEnglish ? 'Get Free AI Audit' : 'Gratis KI-Audit'}
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </CTAButton>
-                <CTAButton
-                  variant="secondary"
-                  size="lg"
-                  href={isEnglish ? '/en/demo' : '/demo'}
-                  location="hero"
-                  className="text-lg px-8 py-4 glass-panel hover:-translate-y-0.5 transition-all"
-                >
-                  <Play className="mr-2 w-5 h-5" />
-                  {isEnglish ? 'See AI in Action' : 'KI in Aktion sehen'}
-                </CTAButton>
-              </div>
-
-              {/* Trust signals */}
-              <div className="flex items-center gap-6 flex-wrap text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '400ms' }}>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? 'No commitment' : 'Keine Verpflichtung'}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? 'Results in 48h' : 'Ergebnisse in 48h'}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  {isEnglish ? 'AI-powered insights' : 'KI-gestützte Insights'}
-                </span>
-              </div>
+                  ? 'AI may translate, prioritize and recommend. AI may not invent scores or cite data not in the input.'
+                  : 'KI darf übersetzen, priorisieren, empfehlen. KI darf keine Scores erfinden oder Daten zitieren, die nicht im Input sind.'}
+              </AIAnnotation>
             </div>
 
-            {/* Right — Pillar stack (5 cols) */}
-            <div className="hidden lg:block lg:col-span-5 animate-fade-in" style={{ animationDelay: '500ms' }}>
-              <div className="space-y-3">
-                {pillars.map((p, index) => {
-                  const Icon = p.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="group glass-panel rounded-2xl p-5 flex items-center gap-4 hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300"
-                      style={{
-                        marginLeft: `${index * 1.5}rem`,
-                        animationDelay: `${500 + index * 100}ms`,
-                      }}
-                    >
-                      <div className="w-12 h-12 rounded-xl bg-gradient-aurora flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
-                        <Icon className="w-6 h-6 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-editorial font-semibold tracking-tight">{p.label}</div>
-                        <div className="text-sm text-muted-foreground">{p.sub}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+            <div className="col-span-12 lg:col-span-7 lg:pl-8">
+              <RevealText delay={120}>
+                <SignalStream stages={stages} />
+              </RevealText>
 
-          {/* Mobile pillars */}
-          <div className="grid grid-cols-2 gap-3 mt-16 lg:hidden animate-fade-in" style={{ animationDelay: '500ms' }}>
-            {pillars.map((p, index) => {
-              const Icon = p.icon;
-              return (
-                <div key={index} className="glass-panel rounded-xl p-4">
-                  <Icon className="w-5 h-5 text-primary mb-2" />
-                  <div className="text-base font-editorial font-semibold">{p.label}</div>
-                  <div className="text-xs text-muted-foreground">{p.sub}</div>
+              <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 font-mono text-sm">
+                <div>
+                  <div className="text-foreground/55 text-xs uppercase tracking-[0.18em] mb-1.5">{isEnglish ? 'Signals' : 'Signale'}</div>
+                  <div className="text-foreground">25+</div>
                 </div>
-              );
-            })}
+                <div>
+                  <div className="text-foreground/55 text-xs uppercase tracking-[0.18em] mb-1.5">{isEnglish ? 'Scoring' : 'Bewertung'}</div>
+                  <div className="text-foreground">{isEnglish ? 'Deterministic' : 'Deterministisch'}</div>
+                </div>
+                <div>
+                  <div className="text-foreground/55 text-xs uppercase tracking-[0.18em] mb-1.5">{isEnglish ? 'Confidence' : 'Konfidenz'}</div>
+                  <div className="text-foreground">{isEnglish ? 'observed · inferred · estimated' : 'beobachtet · abgeleitet · geschätzt'}</div>
+                </div>
+                <div>
+                  <div className="text-foreground/55 text-xs uppercase tracking-[0.18em] mb-1.5">{isEnglish ? 'Output' : 'Ergebnis'}</div>
+                  <div className="text-foreground">{isEnglish ? 'Score · Top 3 fixes' : 'Score · Top 3 Fixes'}</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* Services Section */}
-      <ServicesSection />
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-      {/* Ultimate Package - Our Core USP */}
-      <UltimatePackageSection />
+      {/* ============================================================ */}
+      {/* 03 — The Ultimate Package                                    */}
+      {/* ============================================================ */}
+      <section className="section-padding bg-secondary/40">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
+            <div className="col-span-12 lg:col-span-7">
+              <SectionMarker index={3} total={6} label={isEnglish ? 'The Ultimate Package' : 'Das Ultimate Package'} />
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>Everything the audit reveals — <em className="font-editorial">implemented</em> for you.</>
+                  ) : (
+                    <>Alles, was das Audit aufdeckt — <em className="font-editorial">für Sie umgesetzt</em>.</>
+                  )}
+                </h2>
+                <p className="mt-6 text-lg text-foreground/75 max-w-2xl">
+                  {isEnglish
+                    ? 'The Ultimate Package is our flagship offer: the AI scan, the prioritized roadmap, and a team that ships every fix. One contract, one timeline, one accountable partner.'
+                    : 'Das Ultimate Package ist unser Flaggschiff: der KI-Scan, die priorisierte Roadmap und ein Team, das jeden Fix umsetzt. Ein Vertrag, eine Timeline, ein verantwortlicher Partner.'}
+                </p>
+              </RevealText>
 
-      {/* Social Proof - Logos & Testimonials */}
-      <SocialProofSection />
+              <ul className="mt-10 space-y-4">
+                {ultimateBullets.map((b, i) => (
+                  <li key={i} className="flex items-start gap-4">
+                    <span className="font-mono text-xs text-foreground/55 mt-1.5 w-6 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="text-base text-foreground/85">{b}</span>
+                  </li>
+                ))}
+              </ul>
 
-      {/* How We Work Section */}
-      <SectionContainer id="process" background="muted" className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={isEnglish ? 'How We Work' : 'Wie wir arbeiten'}
-              subtitle={isEnglish 
-                ? 'A proven 4-step process that delivers results faster with AI acceleration.'
-                : 'Ein bewährter 4-Schritte-Prozess, der mit KI-Beschleunigung schneller Ergebnisse liefert.'}
-            />
-          </ScrollReveal>
-          
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8" staggerDelay={0.15}>
-            {processSteps.map((step, index) => (
-              <StaggerItem key={index}>
-                <Link 
-                  to={step.href}
-                  className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
-                >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={step.image} 
-                      alt={step.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                    
-                    {/* Step number badge */}
-                    <div className="absolute top-4 left-4 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold font-display text-lg">
-                      {index + 1}
-                    </div>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold font-display mb-3 group-hover:text-primary transition-colors">
-                      {step.title}
-                    </h3>
-                    <p className="text-muted-foreground mb-4 leading-relaxed">
-                      {step.description}
-                    </p>
-                    
-                    {/* Details list */}
-                    <ul className="space-y-2 mb-4">
-                      {step.details.map((detail, i) => (
-                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                          {detail}
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    {/* Learn more link */}
-                    <div className="flex items-center gap-2 text-sm font-medium text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                      <span>{isEnglish ? 'Learn More' : 'Mehr erfahren'}</span>
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </Link>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </SectionContainer>
-
-      {/* Why Choose Us */}
-      <SectionContainer background="muted" className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh opacity-50" />
-        
-        <div className="relative">
-          <ScrollReveal>
-            <SectionHeader 
-              title={isEnglish ? 'Why Choose Us' : 'Warum uns wählen'}
-              subtitle={isEnglish 
-                ? 'We\'re not just another agency. We\'re your AI-powered growth partner.'
-                : 'Wir sind nicht nur eine weitere Agentur. Wir sind Ihr KI-gestützter Wachstumspartner.'}
-            />
-          </ScrollReveal>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
-            {whyUs.map((item, index) => (
-              <StaggerItem key={index}>
-                <div 
-                  className="p-6 rounded-2xl bg-card/30 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                    <item.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h4 className="text-lg font-bold font-display mb-2">{item.title}</h4>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </SectionContainer>
-
-      {/* AI Chatbot Demo Section */}
-      <SectionContainer className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh opacity-30" />
-        
-        <div className="relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Content */}
-            <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-ai/10 border border-ai/30">
-                <Bot className="w-4 h-4 text-ai" />
-                <span className="text-sm font-medium text-ai">
-                  {isEnglish ? 'Live AI Demo' : 'Live KI-Demo'}
-                </span>
-              </div>
-              
-              <h2 className="mb-4 font-display">
-                {isEnglish ? 'See Our AI in Action' : 'Sehen Sie unsere KI in Aktion'}
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                {isEnglish 
-                  ? 'Watch how our AI assistant handles customer inquiries, qualifies leads, and provides instant support — all with natural, human-like conversation.'
-                  : 'Sehen Sie, wie unser KI-Assistent Kundenanfragen bearbeitet, Leads qualifiziert und sofortigen Support bietet — alles mit natürlicher, menschlicher Konversation.'}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <CTAButton
-                  variant="primary"
-                  size="lg"
-                  href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                  location="chatbot-demo"
-                  className="glow-ai"
-                >
-                  {isEnglish ? 'Get AI for Your Business' : 'KI für Ihr Geschäft'}
-                  <ArrowRight className="ml-2 w-5 h-5" />
+              <div className="mt-10 flex flex-wrap gap-4">
+                <CTAButton variant="primary" size="lg" href={ultimatePath} location="ultimate-teaser">
+                  {isEnglish ? 'Open the Ultimate Package' : 'Ultimate Package öffnen'}
+                  <ArrowUpRight className="ml-2 w-4 h-4" />
+                </CTAButton>
+                <CTAButton variant="ghost" size="lg" href={auditPath} location="ultimate-teaser">
+                  {isEnglish ? 'Or start with the free audit →' : 'Oder mit dem Gratis-Audit starten →'}
                 </CTAButton>
               </div>
             </div>
-            
-            {/* Right - Chatbot Demo */}
-            <div>
-              <AIChatbotDemo />
+
+            {/* Right — score teaser visual */}
+            <div className="col-span-12 lg:col-span-5">
+              <RevealText delay={120}>
+                <div className="card-paper p-10 flex flex-col items-center">
+                  <div className="section-marker mb-8">
+                    {isEnglish ? 'Sample report · live engine' : 'Beispielreport · Live-Engine'}
+                  </div>
+                  <ScoreCard
+                    score={62}
+                    label={isEnglish ? 'Overall' : 'Gesamt'}
+                    verdict={
+                      isEnglish
+                        ? 'Visibility solid. Conversion is the cheapest lever. Three fixes can move the score >75.'
+                        : 'Sichtbarkeit solide. Conversion ist der günstigste Hebel. Drei Fixes bringen den Score >75.'
+                    }
+                  />
+                </div>
+              </RevealText>
             </div>
           </div>
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* Pricing Section */}
-      <SectionContainer id="pricing" background="muted">
-        <SectionHeader 
-          title={t.pricing.sectionTitle}
-          subtitle={isEnglish 
-            ? 'Flexible packages designed for businesses of all sizes.'
-            : 'Flexible Pakete für Unternehmen jeder Grösse.'}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8">
-          <PricingCard
-            name={t.pricing.launch.name}
-            duration={t.pricing.launch.duration}
-            forWhom={t.pricing.launch.forWhom}
-            price={t.pricing.launch.price}
-            features={t.pricing.launch.features}
-            isMonthly={false}
-          />
-          <PricingCard
-            name={t.pricing.growth.name}
-            duration={isEnglish ? '90 days (then monthly)' : '90 Tage (danach monatlich)'}
-            forWhom={t.pricing.growth.forWhom}
-            price={t.pricing.growth.price}
-            features={t.pricing.growth.features}
-            highlighted
-            highlightLabel={isEnglish ? 'Most Popular' : 'Am beliebtesten'}
-          />
-          <PricingCard
-            name={t.pricing.leader.name}
-            duration={t.pricing.leader.duration}
-            forWhom={t.pricing.leader.forWhom}
-            price={t.pricing.leader.price}
-            priceNote={isEnglish ? '(+ performance bonus)' : '(+ Performance-Bonus)'}
-            features={t.pricing.leader.features}
-          />
-        </div>
-        
-        <div className="max-w-2xl mx-auto text-center text-sm text-muted-foreground">
-          <p>{t.pricing.templateNote}</p>
-        </div>
-      </SectionContainer>
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-      {/* FAQ Section */}
-      <SectionContainer id="faq">
-        <SectionHeader title={t.faq.sectionTitle} />
-        <div className="max-w-3xl mx-auto">
-          <FAQAccordion items={faqItems} />
-        </div>
-      </SectionContainer>
+      {/* ============================================================ */}
+      {/* 04 — Services (editorial list, not card grid)               */}
+      {/* ============================================================ */}
+      <section className="section-padding">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+            <div className="col-span-12 lg:col-span-4">
+              <SectionMarker index={4} total={6} label={isEnglish ? 'Services' : 'Services'} />
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>Seven disciplines. <em className="font-editorial">One operating system.</em></>
+                  ) : (
+                    <>Sieben Disziplinen. <em className="font-editorial">Ein Operating System.</em></>
+                  )}
+                </h2>
+                <p className="mt-6 text-base text-foreground/70 max-w-sm">
+                  {isEnglish
+                    ? 'AI implementation is the spine. The other six wrap around it so every tactic feeds the same growth model.'
+                    : 'KI-Implementierung ist das Rückgrat. Die anderen sechs ordnen sich darum an, damit jede Taktik dasselbe Wachstumsmodell nährt.'}
+                </p>
+              </RevealText>
+            </div>
 
-      {/* Final CTA */}
-      <SectionContainer className="gradient-primary text-primary-foreground relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-        </div>
-        
-        <div className="relative max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-white/10 border border-white/20">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              {isEnglish ? 'Start Your AI Journey' : 'Starten Sie Ihre KI-Reise'}
-            </span>
+            <ul className="col-span-12 lg:col-span-8 lg:border-l lg:border-border lg:pl-10">
+              {services.map((s, i) => (
+                <li key={s.path}>
+                  <Link
+                    to={s.path}
+                    className="group block py-7 border-t border-border first:border-t-0 transition-colors hover:bg-foreground/[0.015] -mx-4 px-4 rounded-md"
+                  >
+                    <div className="grid grid-cols-12 items-baseline gap-4">
+                      <div className="col-span-2 sm:col-span-1 font-mono text-xs text-foreground/55 pt-1">{s.num}</div>
+                      <div className="col-span-10 sm:col-span-7">
+                        <div className="flex items-baseline gap-3">
+                          <h3 className="font-editorial text-3xl md:text-4xl font-light text-foreground">
+                            {s.name}
+                          </h3>
+                          {s.anchor && (
+                            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
+                              ★ Core
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="col-span-12 sm:col-span-4 text-sm text-foreground/65 group-hover:text-foreground transition-colors">
+                        <div className="flex items-center justify-between gap-3">
+                          <span>{s.desc}</span>
+                          <ArrowUpRight className="w-4 h-4 shrink-0 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          
-          <h2 className="text-primary-foreground mb-4 font-display">
-            {isEnglish ? 'Ready to Transform Your Business?' : 'Bereit, Ihr Geschäft zu transformieren?'}
-          </h2>
-          <p className="text-primary-foreground/80 text-xl mb-10">
+        </div>
+      </section>
+
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* ============================================================ */}
+      {/* 05 — Real portfolio (no fabricated metrics)                  */}
+      {/* ============================================================ */}
+      <section className="section-padding bg-secondary/40">
+        <div className="container-section">
+          <SectionMarker index={5} total={6} label={isEnglish ? 'Selected Work' : 'Ausgewählte Arbeit'} />
+          <RevealText>
+            <div className="grid grid-cols-12 gap-x-6 gap-y-6 items-end">
+              <h2 className="col-span-12 lg:col-span-8 text-balance">
+                {isEnglish ? (
+                  <>We're new — and we'd rather <em className="font-editorial">show</em> than promise.</>
+                ) : (
+                  <>Wir sind neu — und zeigen lieber <em className="font-editorial">Arbeit</em>, statt zu versprechen.</>
+                )}
+              </h2>
+              <div className="col-span-12 lg:col-span-4 lg:text-right">
+                <Link
+                  to={casesPath}
+                  className="font-mono text-sm uppercase tracking-[0.18em] text-foreground/70 hover:text-foreground inline-flex items-center gap-2 link-underline"
+                >
+                  {isEnglish ? 'All case studies' : 'Alle Fallstudien'}
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </RevealText>
+
+          <p className="mt-6 max-w-2xl text-base text-foreground/65">
             {isEnglish
-              ? 'Get a free AI-powered audit and discover your growth potential.'
-              : 'Erhalten Sie ein kostenloses KI-gestütztes Audit und entdecken Sie Ihr Wachstumspotenzial.'}
+              ? 'Real Swiss service businesses we have analysed or worked with — referenced openly, no invented "+40% leads" claims.'
+              : 'Echte Schweizer Dienstleister, die wir analysiert oder begleitet haben — offen genannt, ohne erfundene „+40 % Leads"-Behauptungen.'}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <CTAButton
-              variant="secondary"
-              size="lg"
-              href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-              location="footer-cta"
-              className="bg-white text-primary hover:bg-white/90 shadow-xl"
-            >
-              {t.cta.getAudit}
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </CTAButton>
-            <CTAButton
-              variant="ghost"
-              size="lg"
-              href={isEnglish ? '/en/free-call' : '/gratis-call'}
-              location="footer-cta"
-              className="text-primary-foreground border-white/30 hover:bg-white/10"
-            >
-              {t.cta.bookCall}
-            </CTAButton>
+
+          <ul className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
+            {[
+              { name: 'umzugscheck.ch', tag: isEnglish ? 'Moving services · Switzerland' : 'Umzüge · Schweiz' },
+              { name: 'zuegelhelden.ch', tag: isEnglish ? 'Moving services · Switzerland' : 'Umzüge · Schweiz' },
+              { name: 'sbpictures.ch', tag: isEnglish ? 'Photography · Switzerland' : 'Fotografie · Schweiz' },
+              { name: 'velolife.ch', tag: isEnglish ? 'Cycling · Switzerland' : 'Velo · Schweiz' },
+            ].map((c) => (
+              <li key={c.name} className="bg-background p-8 md:p-10">
+                <div className="font-editorial text-3xl md:text-4xl font-light text-foreground">{c.name}</div>
+                <div className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-foreground/55">{c.tag}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* ============================================================ */}
+      {/* 06 — Final CTA                                               */}
+      {/* ============================================================ */}
+      <section className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={6} total={6} label={isEnglish ? 'Start' : 'Loslegen'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
+            <RevealText className="col-span-12 lg:col-span-8">
+              <h2 className="text-balance">
+                {isEnglish ? (
+                  <>Two ways in. <em className="font-editorial">Both free.</em></>
+                ) : (
+                  <>Zwei Einstiege. <em className="font-editorial">Beide gratis.</em></>
+                )}
+              </h2>
+              <p className="mt-6 text-lg text-foreground/75 max-w-xl">
+                {isEnglish
+                  ? 'Run the AI audit yourself — or talk to a human first. Either way, you leave with a real number and a real next step.'
+                  : 'Selbst das KI-Audit starten — oder zuerst mit einem Menschen sprechen. So oder so: Sie gehen mit einer echten Zahl und einem echten nächsten Schritt.'}
+              </p>
+            </RevealText>
+
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-3 lg:items-end">
+              <CTAButton variant="primary" size="lg" href={auditPath} location="footer-cta">
+                {isEnglish ? 'Run free AI audit' : 'Gratis KI-Audit starten'}
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </CTAButton>
+              <CTAButton variant="ghost" size="lg" href={callPath} location="footer-cta">
+                {isEnglish ? 'Book a free call →' : 'Gratis-Call buchen →'}
+              </CTAButton>
+            </div>
           </div>
         </div>
-      </SectionContainer>
+      </section>
     </Layout>
   );
 }

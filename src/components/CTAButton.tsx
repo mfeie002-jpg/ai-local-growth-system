@@ -15,6 +15,12 @@ interface CTAButtonProps {
   disabled?: boolean;
 }
 
+/**
+ * CTAButton — Neural Editorial buttons.
+ * Primary  = solid ink primary on bone, hairline shadow.
+ * Secondary = bone with ink hairline border, inverts on hover.
+ * Ghost    = no chrome, mono-style underline on hover.
+ */
 export function CTAButton({
   variant = 'primary',
   size = 'default',
@@ -40,16 +46,17 @@ export function CTAButton({
   };
 
   const baseStyles = cn(
-    'inline-flex items-center justify-center font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 rounded-full',
     {
-      // Sizes
-      'px-4 py-2 text-sm rounded-md': size === 'sm',
-      'px-6 py-3 text-base rounded-lg': size === 'default',
-      'px-8 py-4 text-lg rounded-lg': size === 'lg',
-      // Variants
-      'bg-primary text-primary-foreground hover:bg-primary-hover shadow-button': variant === 'primary',
-      'bg-transparent border-2 border-foreground text-foreground hover:bg-foreground hover:text-background': variant === 'secondary',
-      'bg-transparent text-foreground hover:bg-muted': variant === 'ghost',
+      'px-4 py-2 text-xs tracking-wide': size === 'sm',
+      'px-6 py-3 text-sm tracking-wide': size === 'default',
+      'px-8 py-4 text-base tracking-wide': size === 'lg',
+      'bg-foreground text-background hover:bg-foreground/90 shadow-button':
+        variant === 'primary',
+      'bg-transparent border border-foreground/40 text-foreground hover:border-foreground hover:bg-foreground hover:text-background':
+        variant === 'secondary',
+      'bg-transparent text-foreground hover:bg-foreground/5':
+        variant === 'ghost',
     },
     className
   );
