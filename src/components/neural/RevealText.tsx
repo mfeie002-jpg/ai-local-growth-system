@@ -7,12 +7,11 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 interface RevealTextProps {
   children: ReactNode;
   delay?: number; // ms
-  as?: keyof JSX.IntrinsicElements;
   className?: string;
 }
 
-export function RevealText({ children, delay = 0, as: Tag = 'div', className = '' }: RevealTextProps) {
-  const ref = useRef<HTMLElement | null>(null);
+export function RevealText({ children, delay = 0, className = '' }: RevealTextProps) {
+  const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -33,10 +32,9 @@ export function RevealText({ children, delay = 0, as: Tag = 'div', className = '
     return () => io.disconnect();
   }, []);
 
-  // @ts-expect-error - dynamic tag prop is fine here
   return (
-    <Tag
-      ref={ref as never}
+    <div
+      ref={ref}
       className={`${className} transition-all duration-700 ease-out`}
       style={{
         opacity: visible ? 1 : 0,
@@ -45,6 +43,6 @@ export function RevealText({ children, delay = 0, as: Tag = 'div', className = '
       }}
     >
       {children}
-    </Tag>
+    </div>
   );
 }
