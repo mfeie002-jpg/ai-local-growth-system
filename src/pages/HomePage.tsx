@@ -176,7 +176,7 @@ export default function HomePage() {
       <OrganizationSchema description={t.siteDescription} />
 
       {/* Hero Section — Maximalist Push */}
-      <section className="relative overflow-hidden min-h-screen flex items-center noise-overlay">
+      <section className="relative overflow-hidden min-h-screen flex items-center noise-overlay-lite">
         {/* Layered backgrounds */}
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 grid-pattern opacity-[0.12]" />
