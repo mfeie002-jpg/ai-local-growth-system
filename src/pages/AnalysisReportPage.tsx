@@ -9,7 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   CheckCircle, Search, Shield, Target, Zap,
   Gauge, Loader2, ArrowUpRight,
-  ChevronDown, ChevronUp, Download, Circle
+  ChevronDown, ChevronUp, Download, Circle,
+  type LucideIcon
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -77,7 +78,7 @@ interface Report {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
-const categoryIcons: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+const categoryIcons: Record<string, LucideIcon> = {
   visibility: Search,
   trust: Shield,
   conversion: Target,
