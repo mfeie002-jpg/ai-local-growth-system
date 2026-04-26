@@ -311,9 +311,12 @@
     z-index: 1;
   }
 
-  /* Noise overlay — adds organic grain to dark surfaces */
+  /* Noise overlay — organic grain. Optimized: cached SVG, GPU-promoted layer,
+     and `contain: paint` so it never invalidates ancestors. Off-screen instances
+     are skipped via `content-visibility: auto`. */
   .noise-overlay {
     position: relative;
+    contain: layout paint style;
   }
   .noise-overlay::after {
     content: '';
@@ -322,17 +325,54 @@
     pointer-events: none;
     opacity: var(--noise-opacity);
     mix-blend-mode: overlay;
+    /* Static, browser-cached data URI; transform: translateZ(0) promotes to its own layer */
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
     background-size: 200px 200px;
+    transform: translateZ(0);
+    will-change: opacity;
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 800px;
   }
 
-  /* Aurora hero backdrop — layered radial blooms (light-theme balanced) */
+  /* Lite noise — for above-the-fold heroes. Skips mix-blend-mode (expensive
+     compositing) and uses a smaller tile. Visually near-identical at low opacity. */
+  .noise-overlay-lite {
+    position: relative;
+  }
+  .noise-overlay-lite::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: calc(var(--noise-opacity) * 0.85);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+    background-size: 120px 120px;
+    transform: translateZ(0);
+  }
+
+  /* Aurora hero backdrop — layered radial blooms. Off-screen instances are
+     skipped via `content-visibility: auto`. */
   .aurora-bg {
     position: relative;
+    contain: layout paint style;
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 800px;
     background:
       radial-gradient(ellipse 70% 45% at 18% -5%, hsl(217 91% 62% / 0.10), transparent 65%),
       radial-gradient(ellipse 55% 45% at 82% 8%, hsl(270 75% 65% / 0.09), transparent 65%),
       radial-gradient(ellipse 65% 55% at 50% 105%, hsl(190 90% 55% / 0.07), transparent 70%);
+  }
+
+  /* Aurora-lite — single linear gradient, GPU-cheap. Use for above-the-fold
+     heroes to keep first paint snappy without losing the colored ambience. */
+  .aurora-bg-lite {
+    position: relative;
+    background: linear-gradient(
+      135deg,
+      hsl(217 91% 62% / 0.08) 0%,
+      hsl(270 75% 65% / 0.06) 50%,
+      hsl(190 90% 55% / 0.06) 100%
+    );
   }
 
   /* Mega-menu panel */
