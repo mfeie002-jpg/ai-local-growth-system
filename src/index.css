@@ -326,13 +326,13 @@
     background-size: 200px 200px;
   }
 
-  /* Aurora hero backdrop — layered radial blooms */
+  /* Aurora hero backdrop — layered radial blooms (light-theme balanced) */
   .aurora-bg {
     position: relative;
     background:
-      radial-gradient(ellipse 80% 50% at 20% 0%, hsl(217 91% 60% / 0.18), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 10%, hsl(270 75% 65% / 0.16), transparent 60%),
-      radial-gradient(ellipse 70% 60% at 50% 100%, hsl(190 90% 55% / 0.12), transparent 65%);
+      radial-gradient(ellipse 70% 45% at 18% -5%, hsl(217 91% 62% / 0.10), transparent 65%),
+      radial-gradient(ellipse 55% 45% at 82% 8%, hsl(270 75% 65% / 0.09), transparent 65%),
+      radial-gradient(ellipse 65% 55% at 50% 105%, hsl(190 90% 55% / 0.07), transparent 70%);
   }
 
   /* Mega-menu panel */
