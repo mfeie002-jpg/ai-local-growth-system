@@ -18,14 +18,17 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Sora", "system-ui", "sans-serif"],
-        display: ["Space Grotesk", "system-ui", "sans-serif"],
-        editorial: ["Fraunces", "Space Grotesk", "serif"],
+        sans: ["Inter Tight", "system-ui", "sans-serif"],
+        display: ["Fraunces", "Georgia", "serif"],
+        editorial: ["Fraunces", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       backgroundImage: {
+        "gradient-score": "var(--gradient-score)",
         "gradient-aurora": "var(--gradient-aurora)",
         "gradient-fire": "var(--gradient-fire)",
         "gradient-sunset": "var(--gradient-sunset)",
+        "gradient-card-glow": "var(--gradient-card-glow)",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -57,6 +60,10 @@ export default {
         ai: {
           DEFAULT: "hsl(var(--ai-accent))",
           foreground: "hsl(var(--ai-accent-foreground))",
+        },
+        signal: {
+          DEFAULT: "hsl(var(--signal))",
+          foreground: "hsl(var(--signal-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
