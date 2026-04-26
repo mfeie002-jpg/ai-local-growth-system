@@ -1,6 +1,10 @@
 /**
- * RevealText — wraps content in a gentle fade-up reveal on scroll into view.
- * Lighter than ScrollReveal; uses IntersectionObserver only.
+ * RevealText — gentle fade-in on scroll into view.
+ *
+ * Mobile/CWV note: we do NOT translate the element. The wrapper reserves its
+ * natural height from first paint, so revealing only opacity avoids any
+ * cumulative layout shift (CLS). Respects prefers-reduced-motion by showing
+ * content immediately.
  */
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
@@ -15,6 +19,14 @@ export function RevealText({ children, delay = 0, className = '' }: RevealTextPr
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Honor reduced motion + ensure content is visible if IO not supported
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || typeof IntersectionObserver === 'undefined') {
+      setVisible(true);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -26,7 +38,7 @@ export function RevealText({ children, delay = 0, className = '' }: RevealTextPr
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -35,11 +47,12 @@ export function RevealText({ children, delay = 0, className = '' }: RevealTextPr
   return (
     <div
       ref={ref}
-      className={`${className} transition-all duration-700 ease-out`}
+      className={`${className} transition-opacity duration-500 ease-out motion-reduce:transition-none`}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(16px)',
         transitionDelay: `${delay}ms`,
+        // Reserve space; opacity-only animation = no layout shift
+        willChange: visible ? 'auto' : 'opacity',
       }}
     >
       {children}
