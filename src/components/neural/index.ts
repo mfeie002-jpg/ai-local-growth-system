@@ -4,3 +4,5 @@ export { SignalStream } from './SignalStream';
 export { ScoreCard } from './ScoreCard';
 export { AIAnnotation } from './AIAnnotation';
 export { RevealText } from './RevealText';
+export { FunnelNav, getFunnelSteps } from './FunnelNav';
+export type { FunnelStep } from './FunnelNav';
