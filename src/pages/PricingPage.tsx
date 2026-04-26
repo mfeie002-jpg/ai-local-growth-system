@@ -1,80 +1,63 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer } from '@/components/SectionContainer';
-import { PricingCard } from '@/components/PricingCard';
 import { CTAButton } from '@/components/CTAButton';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { PricingCard } from '@/components/PricingCard';
+import {
+  EditorialHero,
+  SectionMarker,
+  RevealText,
+  FunnelNav,
+  getFunnelSteps,
+} from '@/components/neural';
+import { ArrowRight } from 'lucide-react';
 
+/**
+ * PricingPage — Funnel step 03 / 05 · Commit.
+ * Three packages, transparency on what's NOT included, then push to call.
+ * Previous: Audit. Next: Call.
+ */
 export default function PricingPage() {
   const { t, isEnglish } = useLanguage();
+  const steps = getFunnelSteps(isEnglish);
+  const me = steps[2];
+  const prev = steps[1];
+  const next = steps[3];
 
   return (
-    <Layout showDemoTeaser>
+    <Layout>
       <SEOHead title={t.pricing.sectionTitle} description={t.pricing.disclaimer} />
 
-      {/* Hero — editorial */}
-      <section className="relative overflow-hidden border-b border-border/50">
-        {/* Background layers */}
-        <div className="absolute inset-0 grid-pattern opacity-[0.15]" />
-        <div className="noise-overlay absolute inset-0" />
-        <div
-          className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
-        />
-        <div
-          className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-3xl opacity-25"
-          style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.5), transparent 70%)' }}
-        />
+      {/* Hero */}
+      <EditorialHero
+        eyebrow={`${me.hint} · ${me.label}`}
+        title={
+          isEnglish ? (
+            <>Investment that <em className="font-editorial">compounds.</em></>
+          ) : (
+            <>Investition, die sich <em className="font-editorial">summiert.</em></>
+          )
+        }
+        lede={t.pricing.disclaimer}
+        cta={
+          <CTAButton variant="primary" size="lg" href={next.href} location="pricing-hero">
+            {isEnglish ? 'Talk it through →' : 'Drüber sprechen →'}
+          </CTAButton>
+        }
+        annotation={
+          isEnglish
+            ? 'Three sizes · Launch · Growth · Leader · ad spend paid by you, directly'
+            : 'Drei Größen · Launch · Growth · Leader · Ad Spend zahlst du direkt'
+        }
+      />
 
-        <SectionContainer padding="large" className="relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-            {/* Meta sidebar */}
-            <div className="lg:col-span-3 order-2 lg:order-1">
-              <div className="flex flex-col gap-4">
-                <span className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground">
-                  ◆ 00 / Pricing
-                </span>
-                <div className="h-px w-16 bg-gradient-to-r from-primary to-transparent" />
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                  {isEnglish
-                    ? 'Transparent packages. No hidden fees. Built for ambitious local brands.'
-                    : 'Transparente Pakete. Keine versteckten Kosten. Für ambitionierte lokale Brands.'}
-                </p>
-              </div>
-            </div>
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-            {/* Headline */}
-            <div className="lg:col-span-9 order-1 lg:order-2">
-              <h1 className="font-editorial text-5xl sm:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-tight mb-8">
-                {isEnglish ? (
-                  <>
-                    Investment that <br />
-                    <span className="text-aurora italic">compounds.</span>
-                  </>
-                ) : (
-                  <>
-                    Investition, die <br />
-                    <span className="text-aurora italic">sich potenziert.</span>
-                  </>
-                )}
-              </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-                {t.pricing.disclaimer}
-              </p>
-            </div>
-          </div>
-        </SectionContainer>
-      </section>
-
-      {/* Pricing Cards */}
-      <section className="relative overflow-hidden">
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] blur-3xl opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, hsl(var(--accent) / 0.4), transparent 70%)' }}
-        />
-        <SectionContainer className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16 pt-4">
+      {/* Pricing cards */}
+      <section className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={1} total={3} label={isEnglish ? 'Three packages' : 'Drei Pakete'} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <PricingCard
               index={0}
               name={t.pricing.launch.name}
@@ -105,130 +88,102 @@ export default function PricingPage() {
             />
           </div>
 
-          {/* Disclaimer */}
-          <div className="max-w-2xl mx-auto">
-            <div className="glass-panel p-6 sm:p-8 text-center">
-              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-muted-foreground block mb-3">
-                ◇ Note
-              </span>
-              <p className="text-muted-foreground leading-relaxed">{t.pricing.templateNote}</p>
-            </div>
+          <div className="mt-12 max-w-2xl mx-auto card-paper p-6 sm:p-8 text-center">
+            <div className="section-marker mb-3">{isEnglish ? 'Note' : 'Hinweis'}</div>
+            <p className="text-foreground/70 leading-relaxed">{t.pricing.templateNote}</p>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* What's NOT included — asymmetric */}
-      <section className="relative border-t border-border/50">
-        <div className="noise-overlay absolute inset-0 opacity-50" />
-        <SectionContainer className="relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-            <div className="lg:col-span-5">
-              <span className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground block mb-4">
-                ◆ 01 / Transparency
-              </span>
-              <h2 className="font-editorial text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight">
-                {isEnglish ? (
-                  <>
-                    What's <span className="text-aurora italic">not</span> included?
-                  </>
-                ) : (
-                  <>
-                    Was ist <span className="text-aurora italic">nicht</span> inklusive?
-                  </>
-                )}
-              </h2>
-            </div>
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-            <div className="lg:col-span-7">
-              <div className="glass-panel p-8 sm:p-10 relative overflow-hidden">
-                <div
-                  className="absolute -top-20 -right-20 w-64 h-64 blur-3xl opacity-30"
-                  style={{ background: 'radial-gradient(circle, hsl(var(--ai-accent) / 0.5), transparent 70%)' }}
-                />
-                <div className="relative">
-                  <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-primary block mb-3">
-                    ◇ Ad Spend
-                  </span>
-                  <h3 className="font-editorial text-3xl font-semibold mb-5 leading-tight">
-                    {isEnglish ? 'You pay platforms directly.' : 'Du zahlst Plattformen direkt.'}
-                  </h3>
-                  <p className="text-foreground/80 mb-6 leading-relaxed">
-                    {isEnglish
-                      ? 'Ad spend is paid directly to Google/Meta by you. This gives you full control and transparency over your advertising budget.'
-                      : 'Ad Spend zahlst du direkt an Google/Meta. Das gibt dir volle Kontrolle und Transparenz über dein Werbebudget.'}
-                  </p>
-                  <div className="flex items-center gap-3 pt-6 border-t border-border/50">
-                    <ArrowUpRight className="w-4 h-4 text-primary" />
-                    <span className="text-sm text-muted-foreground">
-                      {isEnglish
-                        ? 'Typical monthly: CHF 1,000 – CHF 5,000'
-                        : 'Typisch monatlich: CHF 1\'000 – CHF 5\'000'}
-                    </span>
-                  </div>
+      {/* Not included */}
+      <section className="section-padding bg-secondary/40">
+        <div className="container-section">
+          <SectionMarker index={2} total={3} label={isEnglish ? 'Transparency' : 'Transparenz'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-start">
+            <div className="col-span-12 lg:col-span-5">
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>What's <em className="font-editorial">not</em> included?</>
+                  ) : (
+                    <>Was ist <em className="font-editorial">nicht</em> inklusive?</>
+                  )}
+                </h2>
+              </RevealText>
+            </div>
+            <div className="col-span-12 lg:col-span-7">
+              <div className="card-paper p-8 sm:p-10">
+                <div className="font-mono text-xs uppercase tracking-[0.18em] text-signal mb-4">
+                  Ad Spend
+                </div>
+                <h3 className="font-editorial text-3xl font-light text-foreground">
+                  {isEnglish ? 'You pay platforms directly.' : 'Du zahlst Plattformen direkt.'}
+                </h3>
+                <p className="mt-5 text-foreground/75 leading-relaxed">
+                  {isEnglish
+                    ? 'Ad spend is paid directly to Google/Meta by you. This gives you full control and transparency over your advertising budget.'
+                    : 'Ad Spend zahlst du direkt an Google/Meta. Das gibt dir volle Kontrolle und Transparenz über dein Werbebudget.'}
+                </p>
+                <div className="mt-8 pt-6 border-t border-border font-mono text-sm text-foreground/65">
+                  {isEnglish
+                    ? 'Typical monthly: CHF 1,000 – CHF 5,000'
+                    : "Typisch monatlich: CHF 1'000 – CHF 5'000"}
                 </div>
               </div>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* CTA — high-impact */}
-      <section className="relative overflow-hidden border-t border-border/50">
-        <div className="absolute inset-0 grid-pattern opacity-[0.15]" />
-        <div className="noise-overlay absolute inset-0" />
-        <div
-          className="absolute inset-0 opacity-60"
-          style={{
-            background:
-              'radial-gradient(ellipse at top left, hsl(var(--primary) / 0.3), transparent 60%), radial-gradient(ellipse at bottom right, hsl(var(--ai-accent) / 0.3), transparent 60%)',
-          }}
-        />
-        <SectionContainer className="relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="text-xs font-mono tracking-[0.3em] uppercase text-muted-foreground block mb-6">
-              ◆ 02 / Next Step
-            </span>
-            <h2 className="font-editorial text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.02] tracking-tight mb-6">
-              {isEnglish ? (
-                <>
-                  Unsure which <br />
-                  <span className="text-aurora italic">package?</span>
-                </>
-              ) : (
-                <>
-                  Unsicher welches <br />
-                  <span className="text-aurora italic">Paket?</span>
-                </>
-              )}
-            </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-              {isEnglish
-                ? "Start with a free audit. We'll recommend the right approach for your situation."
-                : 'Starte mit einem Gratis Audit. Wir empfehlen den richtigen Ansatz für deine Situation.'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <CTAButton
-                variant="primary"
-                size="lg"
-                href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
-                location="pricing-cta"
-                className="shadow-glow-intense"
-              >
-                {t.cta.getAudit}
-                <ArrowRight className="ml-2 w-5 h-5" />
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* Decision section */}
+      <section className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={3} total={3} label={isEnglish ? 'Unsure which?' : 'Unsicher welches?'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
+            <div className="col-span-12 lg:col-span-8">
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>Skip the guesswork. <em className="font-editorial">Book a free call.</em></>
+                  ) : (
+                    <>Schluss mit Raten. <em className="font-editorial">Buch einen Gratis-Call.</em></>
+                  )}
+                </h2>
+                <p className="mt-6 text-lg text-foreground/75 max-w-xl">
+                  {isEnglish
+                    ? '20 focused minutes. We look at your audit (or run one live) and tell you which package fits — or that none does, yet.'
+                    : '20 fokussierte Minuten. Wir schauen auf dein Audit (oder fahren live eines) und sagen dir, welches Paket passt — oder dass noch keines passt.'}
+                </p>
+              </RevealText>
+            </div>
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-3 lg:items-end">
+              <CTAButton variant="primary" size="lg" href={next.href} location="pricing-decision">
+                {isEnglish ? 'Book free call' : 'Gratis-Call buchen'}
+                <ArrowRight className="ml-2 w-4 h-4" />
               </CTAButton>
-              <CTAButton
-                variant="secondary"
-                size="lg"
-                href={isEnglish ? '/en/free-call' : '/gratis-call'}
-                location="pricing-cta"
-              >
-                {t.cta.bookCall}
+              <CTAButton variant="ghost" size="lg" href={prev.href} location="pricing-decision">
+                {isEnglish ? '← Back to audit' : '← Zum Audit'}
               </CTAButton>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
+
+      {/* Funnel nav */}
+      <FunnelNav
+        current={{ index: 3, total: 5, label: me.label }}
+        prev={prev}
+        next={next}
+        nextCtaLabel={isEnglish ? 'Talk to a human →' : 'Mit Mensch sprechen →'}
+        copy={isEnglish
+          ? 'You\'ve seen the shape. A 20-minute call closes the gap from price to plan.'
+          : 'Du kennst die Form. Ein 20-Minuten-Call schließt die Lücke von Preis zu Plan.'}
+        location="pricing"
+      />
     </Layout>
   );
 }

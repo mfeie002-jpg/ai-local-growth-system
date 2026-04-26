@@ -1,259 +1,184 @@
-import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
-import { FAQAccordion } from '@/components/FAQAccordion';
 import { AuditFormStepper } from '@/components/forms/AuditFormStepper';
-import { Check, Zap, Target, Settings, ArrowRight, ArrowUpRight, ClipboardCheck } from 'lucide-react';
+import {
+  EditorialHero,
+  SectionMarker,
+  RevealText,
+  AIAnnotation,
+  FunnelNav,
+  getFunnelSteps,
+} from '@/components/neural';
+import { ArrowRight } from 'lucide-react';
 
+/**
+ * AuditPage — Funnel step 02 / 05 · Start.
+ * Editorial framing on the left, form on the right.
+ * Previous: System. Next: Pakete (after submission, the report flow takes over).
+ */
 export default function AuditPage() {
   const { t, isEnglish } = useLanguage();
-  const navigate = useNavigate();
+  const steps = getFunnelSteps(isEnglish);
+  const me = steps[1];
+  const prev = steps[0];
+  const next = steps[2];
 
-  const checkItems = [
-    { icon: Zap, label: t.audit.whatWeCheck.traffic, num: '01' },
-    { icon: Target, label: t.audit.whatWeCheck.conversion, num: '02' },
-    { icon: Settings, label: t.audit.whatWeCheck.ops, num: '03' },
-  ];
-
-  const steps = [t.audit.steps.step1, t.audit.steps.step2, t.audit.steps.step3];
+  const deliverables = t.audit.deliverables.items;
+  const procSteps = [t.audit.steps.step1, t.audit.steps.step2, t.audit.steps.step3];
 
   return (
-    <Layout showDemoTeaser>
-      <SEOHead
-        title={t.audit.heroTitle}
-        description={t.audit.heroSubtitle}
+    <Layout>
+      <SEOHead title={t.audit.heroTitle} description={t.audit.heroSubtitle} />
+
+      {/* Hero */}
+      <EditorialHero
+        eyebrow={`${me.hint} · ${me.label}`}
+        title={
+          isEnglish ? (
+            <>Hand us your URL. <em className="font-editorial">We'll hand you a score.</em></>
+          ) : (
+            <>Gib uns deine URL. <em className="font-editorial">Wir geben dir einen Score.</em></>
+          )
+        }
+        lede={t.audit.heroSubtitle}
+        cta={
+          <CTAButton
+            variant="primary"
+            size="lg"
+            location="audit-hero"
+            onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            {isEnglish ? 'Start the audit' : 'Audit starten'}
+            <ArrowRight className="ml-2 w-4 h-4" />
+          </CTAButton>
+        }
+        annotation={t.audit.trustLine}
+        meta={
+          <>
+            <span>{isEnglish ? '2–5 min' : '2–5 Min'}</span>
+            <span aria-hidden>·</span>
+            <span>{isEnglish ? 'No credit card' : 'Keine Kreditkarte'}</span>
+            <span aria-hidden>·</span>
+            <span>{isEnglish ? 'No follow-up spam' : 'Kein Spam'}</span>
+          </>
+        }
       />
 
-      {/* Hero — Editorial */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-30" aria-hidden />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
-          aria-hidden
-        />
-        <div
-          className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent) / 0.4), transparent 70%)' }}
-          aria-hidden
-        />
+      <div className="container-section"><div className="rule-hairline" /></div>
 
-        <SectionContainer padding="large">
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-            <aside className="lg:col-span-3 order-2 lg:order-1 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isEnglish ? '§ 01 / Free Audit' : '§ 01 / Gratis Audit'}
-                </span>
-              </div>
-              <div className="glass-panel rounded-2xl p-5 space-y-3">
-                <ClipboardCheck className="h-6 w-6 text-aurora" />
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t.audit.trustLine}
-                </p>
+      {/* Form + sticky framing */}
+      <section id="audit-form" className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={1} total={3} label={isEnglish ? 'The Form' : 'Das Formular'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <aside className="col-span-12 lg:col-span-4">
+              <div className="lg:sticky lg:top-28 space-y-8">
+                <RevealText>
+                  <h2 className="text-balance">
+                    {isEnglish ? (
+                      <>Tell us about <em className="font-editorial">your business.</em></>
+                    ) : (
+                      <>Erzähl uns von <em className="font-editorial">deinem Business.</em></>
+                    )}
+                  </h2>
+                  <p className="mt-6 text-base text-foreground/70 max-w-sm">
+                    {isEnglish
+                      ? 'Five short fields. The scanner does the rest in minutes — you can leave the page once submitted.'
+                      : 'Fünf kurze Felder. Der Scanner erledigt den Rest in Minuten — du kannst die Seite nach dem Absenden verlassen.'}
+                  </p>
+                </RevealText>
+                <AIAnnotation>
+                  {isEnglish
+                    ? 'scanner · firecrawl + pagespeed + observatory · partial-result aware'
+                    : 'scanner · firecrawl + pagespeed + observatory · liefert auch Teilergebnisse'}
+                </AIAnnotation>
               </div>
             </aside>
-
-            <div className="lg:col-span-9 order-1 lg:order-2">
-              <h1 className="font-editorial font-semibold leading-[0.9] tracking-tight text-5xl sm:text-7xl md:text-8xl">
-                <span className="block text-foreground">{t.audit.heroTitle.split(' ').slice(0, -1).join(' ') || t.audit.heroTitle}</span>
-                <span className="block italic text-aurora">{t.audit.heroTitle.split(' ').slice(-1)[0]}</span>
-              </h1>
-              <p className="mt-8 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                {t.audit.heroSubtitle}
-              </p>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <CTAButton
-                  variant="primary"
-                  size="lg"
-                  onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  location="audit-hero"
-                >
-                  {t.cta.startAudit}
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </CTAButton>
-                <CTAButton
-                  variant="secondary"
-                  size="lg"
-                  href={isEnglish ? '/en/free-call' : '/gratis-call'}
-                  location="audit-hero"
-                >
-                  {t.cta.bookCall}
-                </CTAButton>
-              </div>
-            </div>
-          </div>
-        </SectionContainer>
-      </section>
-
-      {/* Audit Form */}
-      <section id="audit-form" className="relative">
-        <div className="absolute inset-0 noise-overlay opacity-50" aria-hidden />
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            <aside className="lg:col-span-4 hidden lg:block">
-              <div className="sticky top-32 space-y-4">
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isEnglish ? '— Step 01' : '— Schritt 01'}
-                </span>
-                <h2 className="font-editorial text-4xl font-semibold leading-tight">
-                  {isEnglish ? (
-                    <>Tell us about <span className="italic text-aurora">your business.</span></>
-                  ) : (
-                    <>Erzähle uns von <span className="italic text-aurora">deinem Business.</span></>
-                  )}
-                </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {isEnglish ? 'Takes about 2-5 minutes. No credit card. No follow-up spam.' : 'Dauert ca. 2-5 Minuten. Keine Kreditkarte. Kein Spam.'}
-                </p>
-              </div>
-            </aside>
-            <div className="lg:col-span-8">
-              <div className="glass-panel rounded-2xl p-6 sm:p-10">
+            <div className="col-span-12 lg:col-span-8">
+              <div className="card-paper p-6 sm:p-10">
                 <AuditFormStepper />
               </div>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
+      <div className="container-section"><div className="rule-hairline" /></div>
+
       {/* Deliverables */}
-      <SectionContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-          <div className="lg:col-span-5">
-            <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-              {isEnglish ? '— Deliverables' : '— Was du bekommst'}
-            </span>
-            <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-              {t.audit.deliverables.title}
-            </h2>
-          </div>
-          <div className="lg:col-span-7">
-            <ul className="divide-y divide-border/60">
-              {t.audit.deliverables.items.map((item, index) => (
-                <li key={index} className="flex items-start gap-5 py-5">
-                  <span className="font-editorial text-aurora text-sm tracking-widest pt-1">
-                    {String(index + 1).padStart(2, '0')}
+      <section className="section-padding bg-secondary/40">
+        <div className="container-section">
+          <SectionMarker index={2} total={3} label={isEnglish ? 'What you get' : 'Was du bekommst'} />
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+            <div className="col-span-12 lg:col-span-5">
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>A real number. <em className="font-editorial">A real next step.</em></>
+                  ) : (
+                    <>Eine echte Zahl. <em className="font-editorial">Ein echter nächster Schritt.</em></>
+                  )}
+                </h2>
+              </RevealText>
+            </div>
+            <ul className="col-span-12 lg:col-span-7 lg:border-l lg:border-border lg:pl-10 divide-y divide-border">
+              {deliverables.map((item, i) => (
+                <li key={i} className="flex items-start gap-5 py-5 first:pt-0">
+                  <span className="font-mono text-xs text-foreground/55 mt-2 w-6 shrink-0">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                  <Check className="w-5 h-5 text-aurora mt-1 flex-shrink-0" />
-                  <span className="text-foreground text-lg leading-relaxed">{item}</span>
+                  <span className="text-lg text-foreground/85 leading-relaxed">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* What We Check */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 noise-overlay opacity-60" aria-hidden />
-        <SectionContainer>
-          <div className="mb-12 max-w-3xl">
-            <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-              {isEnglish ? '— Scope' : '— Umfang'}
-            </span>
-            <h2 className="mt-4 font-editorial text-4xl sm:text-6xl font-semibold leading-tight">
-              {t.audit.whatWeCheck.title}
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* Process */}
+      <section className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={3} total={3} label={isEnglish ? 'The process' : 'Der Ablauf'} />
+          <RevealText>
+            <h2 className="text-balance max-w-3xl">
+              {isEnglish ? (
+                <>Three small moves. <em className="font-editorial">One clean report.</em></>
+              ) : (
+                <>Drei kleine Schritte. <em className="font-editorial">Ein klarer Report.</em></>
+              )}
             </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 border-t border-border/60">
-            {checkItems.map(({ icon: Icon, label, num }) => (
-              <div key={num} className="border-b md:border-b-0 md:border-r last:md:border-r-0 border-border/60 p-8 group hover:bg-muted/30 transition-colors">
-                <div className="flex items-start justify-between mb-8">
-                  <span className="font-editorial text-aurora text-sm tracking-widest">{num}</span>
-                  <Icon className="w-8 h-8 text-aurora" />
+          </RevealText>
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
+            {procSteps.map((step, i) => (
+              <div key={i} className="bg-background p-8 md:p-10">
+                <div className="font-mono text-xs uppercase tracking-[0.18em] text-foreground/55 mb-4">
+                  Step {String(i + 1).padStart(2, '0')}
                 </div>
-                <p className="font-editorial text-2xl text-foreground leading-tight">{label}</p>
+                <h3 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
+                  {step.title}
+                </h3>
+                <p className="mt-4 text-base text-foreground/70">{step.description}</p>
               </div>
             ))}
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* Steps */}
-      <SectionContainer>
-        <div className="mb-12 max-w-3xl">
-          <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-            {isEnglish ? '— Process' : '— Ablauf'}
-          </span>
-          <h2 className="mt-4 font-editorial text-4xl sm:text-6xl font-semibold leading-tight">
-            {t.audit.steps.title}
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step, index) => (
-            <div key={index} className="relative">
-              <div className="font-editorial text-7xl text-aurora italic leading-none mb-6">
-                {String(index + 1).padStart(2, '0')}
-              </div>
-              <h3 className="font-editorial text-2xl font-semibold mb-3">{step.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-            </div>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Pricing Teaser — Sunset CTA */}
-      <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-50"
-          style={{ background: 'var(--gradient-sunset)' }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <SectionContainer>
-          <div className="relative max-w-4xl mx-auto text-center">
-            <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-              {isEnglish ? '— Ready to commit?' : '— Bereit für mehr?'}
-            </span>
-            <h2 className="mt-6 font-editorial font-semibold leading-[0.95] tracking-tight text-4xl sm:text-6xl md:text-7xl">
-              {isEnglish ? (
-                <>See our <span className="italic text-aurora">packages.</span></>
-              ) : (
-                <>Unsere <span className="italic text-aurora">Pakete.</span></>
-              )}
-            </h2>
-            <p className="mt-6 text-lg text-muted-foreground max-w-xl mx-auto">
-              {isEnglish ? 'From one-time sprints to ongoing retainers.' : 'Von einmaligen Sprints bis zu laufenden Retainern.'}
-            </p>
-            <div className="mt-10">
-              <CTAButton
-                variant="primary"
-                size="lg"
-                href={isEnglish ? '/en/pricing' : '/pakete'}
-                location="audit-pricing-teaser"
-              >
-                {isEnglish ? 'View pricing' : 'Pakete ansehen'}
-                <ArrowUpRight className="ml-2 w-5 h-5" />
-              </CTAButton>
-            </div>
-          </div>
-        </SectionContainer>
-      </section>
-
-      {/* FAQ */}
-      <SectionContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-          <aside className="lg:col-span-4">
-            <div className="sticky top-32 space-y-4">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isEnglish ? '— FAQ' : '— FAQ'}
-              </span>
-              <h2 className="font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-                {t.faq.sectionTitle}
-              </h2>
-            </div>
-          </aside>
-          <div className="lg:col-span-8">
-            <FAQAccordion items={t.faq.auditItems} />
-          </div>
-        </div>
-      </SectionContainer>
+      {/* Funnel nav */}
+      <FunnelNav
+        current={{ index: 2, total: 5, label: me.label }}
+        prev={prev}
+        next={next}
+        nextCtaLabel={isEnglish ? 'See packages →' : 'Pakete ansehen →'}
+        copy={isEnglish
+          ? "Submitted? You'll get the score. Curious what comes after — see the packages."
+          : 'Abgeschickt? Du bekommst den Score. Neugierig, was danach folgt — sieh dir die Pakete an.'}
+        location="audit"
+      />
     </Layout>
   );
 }
