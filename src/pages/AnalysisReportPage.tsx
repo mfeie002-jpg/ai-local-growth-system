@@ -3,20 +3,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import {
-  AlertTriangle, CheckCircle, Search, Shield, Target, Zap,
-  Gauge, AlertOctagon, Loader2, ArrowUpRight, Sparkles,
-  ChevronDown, ChevronUp, Download
+  CheckCircle, Search, Shield, Target, Zap,
+  Gauge, Loader2, ArrowUpRight,
+  ChevronDown, ChevronUp, Download, Circle
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
 
 // ── Types ──────────────────────────────────────────────────────────
 interface Signal {
@@ -79,19 +77,13 @@ interface Report {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
-const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+const categoryIcons: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
   visibility: Search,
   trust: Shield,
   conversion: Target,
   technical: Gauge,
   automation: Zap,
 };
-
-function getScoreTone(score: number) {
-  if (score >= 75) return { text: 'text-aurora', label: 'aurora' };
-  if (score >= 50) return { text: 'text-primary', label: 'primary' };
-  return { text: 'text-foreground', label: 'foreground' };
-}
 
 function getBucketCopy(score: number, isDE: boolean) {
   if (score >= 75) {
@@ -126,6 +118,8 @@ function getSourceLabel(source: string): string {
     default: return source;
   }
 }
+
+const TOTAL_SECTIONS = 6;
 
 // ── Component ──────────────────────────────────────────────────────
 const AnalysisReportPage: React.FC = () => {
@@ -197,9 +191,8 @@ const AnalysisReportPage: React.FC = () => {
     return (
       <Layout>
         <SEOHead title="Loading..." description="Loading analysis report..." noIndex />
-        <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 noise-overlay" aria-hidden />
-          <Loader2 className="w-10 h-10 animate-spin text-aurora" />
+        <section className="min-h-[70vh] flex items-center justify-center">
+          <Loader2 className="w-10 h-10 animate-spin text-foreground" strokeWidth={1.5} />
         </section>
       </Layout>
     );
@@ -210,35 +203,25 @@ const AnalysisReportPage: React.FC = () => {
     return (
       <Layout>
         <SEOHead title={isDE ? 'Report nicht gefunden' : 'Report not found'} description="" noIndex />
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 noise-overlay" aria-hidden />
-          <div
-            className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-            style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }}
-            aria-hidden
-          />
-          <SectionContainer padding="large">
+        <section className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32">
+          <div className="container-section">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  § Report / 404
-                </span>
-              </div>
-              <h1 className="mt-6 font-editorial font-semibold leading-[0.95] text-5xl sm:text-7xl">
-                {isDE ? (<>Report <span className="italic text-aurora">nicht gefunden.</span></>) : (<>Report <span className="italic text-aurora">not found.</span></>)}
+              <SectionMarker index={0} total={6} label="Report / 404" />
+              <h1 className="text-balance">
+                {isDE ? 'Report ' : 'Report '}
+                <span className="font-editorial italic">{isDE ? 'nicht gefunden.' : 'not found.'}</span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+              <p className="mt-8 max-w-xl text-lg md:text-xl text-foreground/75 leading-[1.55]">
                 {error || (isDE ? 'Der Link ist abgelaufen oder ungültig.' : 'The link has expired or is invalid.')}
               </p>
-              <div className="mt-8">
+              <div className="mt-12">
                 <CTAButton href={isDE ? '/scan' : '/en/scan'} size="lg">
                   {isDE ? 'Neue Analyse starten' : 'Start new analysis'}
                   <ArrowUpRight className="ml-2 w-5 h-5" />
                 </CTAButton>
               </div>
             </div>
-          </SectionContainer>
+          </div>
         </section>
       </Layout>
     );
@@ -248,7 +231,6 @@ const AnalysisReportPage: React.FC = () => {
   const categories: CategoryScore[] = report.scoring_details?.categories || [];
   const signals: Signal[] = report.normalized_signals || [];
   const bucket = getBucketCopy(report.overall_score, isDE);
-  const tone = getScoreTone(report.overall_score);
 
   return (
     <Layout>
@@ -259,327 +241,312 @@ const AnalysisReportPage: React.FC = () => {
         noIndex
       />
 
-      {/* ===== HERO — Editorial ===== */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-30" aria-hidden />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
-          aria-hidden
-        />
-        <div
-          className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent) / 0.4), transparent 70%)' }}
-          aria-hidden
-        />
-
-        <SectionContainer padding="large">
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-            {/* Score panel */}
-            <aside className="lg:col-span-4 order-2 lg:order-1 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isDE ? '§ Reifegrad-Check' : '§ Maturity Check'}
+      {/* ===== 01 · HERO ===== */}
+      <section className="pt-28 md:pt-36 lg:pt-44 pb-20 md:pb-28">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <div className="col-span-12 lg:col-span-8">
+              <SectionMarker index={1} total={TOTAL_SECTIONS} label={isDE ? 'Reifegrad-Check' : 'Maturity Check'} />
+              <h1 className="text-balance">
+                <span className="block">{report.site_name}</span>
+                <span className="block font-editorial italic text-foreground/85">
+                  {isDE ? 'Reifegrad.' : 'maturity.'}
                 </span>
-              </div>
-
-              <div className="glass-panel rounded-2xl p-6 space-y-4">
-                <div className="flex items-start justify-between">
-                  <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                    {isDE ? 'Score' : 'Score'}
-                  </span>
-                  <Sparkles className="w-5 h-5 text-aurora" />
-                </div>
-                <div className="font-editorial leading-none">
-                  <span className={cn('text-7xl italic font-semibold', tone.text)}>{report.overall_score}</span>
-                  <span className="text-2xl text-muted-foreground">/100</span>
-                </div>
-                <p className={cn('font-editorial text-lg leading-snug', tone.text)}>
-                  {bucket.label}
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {bucket.description}
-                </p>
-
-                <div className="pt-4 border-t border-border/50 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">{isDE ? 'Top-Potenziale' : 'Top potentials'}</span>
-                    <span className="font-editorial text-aurora">{report.critical_issues}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">{isDE ? 'Verbesserungen' : 'Improvements'}</span>
-                    <span className="font-editorial text-primary">{report.warning_issues}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">{isDE ? 'Gut aufgestellt' : 'Well set up'}</span>
-                    <span className="font-editorial">{report.info_issues}</span>
-                  </div>
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  disabled={pdfLoading}
-                  className="w-full gap-2 text-xs mt-2"
-                >
-                  {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                  {isDE ? 'Als PDF herunterladen' : 'Download as PDF'}
-                </Button>
-              </div>
-            </aside>
-
-            {/* Headline */}
-            <div className="lg:col-span-8 order-1 lg:order-2">
-              <h1 className="font-editorial font-semibold leading-[0.9] tracking-tight text-5xl sm:text-7xl md:text-8xl">
-                <span className="block text-foreground">{report.site_name}</span>
-                <span className="block italic text-aurora">{isDE ? 'Reifegrad.' : 'maturity.'}</span>
               </h1>
               {ai?.headline && (
-                <p className="mt-8 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                <p className="mt-8 max-w-2xl text-lg md:text-xl text-foreground/75 leading-[1.55]">
                   {ai.headline}
                 </p>
               )}
-              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche geprüft' : 'areas checked'}</span>
-                <span>·</span>
-                <span>{report.data_sources_used?.map(getSourceLabel).join(', ')}</span>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche' : 'areas'}</span>
+                {report.data_sources_used && report.data_sources_used.length > 0 && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span>{report.data_sources_used.map(getSourceLabel).join(' · ')}</span>
+                  </>
+                )}
                 {report.scan_duration_ms && (
                   <>
-                    <span>·</span>
+                    <span aria-hidden>·</span>
                     <span>{(report.scan_duration_ms / 1000).toFixed(1)}s</span>
                   </>
                 )}
               </div>
             </div>
+
+            <aside className="col-span-12 lg:col-span-4 lg:col-start-9 flex flex-col gap-6">
+              <div className="hidden lg:block rule-hairline w-12" />
+              <div className="card-paper p-8 flex flex-col items-center">
+                <ScoreCard score={report.overall_score} label={isDE ? 'Reifegrad' : 'Maturity'} size={200} />
+                <p className="mt-6 text-center text-base text-foreground text-balance">{bucket.label}</p>
+                <p className="mt-3 text-center text-sm text-muted-foreground leading-relaxed text-balance">
+                  {bucket.description}
+                </p>
+                <div className="mt-6 w-full pt-6 border-t border-border/80 grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <div className="font-editorial italic text-2xl text-foreground">{report.critical_issues}</div>
+                    <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                      {isDE ? 'Top' : 'Top'}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-editorial italic text-2xl text-foreground">{report.warning_issues}</div>
+                    <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                      {isDE ? 'Hebel' : 'Levers'}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-editorial italic text-2xl text-foreground">{report.info_issues}</div>
+                    <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                      {isDE ? 'Solide' : 'Solid'}
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  disabled={pdfLoading}
+                  className="w-full gap-2 text-xs mt-6"
+                >
+                  {pdfLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  {isDE ? 'Als PDF herunterladen' : 'Download as PDF'}
+                </Button>
+              </div>
+              <AIAnnotation>
+                {isDE
+                  ? `gemini-2.5-flash · ${signals.length} Signale ausgewertet · ${report.scan_version || 'v1.0'}`
+                  : `gemini-2.5-flash · ${signals.length} signals interpreted · ${report.scan_version || 'v1.0'}`}
+              </AIAnnotation>
+            </aside>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* ===== AI SUMMARY ===== */}
+      {/* ===== 02 · AI Summary ===== */}
       {ai?.summary && (
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-            <div className="lg:col-span-4">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Lagebild' : '— Snapshot'}
-              </span>
-              <h2 className="mt-4 font-editorial text-3xl sm:text-4xl font-semibold leading-tight">
-                {isDE ? (<>Was die Daten <span className="italic text-aurora">erzählen.</span></>) : (<>What the data <span className="italic text-aurora">tells us.</span></>)}
-              </h2>
-            </div>
-            <div className="lg:col-span-8">
-              <p className="font-editorial text-xl sm:text-2xl leading-relaxed text-foreground/90">
-                {ai.summary}
-              </p>
+        <section className="py-20 md:py-28 border-t border-border/80">
+          <div className="container-section">
+            <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+              <div className="col-span-12 lg:col-span-4">
+                <SectionMarker index={2} total={TOTAL_SECTIONS} label={isDE ? 'Lagebild' : 'Snapshot'} />
+                <h2 className="text-balance">
+                  {isDE ? 'Was die Daten ' : 'What the data '}
+                  <span className="font-editorial italic">{isDE ? 'erzählen.' : 'tells us.'}</span>
+                </h2>
+              </div>
+              <div className="col-span-12 lg:col-span-8">
+                <p className="font-editorial italic text-2xl md:text-3xl leading-[1.35] text-foreground/90 text-balance">
+                  {ai.summary}
+                </p>
+              </div>
             </div>
           </div>
-        </SectionContainer>
-      )}
-
-      {/* ===== TOP 3 OPPORTUNITIES ===== */}
-      {ai?.top_3_opportunities && ai.top_3_opportunities.length > 0 && (
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 noise-overlay opacity-50" aria-hidden />
-          <SectionContainer>
-            <div className="max-w-3xl">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Top 3 Chancen' : '— Top 3 opportunities'}
-              </span>
-              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl md:text-6xl font-semibold leading-[0.95]">
-                {isDE ? (<>Größte <span className="italic text-aurora">Hebel.</span></>) : (<>Biggest <span className="italic text-aurora">levers.</span></>)}
-              </h2>
-            </div>
-
-            <div className="mt-12 space-y-px">
-              {ai.top_3_opportunities.map((opp, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="group grid grid-cols-12 gap-4 sm:gap-8 py-8 border-t border-border/40 last:border-b"
-                >
-                  <div className="col-span-2 sm:col-span-1">
-                    <span className="font-editorial text-aurora text-sm tracking-widest">
-                      0{i + 1}
-                    </span>
-                  </div>
-                  <div className="col-span-10 sm:col-span-8">
-                    <h3 className="font-editorial text-2xl sm:text-3xl font-semibold leading-tight">
-                      {opp.title}
-                    </h3>
-                    <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-                      {opp.why}
-                    </p>
-                  </div>
-                  <div className="col-span-12 sm:col-span-3 flex sm:flex-col sm:items-end gap-2 sm:gap-3 sm:text-right">
-                    <div>
-                      <span className="block font-editorial text-[10px] tracking-[0.2em] uppercase text-muted-foreground">{isDE ? 'Wirkung' : 'Impact'}</span>
-                      <span className={cn(
-                        'font-editorial text-lg italic',
-                        opp.impact === 'high' ? 'text-aurora' : opp.impact === 'medium' ? 'text-primary' : 'text-muted-foreground'
-                      )}>
-                        {opp.impact === 'high' ? (isDE ? 'Hoch' : 'High') : opp.impact === 'medium' ? (isDE ? 'Mittel' : 'Medium') : (isDE ? 'Niedrig' : 'Low')}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block font-editorial text-[10px] tracking-[0.2em] uppercase text-muted-foreground">{isDE ? 'Aufwand' : 'Effort'}</span>
-                      <span className="font-editorial text-lg italic text-foreground">{opp.effort}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </SectionContainer>
         </section>
       )}
 
-      {/* ===== CATEGORY SCORES ===== */}
-      <SectionContainer>
-        <div className="max-w-3xl mb-10">
-          <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-            {isDE ? '— Bereiche' : '— Areas'}
-          </span>
-          <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-            {isDE ? (<>Reifegrad nach <span className="italic text-aurora">Bereich.</span></>) : (<>Maturity by <span className="italic text-aurora">area.</span></>)}
-          </h2>
-        </div>
-
-        <div className="space-y-3">
-          {categories.map((cat) => {
-            const Icon = categoryIcons[cat.id] || Search;
-            const isExpanded = expandedCategories.includes(cat.id);
-            const catTone = getScoreTone(cat.score);
-            return (
-              <div key={cat.id} className="glass-panel rounded-2xl overflow-hidden">
-                <button
-                  onClick={() => toggleCategory(cat.id)}
-                  className="w-full p-5 flex items-center gap-4 text-left hover:bg-muted/20 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-aurora/10 text-aurora">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-editorial text-base sm:text-lg">{cat.name}</span>
-                      <span className={cn('font-editorial italic text-2xl', catTone.text)}>{cat.score}</span>
-                    </div>
-                    <Progress value={cat.score} className="h-1" />
-                  </div>
-                  <div className="shrink-0 ml-2 text-muted-foreground">
-                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </div>
-                </button>
-
-                {isExpanded && cat.signals && (
-                  <div className="border-t border-border/40 px-5 pb-5">
-                    <div className="space-y-1 mt-3">
-                      {cat.signals.map((signal) => (
-                        <div key={signal.id} className="flex items-center justify-between py-2.5 text-sm border-b border-border/20 last:border-0">
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            {signal.score >= 70 ? (
-                              <CheckCircle className="w-4 h-4 text-aurora shrink-0" />
-                            ) : (
-                              <AlertTriangle className="w-4 h-4 text-primary shrink-0" />
-                            )}
-                            <span className="truncate">{signal.label}</span>
-                            {signal.details && (
-                              <span className="text-xs text-muted-foreground hidden md:inline truncate">— {signal.details}</span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3 shrink-0 ml-2">
-                            <Badge variant="outline" className="text-[10px] font-editorial tracking-wider">{getSourceLabel(signal.source)}</Badge>
-                            <span className={cn('font-editorial italic text-base', getScoreTone(signal.score).text)}>{signal.score}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </SectionContainer>
-
-      {/* ===== STRENGTHS ===== */}
-      {ai?.strengths && ai.strengths.length > 0 && (
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            <div className="lg:col-span-4">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Stärken' : '— Strengths'}
-              </span>
-              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-                {isDE ? (<>Was bereits <span className="italic text-aurora">trägt.</span></>) : (<>What's already <span className="italic text-aurora">working.</span></>)}
+      {/* ===== 03 · Top 3 opportunities ===== */}
+      {ai?.top_3_opportunities && ai.top_3_opportunities.length > 0 && (
+        <section className="py-20 md:py-28 border-t border-border/80">
+          <div className="container-section">
+            <div className="max-w-3xl mb-12">
+              <SectionMarker index={3} total={TOTAL_SECTIONS} label={isDE ? 'Top 3 Chancen' : 'Top 3 opportunities'} />
+              <h2 className="text-balance">
+                {isDE ? 'Größte ' : 'Biggest '}
+                <span className="font-editorial italic">{isDE ? 'Hebel.' : 'levers.'}</span>
               </h2>
             </div>
-            <ul className="lg:col-span-8 space-y-px">
-              {ai.strengths.map((s, i) => (
-                <li key={i} className="grid grid-cols-12 gap-4 py-5 border-t border-border/40 last:border-b">
-                  <span className="col-span-2 sm:col-span-1 font-editorial text-aurora text-sm tracking-widest pt-1">
-                    0{i + 1}
-                  </span>
-                  <div className="col-span-10 sm:col-span-11 flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-aurora mt-1 flex-shrink-0" />
-                    <span className="font-editorial text-lg sm:text-xl leading-snug">{s}</span>
+
+            <ul className="border-t border-border/80">
+              {ai.top_3_opportunities.map((opp, i) => (
+                <li
+                  key={i}
+                  className="grid grid-cols-12 gap-4 sm:gap-6 py-8 border-b border-border/80"
+                >
+                  <div className="col-span-2 sm:col-span-1">
+                    <span className="font-mono text-xs tracking-[0.2em] text-muted-foreground">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <div className="col-span-10 sm:col-span-8">
+                    <h3 className="text-balance">{opp.title}</h3>
+                    <p className="mt-4 text-base md:text-lg text-foreground/75 leading-relaxed">
+                      {opp.why}
+                    </p>
+                  </div>
+                  <div className="col-span-12 sm:col-span-3 flex sm:flex-col sm:items-end gap-6 sm:gap-3 sm:text-right">
+                    <div>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        {isDE ? 'Wirkung' : 'Impact'}
+                      </div>
+                      <div className="font-editorial italic text-xl mt-1">
+                        {opp.impact === 'high' ? (isDE ? 'Hoch' : 'High') : opp.impact === 'medium' ? (isDE ? 'Mittel' : 'Medium') : (isDE ? 'Niedrig' : 'Low')}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        {isDE ? 'Aufwand' : 'Effort'}
+                      </div>
+                      <div className="font-editorial italic text-xl mt-1">{opp.effort}</div>
+                    </div>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
-        </SectionContainer>
+        </section>
       )}
 
-      {/* ===== WHAT CHANGES IF YOU ACT ===== */}
-      {ai?.risk_if_ignored && (
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-            <div className="lg:col-span-5">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Wirkung' : '— Outcome'}
-              </span>
-              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-                {isDE ? (<>Was sich <span className="italic text-aurora">verändert.</span></>) : (<>What <span className="italic text-aurora">shifts.</span></>)}
-              </h2>
-            </div>
-            <div className="lg:col-span-7">
-              <p className="font-editorial text-xl sm:text-2xl leading-relaxed text-foreground/90">
-                {ai.risk_if_ignored}
-              </p>
+      {/* ===== 04 · Category Scores ===== */}
+      <section className="py-20 md:py-28 border-t border-border/80">
+        <div className="container-section">
+          <div className="max-w-3xl mb-12">
+            <SectionMarker index={4} total={TOTAL_SECTIONS} label={isDE ? 'Bereiche' : 'Areas'} />
+            <h2 className="text-balance">
+              {isDE ? 'Reifegrad nach ' : 'Maturity by '}
+              <span className="font-editorial italic">{isDE ? 'Bereich.' : 'area.'}</span>
+            </h2>
+          </div>
+
+          <div className="border-t border-border/80">
+            {categories.map((cat) => {
+              const Icon = categoryIcons[cat.id] || Search;
+              const isExpanded = expandedCategories.includes(cat.id);
+              return (
+                <div key={cat.id} className="border-b border-border/80">
+                  <button
+                    onClick={() => toggleCategory(cat.id)}
+                    className="w-full py-6 grid grid-cols-12 gap-4 items-center text-left hover:bg-secondary/40 transition-colors px-2 -mx-2"
+                  >
+                    <div className="col-span-1 flex justify-center">
+                      <Icon className="w-5 h-5 text-foreground/70" strokeWidth={1.5} />
+                    </div>
+                    <div className="col-span-7 sm:col-span-8">
+                      <div className="text-xl md:text-2xl">{cat.name}</div>
+                      <div className="mt-3 h-px bg-border relative overflow-hidden">
+                        <div
+                          className="absolute left-0 bg-foreground"
+                          style={{ width: `${cat.score}%`, height: '2px', top: '-0.5px' }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-3 sm:col-span-2 text-right font-editorial italic text-3xl">
+                      {cat.score}
+                    </div>
+                    <div className="col-span-1 flex justify-end text-muted-foreground">
+                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </div>
+                  </button>
+
+                  {isExpanded && cat.signals && (
+                    <ul className="pb-6 pl-2 sm:pl-12 pr-2">
+                      {cat.signals.map((signal) => (
+                        <li
+                          key={signal.id}
+                          className="flex items-center justify-between py-3 text-sm border-t border-border/60 first:border-t-0"
+                        >
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            {signal.score >= 70 ? (
+                              <CheckCircle className="w-4 h-4 text-foreground shrink-0" strokeWidth={1.5} />
+                            ) : (
+                              <Circle className="w-4 h-4 text-[hsl(var(--signal))] shrink-0" strokeWidth={1.5} />
+                            )}
+                            <span className="truncate">{signal.label}</span>
+                            {signal.details && (
+                              <span className="text-xs text-muted-foreground hidden md:inline truncate">
+                                — {signal.details}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0 ml-3">
+                            <Badge variant="outline" className="text-[10px] font-mono tracking-wider">
+                              {getSourceLabel(signal.source)}
+                            </Badge>
+                            <span className="font-editorial italic text-base w-8 text-right">
+                              {signal.score}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== 05 · Strengths ===== */}
+      {ai?.strengths && ai.strengths.length > 0 && (
+        <section className="py-20 md:py-28 border-t border-border/80">
+          <div className="container-section">
+            <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+              <div className="col-span-12 lg:col-span-4">
+                <SectionMarker index={5} total={TOTAL_SECTIONS} label={isDE ? 'Stärken' : 'Strengths'} />
+                <h2 className="text-balance">
+                  {isDE ? 'Was bereits ' : "What's already "}
+                  <span className="font-editorial italic">{isDE ? 'trägt.' : 'working.'}</span>
+                </h2>
+              </div>
+              <ul className="col-span-12 lg:col-span-8 border-t border-border/80">
+                {ai.strengths.map((s, i) => (
+                  <li key={i} className="grid grid-cols-12 gap-4 py-5 border-b border-border/80">
+                    <span className="col-span-1 font-mono text-xs tracking-[0.2em] text-muted-foreground pt-1.5">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <CheckCircle className="col-span-1 w-5 h-5 text-foreground mt-1" strokeWidth={1.5} />
+                    <span className="col-span-10 text-lg md:text-xl leading-snug text-balance">{s}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-        </SectionContainer>
+        </section>
       )}
 
-      {/* ===== CTA ===== */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)' }}
-          aria-hidden
-        />
-        <SectionContainer padding="large">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-end">
-            <div className="lg:col-span-7">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Nächster Schritt' : '— Next step'}
-              </span>
-              <h2 className="mt-4 font-editorial font-semibold leading-[0.95] text-5xl sm:text-6xl md:text-7xl">
-                {isDE ? (<>Lass uns das <span className="italic text-aurora">aktivieren.</span></>) : (<>Let's <span className="italic text-aurora">activate this.</span></>)}
+      {/* Outcome — what shifts (no marker, in-flow editorial pull) */}
+      {ai?.risk_if_ignored && (
+        <section className="py-20 md:py-28 border-t border-border/80">
+          <div className="container-section">
+            <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-start">
+              <div className="col-span-12 lg:col-span-5">
+                <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  — {isDE ? 'Wirkung' : 'Outcome'}
+                </span>
+                <h3 className="mt-4 text-balance">
+                  {isDE ? 'Was sich ' : 'What '}
+                  <span className="font-editorial italic">{isDE ? 'verändert.' : 'shifts.'}</span>
+                </h3>
+              </div>
+              <div className="col-span-12 lg:col-span-7">
+                <p className="font-editorial italic text-2xl md:text-3xl leading-[1.35] text-foreground/90 text-balance">
+                  {ai.risk_if_ignored}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ===== 06 · CTA ===== */}
+      <section className="py-24 md:py-32 border-t border-border/80">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
+            <div className="col-span-12 lg:col-span-7">
+              <SectionMarker index={6} total={TOTAL_SECTIONS} label={isDE ? 'Nächster Schritt' : 'Next step'} />
+              <h2 className="text-balance">
+                {isDE ? "Lass uns das " : "Let's "}
+                <span className="font-editorial italic">{isDE ? 'aktivieren.' : 'activate this.'}</span>
               </h2>
               {ai?.recommended_action_reason && (
-                <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+                <p className="mt-6 max-w-xl text-lg text-foreground/75 leading-relaxed">
                   {ai.recommended_action_reason}
                 </p>
               )}
             </div>
-            <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-4">
+            <div className="col-span-12 lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-4">
               <CTAButton href={isDE ? '/gratis-call' : '/en/free-call'} size="lg" location="analysis-report-cta">
                 {isDE ? 'Kostenloses Gespräch' : 'Free consultation'}
                 <ArrowUpRight className="ml-2 w-5 h-5" />
@@ -588,25 +555,26 @@ const AnalysisReportPage: React.FC = () => {
                 variant="outline"
                 size="lg"
                 onClick={() => navigate(isDE ? '/ultimate-package' : '/en/ultimate-package')}
-                className="font-editorial"
               >
                 {isDE ? 'Ultimate Package entdecken' : 'Discover Ultimate Package'}
                 <ArrowUpRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* ===== META FOOTER ===== */}
-      <SectionContainer padding="small">
-        <div className="text-center text-xs text-muted-foreground/60 font-editorial tracking-wider">
-          {isDE ? 'Erstellt am' : 'Generated'} {new Date(report.created_at).toLocaleDateString(isDE ? 'de-CH' : 'en-US')}
-          {' · '}Version {report.scan_version || 'v1.0'}
-          {' · '}{signals.length} Signals
-          {' · '}{report.data_sources_used?.length || 0} {isDE ? 'Datenquellen' : 'data sources'}
+      {/* Meta footer */}
+      <section className="py-8 border-t border-border/80">
+        <div className="container-section">
+          <p className="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            {isDE ? 'Erstellt' : 'Generated'} {new Date(report.created_at).toLocaleDateString(isDE ? 'de-CH' : 'en-US')}
+            {' · '}{report.scan_version || 'v1.0'}
+            {' · '}{signals.length} Signals
+            {' · '}{report.data_sources_used?.length || 0} {isDE ? 'Quellen' : 'sources'}
+          </p>
         </div>
-      </SectionContainer>
+      </section>
     </Layout>
   );
 };
