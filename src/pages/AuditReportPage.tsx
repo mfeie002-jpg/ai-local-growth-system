@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Loader2, CheckCircle, AlertTriangle, XCircle, ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Loader2, CheckCircle, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
-import { SectionContainer } from '@/components/SectionContainer';
 import { CTAButton } from '@/components/CTAButton';
 import { CallbackRequestForm } from '@/components/forms/CallbackRequestForm';
+import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/lib/analytics';
-import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site';
 
 interface LeadReport {
@@ -57,12 +56,10 @@ export default function AuditReportPage() {
   };
 
   // Positive-framing labels per brand rule
-  const getBucketInfo = (bucket: string | null) => {
+  const getBucketCopy = (bucket: string | null) => {
     switch (bucket) {
       case 'red':
         return {
-          icon: Sparkles,
-          accent: 'text-aurora',
           label: isDE ? 'Grosses Wachstumspotenzial' : 'Significant growth potential',
           description: isDE
             ? 'Mehrere Hebel sind noch ungenutzt — die Ausgangslage für schnelle Fortschritte ist hervorragend.'
@@ -70,8 +67,6 @@ export default function AuditReportPage() {
         };
       case 'yellow':
         return {
-          icon: AlertTriangle,
-          accent: 'text-aurora',
           label: isDE ? 'Solide Basis, klare Hebel' : 'Solid base, clear levers',
           description: isDE
             ? 'Gute Grundlage vorhanden. Mit gezielten Massnahmen lässt sich noch deutlich mehr rausholen.'
@@ -79,8 +74,6 @@ export default function AuditReportPage() {
         };
       case 'green':
         return {
-          icon: CheckCircle,
-          accent: 'text-aurora',
           label: isDE ? 'Starkes Fundament. Bereit zum Skalieren.' : 'Strong foundation. Ready to scale.',
           description: isDE
             ? 'Du hast bereits vieles richtig gemacht. Zeit für den nächsten Schritt.'
@@ -88,8 +81,6 @@ export default function AuditReportPage() {
         };
       default:
         return {
-          icon: Sparkles,
-          accent: 'text-aurora',
           label: isDE ? 'Wird analysiert' : 'Being analysed',
           description: isDE ? 'Deine Daten werden geprüft.' : 'Your data is being reviewed.',
         };
@@ -124,7 +115,7 @@ export default function AuditReportPage() {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-aurora" />
+          <Loader2 className="w-8 h-8 animate-spin text-foreground" strokeWidth={1.5} />
         </div>
       </Layout>
     );
@@ -138,35 +129,31 @@ export default function AuditReportPage() {
           description={isDE ? 'Der angeforderte Report wurde nicht gefunden.' : 'The requested report was not found.'}
           noIndex
         />
-        <section className="relative overflow-hidden min-h-[70vh] flex items-center py-20">
-          <div className="absolute inset-0 grid-pattern opacity-20" aria-hidden />
-          <div className="absolute inset-0 noise-overlay" aria-hidden />
-          <SectionContainer>
-            <div className="max-w-2xl mx-auto text-center">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— 404' : '— 404'}
-              </span>
-              <h1 className="mt-6 font-editorial font-semibold leading-[0.95] text-5xl sm:text-7xl">
-                {isDE ? (<>Link <span className="italic text-aurora">abgelaufen.</span></>) : (<>Link <span className="italic text-aurora">expired.</span></>)}
+        <section className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32">
+          <div className="container-section">
+            <div className="max-w-2xl">
+              <SectionMarker index={0} total={4} label="Report / 404" />
+              <h1 className="text-balance">
+                {isDE ? 'Link ' : 'Link '}
+                <span className="font-editorial italic">{isDE ? 'abgelaufen.' : 'expired.'}</span>
               </h1>
-              <p className="mt-6 text-lg text-muted-foreground">
+              <p className="mt-8 text-lg md:text-xl text-foreground/75 leading-[1.55]">
                 {isDE ? 'Dieser Link ist ungültig oder abgelaufen.' : 'This link is invalid or expired.'}
               </p>
-              <div className="mt-10">
+              <div className="mt-12">
                 <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-audit' : '/gratis-audit'} location="report-not-found">
                   {isDE ? 'Neues Audit starten' : 'Start new audit'}
                   <ArrowUpRight className="ml-2 w-5 h-5" />
                 </CTAButton>
               </div>
             </div>
-          </SectionContainer>
+          </div>
         </section>
       </Layout>
     );
   }
 
-  const bucketInfo = getBucketInfo(lead.pre_score_bucket);
-  const BucketIcon = bucketInfo.icon;
+  const bucket = getBucketCopy(lead.pre_score_bucket);
 
   return (
     <Layout>
@@ -176,170 +163,151 @@ export default function AuditReportPage() {
         noIndex
       />
 
-      {/* Hero — Editorial */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-30" aria-hidden />
-        <div className="absolute inset-0 noise-overlay" aria-hidden />
-        <div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.5), transparent 70%)' }}
-          aria-hidden
-        />
-        <div
-          className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent) / 0.4), transparent 70%)' }}
-          aria-hidden
-        />
-
-        <SectionContainer padding="large">
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-            <aside className="lg:col-span-4 order-2 lg:order-1 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8" style={{ background: 'var(--gradient-aurora)' }} />
-                <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  {isDE ? '§ Report / Pre-Score' : '§ Report / Pre-Score'}
+      {/* ===== 01 · Hero ===== */}
+      <section className="pt-28 md:pt-36 lg:pt-44 pb-20 md:pb-28">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <div className="col-span-12 lg:col-span-8">
+              <SectionMarker index={1} total={4} label={isDE ? 'Vorab-Score' : 'Pre-Score'} />
+              <h1 className="text-balance">
+                <span className="block">{isDE ? 'Dein' : 'Your'}</span>
+                <span className="block font-editorial italic text-foreground/85">
+                  {isDE ? 'Vorab-Score.' : 'pre-score.'}
                 </span>
-              </div>
-
-              {/* Score panel */}
-              <div className="glass-panel rounded-2xl p-6 space-y-4">
-                <div className="flex items-start justify-between">
-                  <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                    {isDE ? 'Score' : 'Score'}
-                  </span>
-                  <BucketIcon className={cn('w-6 h-6', bucketInfo.accent)} />
-                </div>
-                {lead.pre_score_total !== null ? (
-                  <div className="font-editorial leading-none">
-                    <span className="text-7xl text-aurora italic font-semibold">{lead.pre_score_total}</span>
-                    <span className="text-2xl text-muted-foreground">/100</span>
-                  </div>
-                ) : (
-                  <div className="font-editorial text-3xl text-muted-foreground italic">—</div>
-                )}
-                <p className={cn('font-editorial text-lg leading-snug', bucketInfo.accent)}>
-                  {bucketInfo.label}
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {bucketInfo.description}
-                </p>
-              </div>
-            </aside>
-
-            <div className="lg:col-span-8 order-1 lg:order-2">
-              <h1 className="font-editorial font-semibold leading-[0.9] tracking-tight text-5xl sm:text-7xl md:text-8xl">
-                <span className="block text-foreground">{isDE ? 'Dein' : 'Your'}</span>
-                <span className="block italic text-aurora">{isDE ? 'Vorab-Score.' : 'pre-score.'}</span>
               </h1>
-              <p className="mt-8 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
+              <p className="mt-8 max-w-2xl text-lg md:text-xl text-foreground/75 leading-[1.55]">
                 {isDE
                   ? 'Basierend auf deiner Eingabe. Das vollständige Audit ergänzt eine manuelle Tiefenprüfung.'
                   : 'Based on your input. The full audit adds a manual deep-dive review.'}
               </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                {isDE ? `Hallo ${lead.name} — danke für die Anfrage aus ${lead.service_area}.` : `Hi ${lead.name} — thanks for the request from ${lead.service_area}.`}
+              <p className="mt-4 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                {isDE
+                  ? `Hallo ${lead.name} · Anfrage aus ${lead.service_area}`
+                  : `Hi ${lead.name} · request from ${lead.service_area}`}
               </p>
             </div>
-          </div>
-        </SectionContainer>
-      </section>
 
-      {/* Next Step CTA */}
-      <SectionContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-          <div className="lg:col-span-5">
-            <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-              {isDE ? '— Next step' : '— Next step'}
-            </span>
-            <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-              {isDE ? (<>Lass uns das <span className="italic text-aurora">aktivieren.</span></>) : (<>Let's <span className="italic text-aurora">activate this.</span></>)}
-            </h2>
-          </div>
-          <div className="lg:col-span-7 flex flex-col sm:flex-row gap-4">
-            {lead.pre_score_bucket === 'green' ? (
-              <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-call' : '/gratis-call'} location="report-cta-green">
-                {isDE ? '20-Minuten Call buchen' : 'Book 20-minute call'}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </CTAButton>
-            ) : (
-              <>
-                <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-call' : '/gratis-call'} location="report-cta">
-                  {isDE ? 'Gratis Orientierungsgespräch' : 'Free orientation call'}
-                  <ArrowUpRight className="ml-2 w-5 h-5" />
-                </CTAButton>
-                <a href="#checklist">
-                  <CTAButton variant="secondary" size="lg" location="report-checklist">
-                    {isDE ? 'Checkliste ansehen' : 'View checklist'}
-                  </CTAButton>
-                </a>
-              </>
-            )}
+            <aside className="col-span-12 lg:col-span-4 lg:col-start-9 flex flex-col gap-6">
+              <div className="hidden lg:block rule-hairline w-12" />
+              <div className="card-paper p-8 flex flex-col items-center">
+                {lead.pre_score_total !== null ? (
+                  <ScoreCard
+                    score={lead.pre_score_total}
+                    label={isDE ? 'Pre-Score' : 'Pre-Score'}
+                    size={200}
+                  />
+                ) : (
+                  <div className="font-editorial text-5xl italic text-muted-foreground py-12">—</div>
+                )}
+                <p className="mt-6 text-center text-base text-foreground text-balance">
+                  {bucket.label}
+                </p>
+                <p className="mt-3 text-center text-sm text-muted-foreground leading-relaxed text-balance">
+                  {bucket.description}
+                </p>
+              </div>
+              <AIAnnotation>
+                {isDE
+                  ? 'gemini-2.5-flash · interpretiert deine Eingabe · vollständiges Audit folgt manuell'
+                  : 'gemini-2.5-flash · interpreting your input · full audit follows manually'}
+              </AIAnnotation>
+            </aside>
           </div>
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* Checklist */}
-      <section id="checklist" className="relative">
-        <div className="absolute inset-0 noise-overlay opacity-50" aria-hidden />
-        <SectionContainer>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            <div className="lg:col-span-4">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Checkliste' : '— Checklist'}
-              </span>
-              <h2 className="mt-4 font-editorial text-4xl sm:text-5xl font-semibold leading-tight">
-                {isDE ? (<>Digitaler <span className="italic text-aurora">Neustart.</span></>) : (<>Digital <span className="italic text-aurora">restart.</span></>)}
+      {/* ===== 02 · Next step ===== */}
+      <section className="py-20 md:py-24 border-t border-border/80">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
+            <div className="col-span-12 lg:col-span-7">
+              <SectionMarker index={2} total={4} label={isDE ? 'Nächster Schritt' : 'Next step'} />
+              <h2 className="text-balance">
+                {isDE ? 'Lass uns das ' : "Let's "}
+                <span className="font-editorial italic">{isDE ? 'aktivieren.' : 'activate this.'}</span>
               </h2>
-              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                {isDE ? 'Die zehn Hebel, die wir bei jedem ersten Sprint adressieren.' : 'The ten levers we tackle in every first sprint.'}
-              </p>
             </div>
-            <div className="lg:col-span-8">
-              <ul className="divide-y divide-border/60">
-                {checklist.map((item, index) => (
-                  <li key={index} className="flex items-start gap-5 py-4">
-                    <span className="font-editorial text-aurora text-sm tracking-widest pt-1">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <CheckCircle className="w-5 h-5 text-aurora mt-1 flex-shrink-0" />
-                    <span className="text-foreground leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="col-span-12 lg:col-span-5 flex flex-col sm:flex-row gap-4">
+              {lead.pre_score_bucket === 'green' ? (
+                <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-call' : '/gratis-call'} location="report-cta-green">
+                  {isDE ? '20-Minuten Call buchen' : 'Book 20-minute call'}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </CTAButton>
+              ) : (
+                <>
+                  <CTAButton variant="primary" size="lg" href={isEnglish ? '/en/free-call' : '/gratis-call'} location="report-cta">
+                    {isDE ? 'Gratis Orientierungsgespräch' : 'Free orientation call'}
+                    <ArrowUpRight className="ml-2 w-5 h-5" />
+                  </CTAButton>
+                  <a href="#checklist">
+                    <CTAButton variant="secondary" size="lg" location="report-checklist">
+                      {isDE ? 'Checkliste ansehen' : 'View checklist'}
+                    </CTAButton>
+                  </a>
+                </>
+              )}
             </div>
           </div>
-        </SectionContainer>
+        </div>
       </section>
 
-      {/* Callback */}
-      {siteConfig.voiceCallbackEnabled && token && (
-        <SectionContainer>
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <span className="font-editorial text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                {isDE ? '— Optional' : '— Optional'}
-              </span>
-              <h3 className="mt-4 font-editorial text-3xl sm:text-4xl font-semibold leading-tight">
-                {isDE ? (<>Rückruf vom <span className="italic text-aurora">AI-Assistenten.</span></>) : (<>Callback from the <span className="italic text-aurora">AI assistant.</span></>)}
-              </h3>
+      {/* ===== 03 · Checklist ===== */}
+      <section id="checklist" className="py-20 md:py-28 border-t border-border/80">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+            <div className="col-span-12 lg:col-span-4">
+              <SectionMarker index={3} total={4} label={isDE ? 'Checkliste' : 'Checklist'} />
+              <h2 className="text-balance">
+                {isDE ? 'Digitaler ' : 'Digital '}
+                <span className="font-editorial italic">{isDE ? 'Neustart.' : 'restart.'}</span>
+              </h2>
+              <p className="mt-6 max-w-md text-base text-foreground/75 leading-relaxed">
+                {isDE
+                  ? 'Die zehn Hebel, die wir bei jedem ersten Sprint adressieren.'
+                  : 'The ten levers we tackle in every first sprint.'}
+              </p>
             </div>
-            <div className="glass-panel rounded-2xl p-6 sm:p-8">
-              <CallbackRequestForm token={token} language={isDE ? 'de' : 'en'} />
+            <ul className="col-span-12 lg:col-span-8 border-t border-border/80">
+              {checklist.map((item, index) => (
+                <li key={index} className="grid grid-cols-12 gap-4 py-5 border-b border-border/80 items-start">
+                  <span className="col-span-1 font-mono text-xs tracking-[0.2em] text-muted-foreground pt-1.5">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <CheckCircle className="col-span-1 w-5 h-5 text-foreground mt-1" strokeWidth={1.5} />
+                  <span className="col-span-10 text-lg leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== 04 · Optional callback ===== */}
+      {siteConfig.voiceCallbackEnabled && token && (
+        <section className="py-20 md:py-28 border-t border-border/80">
+          <div className="container-section">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-10">
+                <div className="inline-flex">
+                  <SectionMarker index={4} total={4} label={isDE ? 'Optional' : 'Optional'} />
+                </div>
+                <h3 className="text-balance">
+                  {isDE ? 'Rückruf vom ' : 'Callback from the '}
+                  <span className="font-editorial italic">{isDE ? 'AI-Assistenten.' : 'AI assistant.'}</span>
+                </h3>
+              </div>
+              <div className="card-paper p-6 sm:p-8">
+                <CallbackRequestForm token={token} language={isDE ? 'de' : 'en'} />
+              </div>
+              <p className="mt-8 text-center text-sm text-muted-foreground">
+                {isDE
+                  ? 'Wenn Voice-Assistenz genutzt wird, erfolgt ein transparenter Hinweis (inkl. Aufzeichnung).'
+                  : 'If voice assistance is used, there will be a transparent notice (including recording).'}
+              </p>
             </div>
           </div>
-        </SectionContainer>
+        </section>
       )}
-
-      {/* Transparency */}
-      <SectionContainer>
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-sm text-muted-foreground">
-            {isDE
-              ? 'Wenn später Voice-Assistenz genutzt wird, erfolgt ein transparenter Hinweis (inkl. Aufzeichnung).'
-              : 'If voice assistance is used later, there will be a transparent notice (including recording).'}
-          </p>
-        </div>
-      </SectionContainer>
     </Layout>
   );
 }
