@@ -188,15 +188,20 @@ export default function AuditReportPage() {
             <aside className="col-span-12 lg:col-span-4 lg:col-start-9 flex flex-col gap-6">
               <div className="hidden lg:block rule-hairline w-12" />
               <div className="card-paper p-8 flex flex-col items-center">
-                {lead.pre_score_total !== null ? (
-                  <ScoreCard
-                    score={lead.pre_score_total}
-                    label={isDE ? 'Pre-Score' : 'Pre-Score'}
-                    size={200}
-                  />
-                ) : (
-                  <div className="font-editorial text-5xl italic text-muted-foreground py-12">—</div>
-                )}
+                <div
+                  className="flex items-center justify-center"
+                  style={{ width: 200, height: 200 }}
+                >
+                  {lead.pre_score_total !== null ? (
+                    <ScoreCard
+                      score={lead.pre_score_total}
+                      label={isDE ? 'Pre-Score' : 'Pre-Score'}
+                      size={200}
+                    />
+                  ) : (
+                    <div className="font-editorial text-5xl italic text-muted-foreground">—</div>
+                  )}
+                </div>
                 <p className="mt-6 text-center text-base text-foreground text-balance">
                   {bucket.label}
                 </p>
