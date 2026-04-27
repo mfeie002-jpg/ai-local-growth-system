@@ -213,30 +213,29 @@ export function NeuralBackdrop() {
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
-      {/* Layer A: slow color glow orbs (CSS only, very cheap).
-          Dimmed on mobile via the `md:` opacity bumps to keep things calm. */}
+      {/* Layer A: slow color glow orbs — bold, sichtbar */}
       <div className="absolute inset-0">
         <div
-          className="absolute -top-40 -left-40 h-[60vmin] w-[60vmin] rounded-full opacity-25 md:opacity-45 animate-orb-a"
+          className="absolute -top-40 -left-40 h-[60vmin] w-[60vmin] rounded-full opacity-60 md:opacity-80 animate-orb-a"
           style={{
             background:
-              'radial-gradient(circle at 50% 50%, hsl(224 70% 45% / 0.45), transparent 65%)',
+              'radial-gradient(circle at 50% 50%, hsl(224 85% 55% / 0.75), transparent 65%)',
             filter: 'blur(60px)',
           }}
         />
         <div
-          className="absolute top-[30%] -right-32 h-[70vmin] w-[70vmin] rounded-full opacity-20 md:opacity-40 animate-orb-b"
+          className="absolute top-[30%] -right-32 h-[70vmin] w-[70vmin] rounded-full opacity-55 md:opacity-75 animate-orb-b"
           style={{
             background:
-              'radial-gradient(circle at 50% 50%, hsl(28 80% 50% / 0.35), transparent 65%)',
+              'radial-gradient(circle at 50% 50%, hsl(28 90% 55% / 0.65), transparent 65%)',
             filter: 'blur(70px)',
           }}
         />
         <div
-          className="absolute -bottom-40 left-[20%] h-[65vmin] w-[65vmin] rounded-full opacity-20 md:opacity-35 animate-orb-c"
+          className="absolute -bottom-40 left-[20%] h-[65vmin] w-[65vmin] rounded-full opacity-55 md:opacity-70 animate-orb-c"
           style={{
             background:
-              'radial-gradient(circle at 50% 50%, hsl(264 60% 50% / 0.30), transparent 65%)',
+              'radial-gradient(circle at 50% 50%, hsl(264 75% 55% / 0.60), transparent 65%)',
             filter: 'blur(65px)',
           }}
         />
@@ -245,12 +244,12 @@ export function NeuralBackdrop() {
       {/* Layer B: neural net + particles canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* Layer C: paper veil — keeps editorial readability dominant */}
+      {/* Layer C: paper veil — leicht, damit Hintergrund lebt */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, hsl(var(--background) / 0.78) 0%, hsl(var(--background) / 0.86) 50%, hsl(var(--background) / 0.78) 100%)',
+            'linear-gradient(180deg, hsl(var(--background) / 0.45) 0%, hsl(var(--background) / 0.55) 50%, hsl(var(--background) / 0.45) 100%)',
         }}
       />
     </div>
