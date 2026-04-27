@@ -42,6 +42,7 @@ export function NeuralBackdrop() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const w = window.innerWidth;
       const h = window.innerHeight;
+      const isMobile = w < 768;
       sizeRef.current = { w, h, dpr };
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
@@ -49,16 +50,20 @@ export function NeuralBackdrop() {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Particle density: ~1 per 14k px², capped for mobile/desktop
-      const target = Math.min(120, Math.max(35, Math.floor((w * h) / 14000)));
+      // Density: ~1 / 22k px² desktop, ~1 / 38k px² mobile (much sparser)
+      const divisor = isMobile ? 38000 : 22000;
+      const max = isMobile ? 32 : 80;
+      const min = isMobile ? 14 : 28;
+      const target = Math.min(max, Math.max(min, Math.floor((w * h) / divisor)));
       const arr: Particle[] = [];
       for (let i = 0; i < target; i++) {
         arr.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.18,
-          vy: (Math.random() - 0.5) * 0.18,
-          r: 0.8 + Math.random() * 1.6,
+          // Slower drift, especially on mobile
+          vx: (Math.random() - 0.5) * (isMobile ? 0.06 : 0.11),
+          vy: (Math.random() - 0.5) * (isMobile ? 0.06 : 0.11),
+          r: 0.6 + Math.random() * 1.2,
           phase: Math.random() * Math.PI * 2,
         });
       }
@@ -70,18 +75,30 @@ export function NeuralBackdrop() {
 
     let last = performance.now();
     let running = true;
+    // Mobile: throttle to ~30fps to halve main-thread work
+    const isMobile = window.innerWidth < 768;
+    const minFrameMs = isMobile ? 33 : 0;
+    let acc = 0;
 
     const draw = (now: number) => {
       if (!running) return;
       const dt = Math.min(40, now - last);
       last = now;
+      acc += dt;
+      if (acc < minFrameMs) {
+        rafRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      acc = 0;
+
       const { w, h } = sizeRef.current;
       const particles = particlesRef.current;
 
       ctx.clearRect(0, 0, w, h);
 
-      // 1) Connection lines (neural net)
-      ctx.lineWidth = 1;
+      // 1) Connection lines (neural net) — dezent: lower alpha, thinner
+      ctx.lineWidth = 0.6;
+      const maxAlpha = isMobile ? 0.08 : 0.14;
       for (let i = 0; i < particles.length; i++) {
         const a = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
@@ -91,9 +108,8 @@ export function NeuralBackdrop() {
           const d2 = dx * dx + dy * dy;
           if (d2 < CONNECT_DIST * CONNECT_DIST) {
             const d = Math.sqrt(d2);
-            const alpha = (1 - d / CONNECT_DIST) * 0.28;
-            // Cobalt-leaning lines
-            ctx.strokeStyle = `hsla(224, 84%, 48%, ${alpha})`;
+            const alpha = (1 - d / CONNECT_DIST) * maxAlpha;
+            ctx.strokeStyle = `hsla(224, 60%, 35%, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -102,13 +118,15 @@ export function NeuralBackdrop() {
         }
       }
 
-      // 2) Particles (atoms) with subtle pulse
+      // 2) Particles (atoms) with subtle pulse — dezent
+      const dotAlpha = isMobile ? 0.22 : 0.32;
+      const haloAlpha = isMobile ? 0.03 : 0.05;
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         if (!reduced) {
           p.x += p.vx * (dt / 16);
           p.y += p.vy * (dt / 16);
-          p.phase += 0.02;
+          p.phase += 0.012;
           if (p.x < -10) p.x = w + 10;
           if (p.x > w + 10) p.x = -10;
           if (p.y < -10) p.y = h + 10;
