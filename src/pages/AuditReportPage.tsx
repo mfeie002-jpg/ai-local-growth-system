@@ -5,7 +5,7 @@ import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { CTAButton } from '@/components/CTAButton';
 import { CallbackRequestForm } from '@/components/forms/CallbackRequestForm';
-import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
+import { SectionMarker, ScoreCard, AIAnnotation, ReportSkeleton } from '@/components/neural';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/lib/analytics';
@@ -114,9 +114,7 @@ export default function AuditReportPage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-foreground" strokeWidth={1.5} />
-        </div>
+        <ReportSkeleton marker={isDE ? 'Vorab-Score' : 'Pre-Score'} />
       </Layout>
     );
   }
