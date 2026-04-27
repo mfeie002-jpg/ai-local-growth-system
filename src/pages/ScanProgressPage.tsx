@@ -160,25 +160,35 @@ export default function ScanProgressPage() {
                   : 'gemini-2.5-flash · prüft öffentliche Signale · meist 30–90s'}
               </AIAnnotation>
 
-              {status.checks_total > 0 && !error && (
-                <div className="card-paper p-5">
-                  <div className="flex items-baseline justify-between mb-3">
+              {/* Reserve aside card slot so progress arrival doesn't shift layout */}
+              <div className="card-paper p-5" style={{ minHeight: '92px' }}>
+                {status.checks_total > 0 && !error ? (
+                  <>
+                    <div className="flex items-baseline justify-between mb-3">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                        {c.checks}
+                      </span>
+                      <span className="font-editorial text-3xl text-foreground">
+                        {status.checks_passed}
+                        <span className="text-base text-muted-foreground">/{status.checks_total}</span>
+                      </span>
+                    </div>
+                    <div className="h-px bg-border relative overflow-hidden">
+                      <div
+                        className="absolute inset-y-0 left-0 bg-foreground transition-all duration-500"
+                        style={{ width: `${progress}%`, height: '2px', top: '-0.5px' }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-baseline justify-between">
                     <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                       {c.checks}
                     </span>
-                    <span className="font-editorial text-3xl text-foreground">
-                      {status.checks_passed}
-                      <span className="text-base text-muted-foreground">/{status.checks_total}</span>
-                    </span>
+                    <span className="font-editorial text-3xl text-muted-foreground/60">—</span>
                   </div>
-                  <div className="h-px bg-border relative overflow-hidden">
-                    <div
-                      className="absolute inset-y-0 left-0 bg-foreground transition-all duration-500"
-                      style={{ width: `${progress}%`, height: '2px', top: '-0.5px' }}
-                    />
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </aside>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { CTAButton } from '@/components/CTAButton';
 import { CallbackRequestForm } from '@/components/forms/CallbackRequestForm';
-import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
+import { SectionMarker, ScoreCard, AIAnnotation, ReportSkeleton } from '@/components/neural';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/lib/analytics';
@@ -114,9 +114,7 @@ export default function AuditReportPage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-foreground" strokeWidth={1.5} />
-        </div>
+        <ReportSkeleton marker={isDE ? 'Vorab-Score' : 'Pre-Score'} />
       </Layout>
     );
   }
@@ -190,15 +188,20 @@ export default function AuditReportPage() {
             <aside className="col-span-12 lg:col-span-4 lg:col-start-9 flex flex-col gap-6">
               <div className="hidden lg:block rule-hairline w-12" />
               <div className="card-paper p-8 flex flex-col items-center">
-                {lead.pre_score_total !== null ? (
-                  <ScoreCard
-                    score={lead.pre_score_total}
-                    label={isDE ? 'Pre-Score' : 'Pre-Score'}
-                    size={200}
-                  />
-                ) : (
-                  <div className="font-editorial text-5xl italic text-muted-foreground py-12">—</div>
-                )}
+                <div
+                  className="flex items-center justify-center"
+                  style={{ width: 200, height: 200 }}
+                >
+                  {lead.pre_score_total !== null ? (
+                    <ScoreCard
+                      score={lead.pre_score_total}
+                      label={isDE ? 'Pre-Score' : 'Pre-Score'}
+                      size={200}
+                    />
+                  ) : (
+                    <div className="font-editorial text-5xl italic text-muted-foreground">—</div>
+                  )}
+                </div>
                 <p className="mt-6 text-center text-base text-foreground text-balance">
                   {bucket.label}
                 </p>

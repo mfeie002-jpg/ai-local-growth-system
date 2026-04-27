@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
+import { SectionMarker, ScoreCard, AIAnnotation, ReportSkeleton } from '@/components/neural';
 
 // ── Types ──────────────────────────────────────────────────────────
 interface Signal {
@@ -187,14 +187,12 @@ const AnalysisReportPage: React.FC = () => {
     );
   };
 
-  // Loading
+  // Loading — skeleton mirrors final hero so no CLS when data lands
   if (loading) {
     return (
       <Layout>
         <SEOHead title="Loading..." description="Loading analysis report..." noIndex />
-        <section className="min-h-[70vh] flex items-center justify-center">
-          <Loader2 className="w-10 h-10 animate-spin text-foreground" strokeWidth={1.5} />
-        </section>
+        <ReportSkeleton marker={isDE ? 'Reifegrad-Check' : 'Maturity Check'} />
       </Layout>
     );
   }
@@ -254,11 +252,18 @@ const AnalysisReportPage: React.FC = () => {
                   {isDE ? 'Reifegrad.' : 'maturity.'}
                 </span>
               </h1>
-              {ai?.headline && (
-                <p className="mt-8 max-w-2xl text-lg md:text-xl text-foreground/75 leading-[1.55]">
-                  {ai.headline}
-                </p>
-              )}
+              {/* Reserve space so the AI headline doesn't shift the layout
+                  when it streams in (or stays empty in fallback). */}
+              <div
+                className="mt-8 max-w-2xl"
+                style={{ minHeight: '64px' }}
+              >
+                {ai?.headline && (
+                  <p className="text-lg md:text-xl text-foreground/75 leading-[1.55]">
+                    {ai.headline}
+                  </p>
+                )}
+              </div>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 <span>{report.checks_passed}/{report.checks_total} {isDE ? 'Bereiche' : 'areas'}</span>
                 {report.data_sources_used && report.data_sources_used.length > 0 && (
