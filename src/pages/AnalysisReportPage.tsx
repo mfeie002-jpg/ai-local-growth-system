@@ -15,7 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { SectionMarker, ScoreCard, AIAnnotation } from '@/components/neural';
+import { SectionMarker, ScoreCard, AIAnnotation, ReportSkeleton } from '@/components/neural';
 
 // ── Types ──────────────────────────────────────────────────────────
 interface Signal {
@@ -187,14 +187,12 @@ const AnalysisReportPage: React.FC = () => {
     );
   };
 
-  // Loading
+  // Loading — skeleton mirrors final hero so no CLS when data lands
   if (loading) {
     return (
       <Layout>
         <SEOHead title="Loading..." description="Loading analysis report..." noIndex />
-        <section className="min-h-[70vh] flex items-center justify-center">
-          <Loader2 className="w-10 h-10 animate-spin text-foreground" strokeWidth={1.5} />
-        </section>
+        <ReportSkeleton marker={isDE ? 'Reifegrad-Check' : 'Maturity Check'} />
       </Layout>
     );
   }
