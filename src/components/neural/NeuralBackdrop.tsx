@@ -100,9 +100,9 @@ export function NeuralBackdrop() {
 
       ctx.clearRect(0, 0, w, h);
 
-      // 1) Connection lines (neural net) — dezent: lower alpha, thinner
-      ctx.lineWidth = 0.6;
-      const maxAlpha = isMobile ? 0.08 : 0.14;
+      // 1) Connection lines (neural net) — sichtbar, lebendig
+      ctx.lineWidth = 0.8;
+      const maxAlpha = isMobile ? 0.22 : 0.38;
       for (let i = 0; i < particles.length; i++) {
         const a = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
@@ -113,7 +113,10 @@ export function NeuralBackdrop() {
           if (d2 < CONNECT_DIST * CONNECT_DIST) {
             const d = Math.sqrt(d2);
             const alpha = (1 - d / CONNECT_DIST) * maxAlpha;
-            ctx.strokeStyle = `hsla(224, 60%, 35%, ${alpha})`;
+            // alternate cobalt + warm signal hue based on pair index for variety
+            const hue = (i + j) % 3 === 0 ? 28 : 224;
+            const sat = hue === 28 ? 85 : 70;
+            ctx.strokeStyle = `hsla(${hue}, ${sat}%, 50%, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -122,9 +125,9 @@ export function NeuralBackdrop() {
         }
       }
 
-      // 2) Particles (atoms) with subtle pulse — dezent
-      const dotAlpha = isMobile ? 0.22 : 0.32;
-      const haloAlpha = isMobile ? 0.03 : 0.05;
+      // 2) Particles (atoms) with pulse — lebendig sichtbar
+      const dotAlpha = isMobile ? 0.55 : 0.75;
+      const haloAlpha = isMobile ? 0.10 : 0.18;
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         if (!reduced) {
@@ -137,15 +140,15 @@ export function NeuralBackdrop() {
           if (p.y > h + 10) p.y = -10;
         }
         const pulse = 0.65 + Math.sin(p.phase) * 0.35;
-        // Halo (warm signal, very subtle)
-        ctx.fillStyle = `hsla(28, 80%, 50%, ${haloAlpha * pulse})`;
+        // Halo (warm signal, sichtbar)
+        ctx.fillStyle = `hsla(28, 90%, 55%, ${haloAlpha * pulse})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r * 4.5, 0, Math.PI * 2);
         ctx.fill();
-        // Core dot (cobalt, dezent)
-        ctx.fillStyle = `hsla(224, 70%, 40%, ${dotAlpha * pulse})`;
+        // Core dot (cobalt, kräftig)
+        ctx.fillStyle = `hsla(224, 85%, 50%, ${dotAlpha * pulse})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r * 1.4, 0, Math.PI * 2);
         ctx.fill();
       }
 
