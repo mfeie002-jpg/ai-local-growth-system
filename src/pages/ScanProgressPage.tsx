@@ -80,7 +80,7 @@ export default function ScanProgressPage() {
         noIndex
       />
 
-      <section className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32">
+      <section data-neural-zone className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12">
             {/* Left — main */}
