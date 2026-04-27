@@ -9,9 +9,13 @@
  *  - Single requestAnimationFrame loop, capped DPR to 1.5
  *  - Particle count scales with viewport area (mobile gets less)
  *  - Pauses when tab is hidden; respects prefers-reduced-motion
+ *  - IntersectionObserver pauses the loop when no [data-neural-zone]
+ *    element is on screen (e.g. user scrolled past content into footer).
+ *  - Scroll-driven intensity boost while a zone is centered in viewport.
  *  - z-index 0; content layers above with relative positioning
  */
 import { useEffect, useRef } from 'react';
+
 
 interface Particle {
   x: number;
