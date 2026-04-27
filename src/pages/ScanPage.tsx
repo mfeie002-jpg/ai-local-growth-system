@@ -26,7 +26,7 @@ export default function ScanPage() {
         }
       />
 
-      <section className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32 border-b border-border">
+      <section data-neural-zone className="pt-28 md:pt-36 lg:pt-44 pb-24 md:pb-32 border-b border-border">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12">
             {/* Left: editorial copy */}

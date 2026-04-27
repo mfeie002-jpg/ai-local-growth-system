@@ -26,7 +26,7 @@ export function ReportSkeleton({
   showAside = true,
 }: ReportSkeletonProps) {
   return (
-    <section className="pt-28 md:pt-36 lg:pt-44 pb-20 md:pb-28">
+    <section data-neural-zone className="pt-28 md:pt-36 lg:pt-44 pb-20 md:pb-28">
       <div className="container-section">
         <div className="grid grid-cols-12 gap-x-6 gap-y-12">
           {/* Left — headline placeholder */}
