@@ -101,6 +101,23 @@ export function useLeadSubmit() {
         });
       }
 
+      // Fire-and-forget: report event to Hub (never block on failure)
+      supabase.functions
+        .invoke('report-event', {
+          body: {
+            event_type: 'lead_submitted',
+            source_url: window.location.href,
+            payload: {
+              lead_type: data.lead_type,
+              industry: data.industry,
+              service_area: data.service_area,
+              language,
+              lead_id: result.lead_id,
+            },
+          },
+        })
+        .catch((err) => console.warn('report-event failed:', err));
+
       return { success: true, leadId: result.lead_id };
     } catch (err) {
       console.error('Unexpected error:', err);
