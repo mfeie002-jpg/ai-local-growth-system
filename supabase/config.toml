@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.scan-status]
 verify_jwt = false
+
+[functions.report-event]
+verify_jwt = false
