@@ -180,101 +180,150 @@ export default function HomePage() {
       <OrganizationSchema description={t.siteDescription} />
       <WebsiteSchema />
 
-      {/* ========== 01 — Hero ========== */}
-      <EditorialHero
-        eyebrow={isEnglish ? 'AI-first digital marketing for Swiss service businesses' : 'AI-first Digital Marketing für Schweizer Dienstleister'}
-        title={
-          isEnglish ? (
-            <>
-              We find what is <em className="font-editorial">holding back</em>
-              <br />your digital growth — and fix it.
-            </>
-          ) : (
-            <>
-              Wir finden, was Ihr digitales <em className="font-editorial">Wachstum bremst</em>
-              <br />— und beheben es.
-            </>
-          )
-        }
-        lede={
-          isEnglish
-            ? 'A scoring engine reads 25+ signals on your website, visibility and conversion path. You get a real number, the top three fixes, and a clear next step. Free, in minutes.'
-            : 'Eine Scoring-Engine liest 25+ Signale zu Website, Sichtbarkeit und Conversion-Pfad. Sie erhalten eine echte Zahl, die drei wichtigsten Fixes und einen klaren nächsten Schritt. Gratis, in Minuten.'
-        }
-        cta={
-          <>
-            <CTAButton variant="primary" size="lg" href={auditPath} location="hero">
-              {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </CTAButton>
-            <CTAButton variant="ghost" size="lg" href={callPath} location="hero">
-              {isEnglish ? 'Or talk to a human →' : 'Oder mit einem Menschen sprechen →'}
-            </CTAButton>
-          </>
-        }
-        annotation={
-          isEnglish
-            ? '25+ signals · deterministic scoring · partial-result aware · never invents numbers'
-            : '25+ Signale · deterministisches Scoring · Teilergebnisse zulässig · erfindet keine Zahlen'
-        }
-      />
-
-      {/* ========== 02 — Trust strip ========== */}
-      <div className="container-section">
-        <div className="rule-hairline" />
-        <ul className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 py-6 font-mono text-xs uppercase tracking-[0.18em] text-foreground/65" data-cta-loc="trust-strip">
-          {trustClaims.map((c) => (
-            <li key={c} className="flex items-center gap-2">
-              <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-signal" />
-              {c}
-            </li>
-          ))}
-        </ul>
-        <div className="rule-hairline" />
-      </div>
-
-      {/* ========== 03 — Problem / Diagnose ========== */}
-      <section data-neural-zone className="section-padding">
+      {/* ========== 01 — Hero (Instrument Panel Bento) ========== */}
+      <section data-neural-zone className="pt-8 md:pt-12 pb-6">
         <div className="container-section">
-          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-            <div className="col-span-12 lg:col-span-5">
-              <SectionMarker index={3} total={11} label={isEnglish ? 'Where growth stalls' : 'Wo Wachstum stockt'} />
-              <RevealText>
-                <h2 className="text-balance">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+            {/* Headline panel */}
+            <div className="md:col-span-8 bg-card border border-border p-8 md:p-12 rounded-md flex flex-col justify-between min-h-[520px]">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 border border-border bg-background rounded-full">
+                  <span className="w-2 h-2 rounded-full bg-signal shadow-[0_0_8px_hsl(var(--signal))] animate-pulse-glow" />
+                  <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-muted-foreground">
+                    {isEnglish ? 'System Status · Active' : 'Systemstatus · Aktiv'}
+                  </span>
+                </div>
+                <h1 className="uppercase text-balance">
                   {isEnglish ? (
-                    <>Growth rarely fails <em className="font-editorial">everywhere</em>. It fails in one or two places you can't see.</>
+                    <>We find the <span className="text-muted-foreground">growth</span><br />blockers.</>
                   ) : (
-                    <>Wachstum scheitert selten <em className="font-editorial">überall</em>. Es scheitert an ein bis zwei Stellen, die Sie nicht sehen.</>
+                    <>Wir finden die <span className="text-muted-foreground">Wachstums-</span><br />bremsen.</>
                   )}
-                </h2>
-                <p className="mt-6 text-lg text-foreground/75 max-w-md">
+                </h1>
+                <p className="max-w-md text-muted-foreground text-lg leading-relaxed">
                   {isEnglish
-                    ? 'The audit isolates the constraint before you spend a franc on more traffic. Five layers, one verdict.'
-                    : 'Das Audit isoliert die Bremse, bevor Sie einen Franken in mehr Traffic stecken. Fünf Ebenen, ein Urteil.'}
+                    ? 'A deterministic engine reads 25+ signals on your website, visibility and conversion path. Real number, top three fixes, clear next step. Free, in minutes.'
+                    : '25+ Signale zu Website, Sichtbarkeit und Conversion — deterministisch bewertet. Echte Zahl, drei Fixes, klarer nächster Schritt. Gratis, in Minuten.'}
                 </p>
-              </RevealText>
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-3">
+                <CTAButton variant="primary" size="lg" href={auditPath} location="hero">
+                  {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </CTAButton>
+                <CTAButton variant="ghost" size="lg" href={callPath} location="hero">
+                  {isEnglish ? 'Or talk to a human →' : 'Oder mit einem Menschen sprechen →'}
+                </CTAButton>
+              </div>
             </div>
-            <ul className="col-span-12 lg:col-span-7 lg:border-l lg:border-border lg:pl-10">
-              {diagnostics.map((d) => (
-                <li key={d.num} className="border-t border-border first:border-t-0 py-6 grid grid-cols-12 gap-4">
-                  <div className="col-span-2 sm:col-span-1 font-mono text-xs text-foreground/55 pt-1">{d.num}</div>
-                  <div className="col-span-10 sm:col-span-3 font-editorial text-2xl md:text-3xl font-light text-foreground">{d.k}</div>
-                  <div className="col-span-12 sm:col-span-8 text-base text-foreground/70">{d.v}</div>
-                </li>
+
+            {/* Live audit score tile */}
+            <div className="md:col-span-4 bg-card border border-border p-8 rounded-md flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[520px]">
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-signal to-transparent opacity-40" />
+              <div className="w-36 h-36 rounded-full border-2 border-border flex items-center justify-center relative mb-6">
+                <div className="absolute inset-0 rounded-full border-t-2 border-signal animate-spin" style={{ animationDuration: '6s' }} />
+                <span className="font-mono text-4xl font-bold text-foreground">84<span className="text-lg text-muted-foreground">%</span></span>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                {isEnglish ? 'Efficiency Score' : 'Efficiency Score'}
+              </span>
+              <div className="mt-6 w-full h-px bg-border" />
+              <div className="mt-4 grid grid-cols-2 w-full gap-4 text-left">
+                <div>
+                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Scanning</div>
+                  <div className="font-mono text-xs font-bold text-foreground">FUNNEL_01</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Signals</div>
+                  <div className="font-mono text-xs font-bold text-foreground">25+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ========== 02 — Trust chips + Live signals feed ========== */}
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-12 gap-3" data-cta-loc="trust-strip">
+            <div className="md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { k: 'METRIC_01', v: trustClaims[0] },
+                { k: 'METHOD',    v: trustClaims[1] },
+                { k: 'STATUS',    v: trustClaims[2] },
+                { k: 'ORIGIN',    v: trustClaims[3] },
+              ].map((c) => (
+                <div key={c.k} className="bg-card border border-border p-4 rounded-md flex flex-col justify-between min-h-[86px]">
+                  <span className="font-mono text-[10px] text-muted-foreground tracking-wider">{c.k}</span>
+                  <span className="text-sm font-bold uppercase tracking-tight text-foreground">{c.v}</span>
+                </div>
               ))}
-            </ul>
+            </div>
+
+            <div className="md:col-span-4 bg-card border border-border p-4 rounded-md overflow-hidden">
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-mono text-[10px] text-muted-foreground tracking-wider">LIVE_SIGNALS</span>
+                <span className="font-mono text-[9px] px-1.5 py-0.5 border border-border text-signal">STREAMING</span>
+              </div>
+              <div className="space-y-2 font-mono text-[10px] leading-relaxed">
+                <div className="flex justify-between text-muted-foreground"><span>[OK] CONVERSION_ANALYSIS</span><span>14:02:11</span></div>
+                <div className="flex justify-between text-muted-foreground"><span>[OK] TECH_STACK_AUDIT</span><span>14:02:08</span></div>
+                <div className="flex justify-between text-signal"><span>[..] SEO_SEM_LINKAGE</span><span>LIVE</span></div>
+                <div className="flex justify-between text-muted-foreground"><span>[OK] TRUST_SIGNAL_INDEX</span><span>14:01:55</span></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="container-section"><div className="rule-hairline" /></div>
+      {/* ========== 03 — Diagnose strip ========== */}
+      <section data-neural-zone className="py-16 md:py-24">
+        <div className="container-section">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-px flex-1 bg-border" />
+            <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground !text-[10px]" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', lineHeight: 1.5 }}>
+              {isEnglish ? '03 / 11 · Diagnostic Zones' : '03 / 11 · Diagnosebereiche'}
+            </h2>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
+          <div className="mb-10 max-w-2xl">
+            <RevealText>
+              <h2 className="uppercase text-balance">
+                {isEnglish ? <>Growth rarely fails <span className="text-muted-foreground">everywhere</span>.</> : <>Wachstum scheitert selten <span className="text-muted-foreground">überall</span>.</>}
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                {isEnglish
+                  ? 'It fails at one or two points you cannot see. The audit isolates the constraint before you spend a franc on more traffic.'
+                  : 'Es scheitert an ein bis zwei Stellen, die Sie nicht sehen. Das Audit isoliert die Bremse, bevor Sie einen Franken in mehr Traffic stecken.'}
+              </p>
+            </RevealText>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 border border-border divide-y md:divide-y-0 md:divide-x divide-border rounded-md overflow-hidden">
+            {diagnostics.map((d, i) => (
+              <div key={d.num} className="p-6 group hover:bg-card transition-colors">
+                <span className="font-mono text-[10px] text-muted-foreground block mb-3 tracking-wider">{d.num}.</span>
+                <h3 className="text-xl font-bold uppercase text-foreground mb-4">{d.k}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4 min-h-[3.5rem]">{d.v}</p>
+                <div className="h-1 w-full bg-border overflow-hidden rounded-full">
+                  <div
+                    className="h-full bg-signal transition-all duration-700"
+                    style={{ width: `${[50, 75, 66, 100, 33][i]}%`, boxShadow: i === 3 ? '0 0 8px hsl(var(--signal))' : undefined }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
 
       {/* ========== 04 — The Audit as a product (Midnight) ========== */}
-      <section data-neural-zone className="section-padding bg-foreground text-background">
+      <section data-neural-zone className="section-padding bg-card text-foreground border-y border-border">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
             <div className="col-span-12 lg:col-span-6">
-              <div className="font-mono text-xs uppercase tracking-[0.18em] text-background/60 mb-6">
+              <div className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-6">
                 {isEnglish ? '04 / 11 · The Audit' : '04 / 11 · Das Audit'}
               </div>
               <RevealText>
@@ -285,14 +334,14 @@ export default function HomePage() {
                     <>Eine deterministische Engine. <em className="font-editorial">Kein Chatbot-Rateversuch.</em></>
                   )}
                 </h2>
-                <p className="mt-6 text-lg text-background/80 max-w-lg">
+                <p className="mt-6 text-lg text-muted-foreground max-w-lg">
                   {isEnglish
                     ? 'Signals are collected, normalized, scored by rules, then interpreted. AI translates — never invents.'
                     : 'Signale werden gesammelt, normalisiert, per Regeln bewertet, dann interpretiert. KI übersetzt — sie erfindet nicht.'}
                 </p>
               </RevealText>
 
-              <div className="mt-10 [&_.text-foreground\\/55]:text-background/55 [&_.text-foreground]:text-background">
+              <div className="mt-10 [&_.text-foreground\\/55]:text-muted-foreground [&_.text-foreground]:text-background">
                 <SignalStream stages={stages} />
               </div>
 
