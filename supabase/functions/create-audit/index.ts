@@ -93,7 +93,7 @@ serve(async (req) => {
     return json({
       success: true,
       token: audit.token,
-      redirect_path: lang === "en" ? `/en/audit/result/${audit.token}` : `/audit/ergebnis/${audit.token}`,
+      redirect_path: lang === "en" ? `/en/audit/r/${audit.token}` : `/audit/r/${audit.token}`,
     }, 200);
   } catch (e) {
     console.error("create-audit error:", e);
