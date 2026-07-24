@@ -18,9 +18,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter Tight", "system-ui", "sans-serif"],
-        display: ["Fraunces", "Georgia", "serif"],
-        editorial: ["Fraunces", "Georgia", "serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        display: ["Sora", "system-ui", "sans-serif"],
+        editorial: ["Sora", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       backgroundImage: {
