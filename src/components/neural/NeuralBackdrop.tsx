@@ -64,12 +64,13 @@ export function NeuralBackdrop() {
         arr.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          // Slower drift, especially on mobile
-          vx: (Math.random() - 0.5) * (isMobile ? 0.06 : 0.11),
-          vy: (Math.random() - 0.5) * (isMobile ? 0.06 : 0.11),
+          // Visible drift — atoms slowly float across the universe
+          vx: (Math.random() - 0.5) * (isMobile ? 0.18 : 0.32),
+          vy: (Math.random() - 0.5) * (isMobile ? 0.18 : 0.32),
           r: 0.6 + Math.random() * 1.2,
           phase: Math.random() * Math.PI * 2,
         });
+
       }
       particlesRef.current = arr;
     };
