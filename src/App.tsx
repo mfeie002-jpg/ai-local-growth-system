@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { UTMTracker } from "@/components/UTMTracker";
@@ -66,7 +66,7 @@ const App = () => (
             <Routes>
               {/* DE Routes */}
               <Route path="/" element={<HomePage />} />
-              <Route path="/gratis-audit" element={<AuditPage />} />
+              <Route path="/gratis-audit" element={<Navigate to="/audit" replace />} />
               <Route path="/gratis-audit/report/:token" element={<AuditReportPage />} />
               <Route path="/gratis-call" element={<CallPage />} />
               <Route path="/system" element={<SystemPage />} />
@@ -96,7 +96,7 @@ const App = () => (
               
               {/* EN Routes */}
               <Route path="/en" element={<HomePage />} />
-              <Route path="/en/free-audit" element={<AuditPage />} />
+              <Route path="/en/free-audit" element={<Navigate to="/en/audit" replace />} />
               <Route path="/en/free-audit/report/:token" element={<AuditReportPage />} />
               <Route path="/en/free-call" element={<CallPage />} />
               <Route path="/en/system" element={<SystemPage />} />
