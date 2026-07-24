@@ -1,45 +1,142 @@
-## Status: Nearly Complete — Verification & Gap-Closing Plan
+Ausgangslage
+- itsFeierabend.ch positioniert sich als „AI-first Digital Marketing Agency“.
+- Kern-Differenzierung: „We are the connection between the machine and the humans“ — KI liest Signale, Menschen setzen Wachstum um.
+- Lead-Generator: kostenloser Website-Audit (25 deterministische Signale, transparentes Scoring).
+- Flagship-Produkt: Ultimate Package (Audit + Roadmap + Umsetzung durch das Team).
+- Zusätzliche Einnahmequellen: Launch Sprint, Growth Retainer, Scale-Retainer.
+- Service-Portfolio: 7 Disziplinen, KI-Implementierung ist das Rückgrat.
+- Harte Regel: Keine erfundenen Kennzahlen, Logos oder Testimonials.
+- Die aktuelle Homepage hat bereits eine gute „Neural Editorial“-Struktur mit 6 nummerierten Sektionen, aber sie verstreut die Conversion-Pfade und nutzt noch die Legacy-Route `/gratis-audit` statt des neuen `/audit`-Prototyps.
 
-All three prompts have already been implemented in prior turns. This plan verifies each requirement is actually in place, closes any residual gaps, and produces a final "definition of done" report.
+Strategische Ziele für die Homepage
+1. In < 3 Sekunden verständlich machen: „KI-gestützte Marketing-Agentur für Schweizer Dienstleister“.
+2. Den kostenlosen Audit als Haupt-Einstieg positionieren — nicht als Feature, sondern als Produkt.
+3. Das Ultimate Package als logische nächste Stufe sichtbar machen.
+4. Vertrauen aufbauen, ohne die No-Fake-Proof-Regel zu brechen.
+5. Drei Intent-Levels bedienen: „Ich will sofort wissen, wo ich stehe“ (Audit), „Ich will erst reden“ (Call), „Ich will alles aus einer Hand“ (Ultimate Package).
 
-### What's already built (from prior turns)
+Empfohlene Sektions-Struktur (Top-down)
+````text
+┌─────────────────────────────────────────────────────────────┐
+│ 00  Sticky Header                                           │
+│     Logo · Audit · Ultimate Package · Services · Pricing    │
+│     CTA: „Free Audit →“                                     │
+├─────────────────────────────────────────────────────────────┤
+│ 01  Hero / Manifesto                                        │
+│     Headline: KI + Mensch. Subheadline: Scoring-Engine.   │
+│     CTA-1: Gratis Audit starten   CTA-2: Call buchen        │
+│     Meta: Keine Verpflichtung · In Minuten · Schweiz        │
+├─────────────────────────────────────────────────────────────┤
+│ 02  Problem / Versprechen                                   │
+│     „Die meisten Audits sind entweder oberflächlich oder    │
+│      reine Verkaufsmaschinen. Wir machen beides anders.“     │
+├─────────────────────────────────────────────────────────────┤
+│ 03  The Engine (How it works)                               │
+│     4 Stufen: Erfassen → Normalisieren → Bewerten →         │
+│     Interpretieren. Deterministisch, keine erfundenen Werte.│
+├─────────────────────────────────────────────────────────────┤
+│ 04  The Ultimate Package (Flagship)                         │
+│     Alles, was das Audit aufdeckt, wird umgesetzt.         │
+│     Score-Teaser + Bullet-Liste + CTA.                      │
+├─────────────────────────────────────────────────────────────┤
+│ 05  Services (Editorial List)                               │
+│     7 Disziplinen, KI-Implementierung als „Core“ markiert.  │
+├─────────────────────────────────────────────────────────────┤
+│ 06  Trust / Proof (No-Fake)                                 │
+│     Echte Fallstudien-Namen + Transparenz-Statement.        │
+│     Anti-Knebel + Dateneigentum + Swiss-based.              │
+├─────────────────────────────────────────────────────────────┤
+│ 07  Pricing Teaser                                          │
+│     Drei Einstiegs-Pakete mit Preisen, Link zu /pakete.     │
+├─────────────────────────────────────────────────────────────┤
+│ 08  Final CTA                                               │
+│     „Zwei Wege rein. Beide gratis.“ Audit oder Call.        │
+└─────────────────────────────────────────────────────────────┘
+````
 
-**Prompt 1 — Vertical slice:**
-- `/audit` + `/en/audit` routes, form with URL/name/email/language/consent + optional marketing consent
-- `audit_requests` + `audit_events` tables with RLS
-- Edge functions: `create-audit`, `fetch-site-signals`, `compute-score`, `generate-report`, `send-report-email`, `get-audit-report-v0`
-- 25 deterministic signals across 5 categories, score v0.1
-- Private `/audit/r/:token` route with score, categories, evidence, top actions, CTA
-- Tracking events; loading/timeout/failure/partial states
+Detaillierte Begründung pro Sektion
 
-**Prompt 2 — Semrush enrichment:**
-- Server-side gateway calls, 30-day cache (`semrush_domain_cache`), daily fresh limit (`semrush_daily_usage`)
-- Opaque error mapping; graceful degradation with `search_visibility` marked `unavailable`
-- 9/9 tests passing in `semrush.test.ts`
+01 Hero / Manifesto
+- Was: Große Headline, die die Brücke zwischen Maschine und Mensch benennt (z. B. „KI liest die Signale. Menschen machen die Moves.“). Kurzer Lede-Satz zur Scoring-Engine. Zwei CTAs: Primary → `/audit` (DE) bzw. `/en/audit` (EN), Secondary → `/gratis-call` / `/en/free-call`.
+- Wo: Über dem Fold, 8/12-Spalten-Editorial-Layout mit Annotation-Spalte rechts.
+- Warum: Der erste Eindruck muss sofort das Geschäftsmodell erklären. Der Audit ist der niedrigste Reibungs-Einstieg; der Call fängt Menschen ab, die erst reden wollen.
 
-**Prompt 3 — Hardening:**
-- Turnstile integrated (both keys now set: site key in `.env`, secret key in vault)
-- 30-day per-domain dedupe, 5/day per-IP, 200/day global limits
-- SSRF protection via `resolvePublicIps`, IP literal/private range/localhost rejection
-- `audit_events` logging for `bot_check_failed`, `ssrf_blocked`, `rate_limited`
-- GitHub CI (`.github/workflows/ci.yml`), Playwright E2E (`tests/e2e/audit-flow.spec.ts`)
-- Lovable badge removed, sitemap/robots/hreflang/canonical done
-- `docs/RELEASE_CHECKLIST.md` produced
+02 Problem / Versprechen
+- Was: Ein kurzer, kontrastreicher Abschnitt (2-3 Sätze): „Die meisten Agenturen verkaufen Stunden. Wir verkaufen Ergebnisse, die eine Engine misst.“
+- Wo: Direkt unter dem Hero, vor der Engine-Erklärung.
+- Warum: Erhöht die Relevanz für Schweizer Dienstleister und bereitet das „Wie“ vor. Trennt sich von klassischen Agentur-Websites.
 
-### Plan for this turn — final verification pass
+03 The Engine
+- Was: Beibehaltung der 4-Stufen-Pipeline (Collect, Normalize, Score, Interpret) mit `SignalStream`. Hinzufügen eines kurzen „Deterministic“-Badges/Statements.
+- Wo: Sektion 03, links Text, rechts Animation + 4 Kennzahlen-Kästchen.
+- Warum: Das ist der technische Beweis für die AI-first-Positionierung. Erklärt, warum der Audit glaubwürdig ist.
 
-1. **Re-verify Turnstile is actually enforced** now that both keys are set (previously fail-open). Read `create-audit/index.ts` and `Turnstile.tsx` to confirm the token is required client-side and validated server-side, and that fail-open is no longer active.
-2. **Run RLS verification query** on `audit_requests`, `audit_events`, `semrush_domain_cache`, `semrush_daily_usage`, `rate_limits` — confirm anon has no read access to PII, service_role has full access, no policy gaps.
-3. **Run Supabase linter** to catch any new warnings introduced across the recent migrations.
-4. **Run the Deno test suite** (`semrush.test.ts` + any audit tests) to confirm green.
-5. **Trigger a fresh SEO scan** and update any findings still marked failing.
-6. **Manually spot-check** `docs/RELEASE_CHECKLIST.md` for the new Turnstile keys and rate-limit values, patch if stale.
-7. **Produce a final go/no-go report** listing: what's live, what's tested, what environment variables are set, and any remaining low-risk gaps.
+04 The Ultimate Package
+- Was: Beibehaltung als Sektion 04, aber klarer als „nächste Stufe“ framen. Score-Teaser mit Live-Engine-Beispiel. Bullets: Scan → Score → Top 3 → Umsetzung.
+- Wo: Rechts ScoreCard, links Text + CTAs.
+- Warum: Wer das Audit versteht, muss sofort sehen, dass es auch umgesetzt werden kann. Das ist der Upsell-Moment.
 
-### Branch note
+05 Services
+- Was: Editorial Liste der 7 Services. KI-Implementierung als „Core“ markiert. Kurze Beschreibungen, keine Karten.
+- Wo: Sektion 05.
+- Warum: Zeigt Breite, ohne vom Hauptpfad abzulenken. Die Reihenfolge kommuniziert: KI ist das Rückgrat, alles andere ordnet sich darum.
 
-The `prototype/audit-v0` branch cannot be created from here — Lovable manages git. Will remind you to create it via the Git panel if you want to isolate this slice from `main`.
+06 Trust / Proof (No-Fake)
+- Was: Echte Namen (umzugscheck.ch, zuegelhelden.ch, sbpictures.ch, velolife.ch) mit Branchen-Tag. Keine erfundenen Kennzahlen. Stattdessen ein Transparenz-Statement: „Wir nennen offen, was wir analysiert haben — ohne +40%-Behauptungen.“
+- Wo: Sektion 06.
+- Warum: Erfüllt die No-Fake-Proof-Constraint und baut dennoch Vertrauen auf.
 
-### Deliverable
+07 Pricing Teaser
+- Was: Drei Karten: Launch Sprint CHF 1'990, Growth Retainer CHF 3'900/Monat, Scale CHF 6'900/Monat. Jede mit „Anti-Knebel“-Hinweis (Domain, Ad-Account, Daten bleiben beim Kunden). Link zu `/pakete` bzw. `/en/pricing`.
+- Wo: Neue Sektion vor dem Final CTA.
+- Warum: Pre-qualifiziert Leads und verhindert, dass nur Preis-sensitive Nutzer den Audit-CTA klicken. Anti-Knebel ist ein echtes Vertrauensargument.
 
-A single verification report at the end of the turn: ✅/❌ per requirement across all 3 prompts, with any last small fixes applied in the same pass.
+08 Final CTA
+- Was: Beibehaltung als Sektion 08. Headline „Zwei Wege rein. Beide gratis.“ mit Audit- und Call-CTA.
+- Wo: Vor dem Footer.
+- Warum: Fangt alle zurück, die bis hierhin gescrollt haben, aber noch nicht konvertiert sind.
+
+CTA- und Routen-Strategie
+- Primärer CTA überall: `/audit` (DE) und `/en/audit` (EN) — das ist der v0-Prototyp mit Turnstile, Rate-Limits und Semrush-Enrichment. `/gratis-audit` (Legacy) sollte auf `/audit` weiterleiten oder entfernt werden.
+- Sekundärer CTA: `/gratis-call` / `/en/free-call`.
+- Tertiärer CTA (nur in Ultimate- und Pricing-Sektionen): Ultimate-Package-Seite und Pricing-Seite.
+- Header-CTA: „Free Audit →“ statt „Gratis Audit →“, damit er zum neuen Prototyp passt.
+
+Vertrauens-Elemente (ohne Fake-Proof)
+- „No commitment · Results in minutes · Swiss-based“ unter dem Hero.
+- Anti-Knebel-Box im Pricing-Teaser.
+- Echte Fallstudien-Namen ohne erfundene Zahlen.
+- Optional: Ein „Methoden-Statement“-Badge: „Deterministisches Scoring. Keine erfundenen Kennzahlen.“
+
+Mobile & Performance
+- Alle Sektionen mit `data-neural-zone` markieren, damit der Hintergrund nur lebt, wenn sichtbar.
+- Hero-CTAs vertikal stapeln, aber Primary immer oben.
+- Pricing-Teaser auf Mobile als horizontal scrollbare Karten oder Akkordeon.
+- Keine schweren Bilder oberhalb des Fold — reines SVG/Text-Hero.
+
+SEO & Strukturierte Daten
+- H1: Eindeutig auf AI-first Audit für Schweizer Dienstleister.
+- Meta-Title/Description in DE und EN anpassen: Audit als Haupt-Keyword.
+- `OrganizationSchema` beibehalten.
+- Optional: `WebSite` Schema mit `potentialAction` → `SearchAction` hinzufügen.
+
+Umsetzungsphasen
+Phase 1 — Copy & CTA-Alignment
+- Hero-Copy auf Maschine+Mensch-Differenzierung schärfen.
+- Alle Homepage-CTAs auf `/audit` bzw. `/en/audit` umstellen.
+- Header-CTA und Footer-Links anpassen.
+
+Phase 2 — Sektions-Erweiterung
+- Problem/Versprechen-Sektion (02) einfügen.
+- Pricing-Teaser (07) als neue Sektion hinzufügen.
+- Trust-Sektion (06) auf No-Fake-Proof-Regel trimmen.
+
+Phase 3 — Polishing
+- Mobile-Layout, CTA-Abstände, Hintergrund-Sichtbarkeit prüfen.
+- SEO-Meta, Canonical, Hreflang und JSON-LD aktualisieren.
+- Lighthouse-Quick-Check (Performance, A11y, Best Practices).
+
+Offene Fragen vor dem Bauen
+1. Soll `/gratis-audit` (Legacy) auf `/audit` weiterleiten, oder soll die Legacy-Seite komplett entfernt werden?
+2. Soll der Pricing-Teaser auf der Homepage die drei Pakete als Karten oder als kompakte Tabelle zeigen?
+3. Gibt es bereits genehmigte Texte für das „Machine + Human“-Manifesto, oder sollen wir den Ton neu schreiben?
