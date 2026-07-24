@@ -20,6 +20,8 @@ import { NoIndex } from '@/components/NoIndex';
 
 export default function AdminLoginPage() {
   const { isAdmin, isLoading, signIn, signUp } = useAuth();
+  const [searchParams] = useSearchParams();
+  const nextPath = safeNext(searchParams.get('next'));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export default function AdminLoginPage() {
   }
 
   if (isAdmin) {
-    return <Navigate to="/admin/leads" replace />;
+    return <Navigate to={nextPath} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
