@@ -64,13 +64,12 @@ export function NeuralBackdrop() {
         arr.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          // Visible drift — atoms slowly float across the universe
-          vx: (Math.random() - 0.5) * (isMobile ? 0.18 : 0.32),
-          vy: (Math.random() - 0.5) * (isMobile ? 0.18 : 0.32),
+          // Gentle drift — visible but calm
+          vx: (Math.random() - 0.5) * (isMobile ? 0.09 : 0.16),
+          vy: (Math.random() - 0.5) * (isMobile ? 0.09 : 0.16),
           r: 0.6 + Math.random() * 1.2,
           phase: Math.random() * Math.PI * 2,
         });
-
       }
       particlesRef.current = arr;
     };
@@ -156,9 +155,6 @@ export function NeuralBackdrop() {
       rafRef.current = requestAnimationFrame(draw);
     };
 
-    rafRef.current = requestAnimationFrame(draw);
-
-    // Pause only when tab is hidden — the background must always live.
     const start = () => {
       if (running) return;
       running = true;
@@ -171,19 +167,56 @@ export function NeuralBackdrop() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
 
+    // Reduced motion: paint one static frame, no loop.
+    if (reduced) {
+      draw(performance.now());
+      running = false;
+    } else {
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
     const onVis = () => {
+      if (reduced) return;
       if (document.hidden) stop();
-      else start();
+      else if (visibleZones > 0 || document.querySelectorAll('[data-neural-zone]').length === 0) start();
     };
     document.addEventListener('visibilitychange', onVis);
-    const zoneObserver: IntersectionObserver | null = null;
 
+    // IntersectionObserver: pause when no [data-neural-zone] visible.
+    // If no zones exist on the page, keep animating (fallback).
+    let visibleZones = 0;
+    let zoneObserver: IntersectionObserver | null = null;
+    if (!reduced && 'IntersectionObserver' in window) {
+      zoneObserver = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visibleZones++;
+          else visibleZones = Math.max(0, visibleZones - 1);
+        }
+        if (document.hidden) return;
+        if (visibleZones > 0) start();
+        else stop();
+      }, { rootMargin: '100px' });
+      const attach = () => {
+        const zones = document.querySelectorAll('[data-neural-zone]');
+        zones.forEach((z) => zoneObserver!.observe(z));
+      };
+      // Wait a tick for the tree to mount.
+      const mo = new MutationObserver(() => {
+        zoneObserver?.disconnect();
+        attach();
+      });
+      attach();
+      mo.observe(document.body, { childList: true, subtree: true });
+      (zoneObserver as unknown as { _mo?: MutationObserver })._mo = mo;
+    }
 
     return () => {
       stop();
       window.removeEventListener('resize', setup);
       document.removeEventListener('visibilitychange', onVis);
-      if (zoneObserver) zoneObserver.disconnect();
+      const mo = (zoneObserver as unknown as { _mo?: MutationObserver } | null)?._mo;
+      mo?.disconnect();
+      zoneObserver?.disconnect();
     };
   }, []);
 
