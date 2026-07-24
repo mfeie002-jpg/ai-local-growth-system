@@ -177,6 +177,10 @@ export type Database = {
           overall_score: number | null
           report_viewed_at: string | null
           score_version: string | null
+          semrush_calls: Json | null
+          semrush_data: Json | null
+          semrush_fetched_at: string | null
+          semrush_status: string | null
           signals: Json | null
           status: string
           token: string
@@ -205,6 +209,10 @@ export type Database = {
           overall_score?: number | null
           report_viewed_at?: string | null
           score_version?: string | null
+          semrush_calls?: Json | null
+          semrush_data?: Json | null
+          semrush_fetched_at?: string | null
+          semrush_status?: string | null
           signals?: Json | null
           status?: string
           token?: string
@@ -233,6 +241,10 @@ export type Database = {
           overall_score?: number | null
           report_viewed_at?: string | null
           score_version?: string | null
+          semrush_calls?: Json | null
+          semrush_data?: Json | null
+          semrush_fetched_at?: string | null
+          semrush_status?: string | null
           signals?: Json | null
           status?: string
           token?: string
@@ -534,6 +546,57 @@ export type Database = {
           created_at?: string
           id?: string
           ip_hash?: string
+        }
+        Relationships: []
+      }
+      semrush_daily_usage: {
+        Row: {
+          cached_hits: number
+          day: string
+          fresh_domains: number
+          updated_at: string
+        }
+        Insert: {
+          cached_hits?: number
+          day: string
+          fresh_domains?: number
+          updated_at?: string
+        }
+        Update: {
+          cached_hits?: number
+          day?: string
+          fresh_domains?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      semrush_domain_cache: {
+        Row: {
+          calls: Json
+          created_at: string
+          data: Json
+          fetched_at: string
+          normalized_domain: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          calls?: Json
+          created_at?: string
+          data: Json
+          fetched_at?: string
+          normalized_domain: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          calls?: Json
+          created_at?: string
+          data?: Json
+          fetched_at?: string
+          normalized_domain?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
