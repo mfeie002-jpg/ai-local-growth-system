@@ -32,3 +32,21 @@ verify_jwt = false
 
 [functions.mcp]
 verify_jwt = false
+
+[functions.create-audit]
+verify_jwt = false
+
+[functions.generate-report]
+verify_jwt = false
+
+[functions.fetch-site-signals]
+verify_jwt = false
+
+[functions.compute-score]
+verify_jwt = false
+
+[functions.send-report-email]
+verify_jwt = false
+
+[functions.get-audit-report-v0]
+verify_jwt = false
