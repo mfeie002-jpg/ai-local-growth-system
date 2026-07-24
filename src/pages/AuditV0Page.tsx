@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
+import { Turnstile, TURNSTILE_ENABLED } from "@/components/Turnstile";
 
 type Lang = "de" | "en";
 
@@ -90,6 +91,7 @@ export default function AuditV0Page({ lang }: Props) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   function update<K extends keyof typeof values>(k: K, v: (typeof values)[K]) {
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -115,10 +117,15 @@ export default function AuditV0Page({ lang }: Props) {
       return;
     }
 
+    if (TURNSTILE_ENABLED && !turnstileToken) {
+      toast.error(lang === "de" ? "Bitte den Bot-Check abschliessen." : "Please complete the bot check.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-audit", {
-        body: { ...parsed.data, language: lang },
+        body: { ...parsed.data, language: lang, turnstile_token: turnstileToken },
       });
       if (error) throw error;
       if (!data?.success || !data?.token) throw new Error(data?.error ?? "Unknown error");
@@ -234,6 +241,12 @@ export default function AuditV0Page({ lang }: Props) {
                 <span className="text-sm text-muted-foreground leading-relaxed">{c.consentMarketing}</span>
               </label>
             </div>
+
+            {TURNSTILE_ENABLED && (
+              <div className="flex justify-center pt-2">
+                <Turnstile onToken={setTurnstileToken} />
+              </div>
+            )}
 
             <Button type="submit" size="lg" disabled={submitting} className="w-full">
               {submitting ? (
