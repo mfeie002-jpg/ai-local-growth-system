@@ -8,6 +8,7 @@ export interface RoutePair {
 
 const PAIRS: RoutePair[] = [
   { de: '/', en: '/en' },
+  { de: '/audit', en: '/en/audit' },
   { de: '/gratis-audit', en: '/en/free-audit' },
   { de: '/gratis-call', en: '/en/free-call' },
   { de: '/system', en: '/en/system' },
