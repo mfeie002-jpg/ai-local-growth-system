@@ -222,14 +222,15 @@ export function NeuralBackdrop() {
       {/* Layer B: neural net + particles canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* Layer C: paper veil — leicht, damit Hintergrund lebt */}
+      {/* Layer C: paper veil — very light so the motion breathes through */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, hsl(var(--background) / 0.45) 0%, hsl(var(--background) / 0.55) 50%, hsl(var(--background) / 0.45) 100%)',
+            'linear-gradient(180deg, hsl(var(--background) / 0.15) 0%, hsl(var(--background) / 0.25) 50%, hsl(var(--background) / 0.35) 100%)',
         }}
       />
+
     </div>
   );
 }
