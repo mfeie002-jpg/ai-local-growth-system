@@ -12,7 +12,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const exploreLinks = [
-    { label: t.nav.audit, path: isEnglish ? '/en/free-audit' : '/gratis-audit' },
+    { label: t.nav.audit, path: isEnglish ? '/en/audit' : '/audit' },
     { label: isEnglish ? 'Ultimate Package' : 'Ultimate Package', path: isEnglish ? '/en/ultimate-package' : '/ultimate-package' },
     { label: isEnglish ? 'Services' : 'Services', path: isEnglish ? '/en/services/ai-implementation' : '/services/ki-implementierung' },
     { label: isEnglish ? 'Case Studies' : 'Fallstudien', path: isEnglish ? '/en/case-studies' : '/fallstudien' },

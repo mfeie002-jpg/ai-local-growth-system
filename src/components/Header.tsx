@@ -28,7 +28,7 @@ export function Header() {
   // Close mobile menu when route changes
   useEffect(() => setMobileOpen(false), [location.pathname]);
 
-  const auditPath = isEnglish ? '/en/free-audit' : '/gratis-audit';
+  const auditPath = isEnglish ? '/en/audit' : '/audit';
 
   const navLinks = [
     {
