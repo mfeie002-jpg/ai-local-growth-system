@@ -1,6 +1,6 @@
-/* Midnight Indigo Design System — itsFeierabend.ch
- * Deep navy canvas · Electric indigo primary · Warm signal amber
- * Sora (display) · Manrope (body) · JetBrains Mono (machine voice)
+/* Obsidian Instrument Design System — itsFeierabend.ch
+ * Deep obsidian canvas · Graphite panels · Chrome hairlines · Icy signal
+ * Space Grotesk (display) · Inter (body) · JetBrains Mono (machine voice)
  */
 
 @tailwind base;
@@ -9,41 +9,44 @@
 
 @layer base {
   :root {
-    /* === Midnight Indigo palette === */
-    --background: 240 40% 6%;
-    --foreground: 220 25% 96%;
+    /* === Obsidian Instrument palette ===
+     * #05070a bg · #12151b panel · #2a2f38 steel border · #b8bec7 chrome text
+     * #f4f5f7 foreground · #e8f4ff icy signal
+     */
+    --background: 220 27% 3%;
+    --foreground: 220 12% 96%;
 
-    --card: 235 38% 10%;
-    --card-foreground: 220 25% 96%;
+    --card: 220 18% 9%;
+    --card-foreground: 220 12% 96%;
 
-    --popover: 235 40% 8%;
-    --popover-foreground: 220 25% 96%;
+    --popover: 220 18% 9%;
+    --popover-foreground: 220 12% 96%;
 
-    --primary: 243 76% 59%;
-    --primary-foreground: 240 40% 6%;
-    --primary-hover: 243 82% 66%;
+    --primary: 220 12% 96%;
+    --primary-foreground: 220 27% 3%;
+    --primary-hover: 210 100% 96%;
 
-    --secondary: 235 45% 18%;
-    --secondary-foreground: 220 25% 96%;
+    --secondary: 220 14% 19%;
+    --secondary-foreground: 220 12% 96%;
 
-    --muted: 235 30% 14%;
-    --muted-foreground: 225 18% 68%;
+    --muted: 220 18% 9%;
+    --muted-foreground: 217 10% 75%;
 
-    --accent: 243 76% 59%;
-    --accent-foreground: 220 25% 96%;
+    --accent: 210 100% 96%;
+    --accent-foreground: 220 27% 3%;
 
-    --signal: 32 96% 60%;
-    --signal-foreground: 240 40% 6%;
+    --signal: 210 100% 96%;
+    --signal-foreground: 220 27% 3%;
 
-    --ai-accent: 32 96% 60%;
-    --ai-accent-foreground: 240 40% 6%;
+    --ai-accent: 210 100% 96%;
+    --ai-accent-foreground: 220 27% 3%;
 
     --destructive: 0 72% 55%;
-    --destructive-foreground: 220 25% 96%;
+    --destructive-foreground: 220 12% 96%;
 
-    --border: 235 30% 20%;
-    --input: 235 30% 18%;
-    --ring: 243 76% 66%;
+    --border: 220 14% 19%;
+    --input: 220 14% 19%;
+    --ring: 210 100% 96%;
 
     --radius: 0.75rem;
 
@@ -51,41 +54,41 @@
     --container-max: 1320px;
     --header-height: 4.5rem;
     --rule-weight: 1px;
-    --rule-color: 220 25% 96%;
+    --rule-color: 220 12% 96%;
 
-    --shadow-sm: 0 1px 2px 0 hsl(240 40% 2% / 0.4);
-    --shadow-md: 0 4px 12px -2px hsl(240 40% 2% / 0.5);
-    --shadow-lg: 0 16px 40px -12px hsl(240 40% 2% / 0.6);
-    --shadow-xl: 0 32px 60px -16px hsl(240 40% 2% / 0.7);
-    --shadow-card: 0 1px 0 hsl(220 25% 96% / 0.04), 0 12px 32px -12px hsl(240 40% 2% / 0.55);
-    --shadow-button: 0 1px 0 hsl(220 25% 96% / 0.10), 0 8px 24px -6px hsl(243 76% 59% / 0.55);
-    --shadow-glow: 0 0 40px hsl(243 76% 59% / 0.35);
-    --shadow-ai-glow: 0 0 40px hsl(32 96% 60% / 0.30);
-    --shadow-glow-intense: 0 0 60px hsl(243 76% 59% / 0.55);
-    --shadow-glow-cyan: 0 0 40px hsl(200 90% 60% / 0.35);
+    --shadow-sm: 0 1px 2px 0 hsl(220 27% 1% / 0.5);
+    --shadow-md: 0 4px 12px -2px hsl(220 27% 1% / 0.6);
+    --shadow-lg: 0 16px 40px -12px hsl(220 27% 1% / 0.7);
+    --shadow-xl: 0 32px 60px -16px hsl(220 27% 1% / 0.8);
+    --shadow-card: 0 1px 0 hsl(220 12% 96% / 0.04), 0 12px 32px -12px hsl(220 27% 1% / 0.65);
+    --shadow-button: 0 1px 0 hsl(220 12% 96% / 0.10), 0 8px 24px -6px hsl(220 27% 1% / 0.65);
+    --shadow-glow: 0 0 40px hsl(210 100% 96% / 0.20);
+    --shadow-ai-glow: 0 0 40px hsl(210 100% 96% / 0.18);
+    --shadow-glow-intense: 0 0 60px hsl(210 100% 96% / 0.35);
+    --shadow-glow-cyan: 0 0 40px hsl(210 100% 96% / 0.25);
 
-    --gradient-score: conic-gradient(from 220deg at 50% 50%, hsl(243 76% 59%), hsl(32 96% 60%), hsl(243 76% 59%));
-    --gradient-card-glow: linear-gradient(180deg, hsl(235 40% 12%) 0%, hsl(240 42% 8%) 100%);
-    --gradient-aurora: linear-gradient(135deg, hsl(243 76% 59%), hsl(266 72% 55%));
-    --gradient-fire: linear-gradient(135deg, hsl(32 96% 60%), hsl(243 76% 59%));
-    --gradient-sunset: linear-gradient(180deg, hsl(240 40% 6%), hsl(235 38% 10%));
-    --gradient-border-aurora: linear-gradient(135deg, hsl(243 76% 59% / 0.5), hsl(32 96% 60% / 0.25));
+    --gradient-score: conic-gradient(from 220deg at 50% 50%, hsl(210 100% 96%), hsl(220 12% 96%), hsl(210 100% 96%));
+    --gradient-card-glow: linear-gradient(180deg, hsl(220 18% 11%) 0%, hsl(220 22% 6%) 100%);
+    --gradient-aurora: linear-gradient(135deg, hsl(220 14% 30%), hsl(220 12% 55%));
+    --gradient-fire: linear-gradient(135deg, hsl(210 100% 96%), hsl(220 12% 55%));
+    --gradient-sunset: linear-gradient(180deg, hsl(220 27% 3%), hsl(220 18% 9%));
+    --gradient-border-aurora: linear-gradient(135deg, hsl(210 100% 96% / 0.35), hsl(220 12% 96% / 0.10));
 
-    --noise-opacity: 0.03;
+    --noise-opacity: 0.025;
 
-    --sidebar-background: 240 40% 5%;
-    --sidebar-foreground: 220 25% 92%;
-    --sidebar-primary: 243 76% 59%;
-    --sidebar-primary-foreground: 240 40% 6%;
-    --sidebar-accent: 235 30% 14%;
-    --sidebar-accent-foreground: 220 25% 92%;
-    --sidebar-border: 235 30% 18%;
-    --sidebar-ring: 243 76% 66%;
+    --sidebar-background: 220 27% 3%;
+    --sidebar-foreground: 220 12% 92%;
+    --sidebar-primary: 220 12% 96%;
+    --sidebar-primary-foreground: 220 27% 3%;
+    --sidebar-accent: 220 18% 9%;
+    --sidebar-accent-foreground: 220 12% 92%;
+    --sidebar-border: 220 14% 19%;
+    --sidebar-ring: 210 100% 96%;
   }
 
   .dark {
-    --background: 240 40% 6%;
-    --foreground: 220 25% 96%;
+    --background: 220 27% 3%;
+    --foreground: 220 12% 96%;
   }
 }
 
@@ -104,35 +107,35 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Manrope", system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.6;
     background-image:
-      radial-gradient(ellipse 80% 50% at 20% 0%, hsl(243 76% 45% / 0.18), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 90% 10%, hsl(266 72% 40% / 0.14), transparent 60%),
-      radial-gradient(ellipse 50% 40% at 50% 100%, hsl(32 96% 50% / 0.06), transparent 70%);
+      radial-gradient(ellipse 80% 50% at 20% 0%, hsl(220 15% 20% / 0.35), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%, hsl(220 12% 30% / 0.20), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 50% 100%, hsl(210 100% 96% / 0.04), transparent 70%);
     background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground;
-    font-family: "Sora", system-ui, sans-serif;
+    font-family: "Space Grotesk", system-ui, sans-serif;
     font-weight: 600;
     letter-spacing: -0.025em;
   }
 
   h1 {
     @apply text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem];
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
     font-weight: 700;
   }
 
   h2 {
     @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 700;
   }
 
   h3 {
@@ -153,10 +156,11 @@
   }
 
   .font-editorial {
-    font-family: "Sora", system-ui, sans-serif;
-    font-style: italic;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-style: normal;
     font-weight: 300;
     letter-spacing: -0.02em;
+    color: hsl(var(--muted-foreground));
   }
 
   .font-mono {
@@ -169,8 +173,8 @@
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.4);
-    color: hsl(var(--foreground));
+    background: hsl(var(--signal));
+    color: hsl(var(--signal-foreground));
   }
 }
 
