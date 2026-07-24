@@ -365,8 +365,12 @@ export async function enrichDomain(domain: string, opts: EnrichOptions): Promise
 
   // Call 5: keyword metrics for up to 5 recommended keywords
   const recommended = (opts.recommendedKeywords ?? []).slice(0, 5).filter(Boolean);
-  let km: GatewayCall<KeywordRow[]> = { ok: true, value: [], ms: 0 };
-  if (recommended.length > 0 && !quotaTripped) {
+  let km: GatewayCall<KeywordRow[]>;
+  if (quotaTripped) {
+    km = { ok: false, reason: "quota_exceeded", ms: 0, quota: true };
+  } else if (recommended.length === 0) {
+    km = { ok: false, reason: "no_keywords", ms: 0 };
+  } else {
     km = await gatewayGet("/keywords/phrase_these", {
       phrase: recommended.join(";"),
       database,
