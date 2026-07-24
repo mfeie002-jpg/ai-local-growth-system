@@ -65,6 +65,31 @@ const t = {
   },
 } as const;
 
+function mapErrorMessage(code: string | undefined, fallback: string | undefined, lang: Lang): string | undefined {
+  if (!code) return fallback;
+  const de: Record<string, string> = {
+    bot_check_failed: "Bot-Check fehlgeschlagen. Bitte lade die Seite neu.",
+    per_ip_daily_exceeded: "Tageslimit für deine IP erreicht. Bitte morgen erneut versuchen.",
+    global_daily_exceeded: "Wir sind heute stark ausgelastet — bitte morgen erneut versuchen.",
+    url_ip_literal: "IP-Adressen sind nicht erlaubt — bitte Domain angeben.",
+    url_unsupported_protocol: "Nur http und https werden unterstützt.",
+    url_malformed: "Ungültige URL — bitte prüfen.",
+    url_blocked_host: "Dieser Host ist nicht erlaubt.",
+    invalid_email: "Ungültige E-Mail-Adresse.",
+  };
+  const en: Record<string, string> = {
+    bot_check_failed: "Bot check failed. Please reload the page.",
+    per_ip_daily_exceeded: "Daily limit for your IP reached. Please try again tomorrow.",
+    global_daily_exceeded: "We're at capacity today — please try again tomorrow.",
+    url_ip_literal: "IP addresses are not allowed — please enter a domain.",
+    url_unsupported_protocol: "Only http and https are supported.",
+    url_malformed: "Invalid URL — please check.",
+    url_blocked_host: "This host is not allowed.",
+    invalid_email: "Invalid email address.",
+  };
+  return (lang === "de" ? de[code] : en[code]) ?? fallback;
+}
+
 const schema = z.object({
   website_url: z.string().trim().min(4).max(500),
   first_name: z.string().trim().min(2).max(80),
