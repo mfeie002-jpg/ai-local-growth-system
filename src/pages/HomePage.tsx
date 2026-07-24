@@ -323,7 +323,7 @@ export default function HomePage() {
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
             <div className="col-span-12 lg:col-span-6">
-              <div className="font-mono text-xs uppercase tracking-[0.18em] text-background/60 mb-6">
+              <div className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-6">
                 {isEnglish ? '04 / 11 · The Audit' : '04 / 11 · Das Audit'}
               </div>
               <RevealText>
@@ -334,14 +334,14 @@ export default function HomePage() {
                     <>Eine deterministische Engine. <em className="font-editorial">Kein Chatbot-Rateversuch.</em></>
                   )}
                 </h2>
-                <p className="mt-6 text-lg text-background/80 max-w-lg">
+                <p className="mt-6 text-lg text-muted-foreground max-w-lg">
                   {isEnglish
                     ? 'Signals are collected, normalized, scored by rules, then interpreted. AI translates — never invents.'
                     : 'Signale werden gesammelt, normalisiert, per Regeln bewertet, dann interpretiert. KI übersetzt — sie erfindet nicht.'}
                 </p>
               </RevealText>
 
-              <div className="mt-10 [&_.text-foreground\\/55]:text-background/55 [&_.text-foreground]:text-background">
+              <div className="mt-10 [&_.text-foreground\\/55]:text-muted-foreground [&_.text-foreground]:text-background">
                 <SignalStream stages={stages} />
               </div>
 
