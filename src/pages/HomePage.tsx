@@ -3,7 +3,7 @@ import { Layout } from '@/components/Layout';
 import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
 import { CTAButton } from '@/components/CTAButton';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, Check } from 'lucide-react';
 import {
   EditorialHero,
   SectionMarker,
@@ -15,22 +15,23 @@ import {
 
 /**
  * HomePage — Neural Editorial.
- * 6 numbered sections, AI-first manifesto, single funnel CTA throughout.
+ * 8 numbered sections, AI-first manifesto, single funnel CTA throughout.
  * No fabricated proof, no aurora chrome.
  */
 export default function HomePage() {
   const { t, isEnglish } = useLanguage();
-  const auditPath = isEnglish ? '/en/free-audit' : '/gratis-audit';
-  const ultimatePath = isEnglish ? '/en/ultimate-package' : '/ultimate-package';
+  const auditPath = isEnglish ? '/en/audit' : '/audit';
   const callPath = isEnglish ? '/en/free-call' : '/gratis-call';
+  const ultimatePath = isEnglish ? '/en/ultimate-package' : '/ultimate-package';
   const casesPath = isEnglish ? '/en/case-studies' : '/fallstudien';
+  const pricingPath = isEnglish ? '/en/pricing' : '/pakete';
 
-  // ---- Section 02 — engine stages ----
+  // ---- Section 03 — engine stages ----
   const stages = isEnglish
     ? ['Collect', 'Normalize', 'Score', 'Interpret']
     : ['Erfassen', 'Normalisieren', 'Bewerten', 'Interpretieren'];
 
-  // ---- Section 03 — Ultimate Package teaser bullets ----
+  // ---- Section 04 — Ultimate Package teaser bullets ----
   const ultimateBullets = isEnglish
     ? [
         'Full AI scan of your digital presence',
@@ -45,7 +46,64 @@ export default function HomePage() {
         'Ein für Sie umgesetzter Pfad zur Implementierung',
       ];
 
-  // ---- Section 04 — services list (editorial, not card grid) ----
+  // ---- Section 07 — pricing teaser ----
+  const pricingPackages = isEnglish
+    ? [
+        {
+          key: 'launch',
+          name: t.pricing.launch.name,
+          price: t.pricing.launch.price,
+          duration: t.pricing.launch.duration,
+          billing: t.pricing.oneTime,
+          features: t.pricing.launch.features,
+        },
+        {
+          key: 'growth',
+          name: t.pricing.growth.name,
+          price: t.pricing.growth.price,
+          duration: t.pricing.growth.duration,
+          billing: t.pricing.perMonth,
+          features: t.pricing.growth.features,
+        },
+        {
+          key: 'leader',
+          name: t.pricing.leader.name,
+          price: t.pricing.leader.price,
+          duration: t.pricing.leader.duration,
+          billing: t.pricing.perMonth,
+          priceNote: t.pricing.leader.priceNote,
+          features: t.pricing.leader.features,
+        },
+      ]
+    : [
+        {
+          key: 'launch',
+          name: t.pricing.launch.name,
+          price: t.pricing.launch.price,
+          duration: t.pricing.launch.duration,
+          billing: t.pricing.oneTime,
+          features: t.pricing.launch.features,
+        },
+        {
+          key: 'growth',
+          name: t.pricing.growth.name,
+          price: t.pricing.growth.price,
+          duration: t.pricing.growth.duration,
+          billing: t.pricing.perMonth,
+          features: t.pricing.growth.features,
+        },
+        {
+          key: 'leader',
+          name: t.pricing.leader.name,
+          price: t.pricing.leader.price,
+          duration: t.pricing.leader.duration,
+          billing: t.pricing.perMonth,
+          priceNote: t.pricing.leader.priceNote,
+          features: t.pricing.leader.features,
+        },
+      ];
+
+  // ---- Section 05 — services list (editorial, not card grid) ----
   const services = isEnglish
     ? [
         { num: '01', name: 'AI Implementation', desc: 'Voice agents, scanners, autonomous funnels.', path: '/en/services/ai-implementation', anchor: true },
@@ -69,10 +127,10 @@ export default function HomePage() {
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'AI-First Digital Growth · itsFeierabend.ch' : 'KI-First Digital Growth · itsFeierabend.ch'}
+        title={isEnglish ? 'Free AI Audit · AI-First Marketing · itsFeierabend.ch' : 'Gratis KI-Audit · KI-First Marketing · itsFeierabend.ch'}
         description={isEnglish
-          ? 'A scoring engine for your digital presence — and a team that turns the score into growth. Free AI audit for Swiss service businesses.'
-          : 'Eine Scoring-Engine für Ihre digitale Präsenz — und ein Team, das aus der Bewertung Wachstum macht. Gratis KI-Audit für Schweizer Dienstleister.'}
+          ? 'Run a free AI audit on your digital presence — 25+ deterministic signals, Swiss-based. Then book a call or let us implement every fix.'
+          : 'Starten Sie ein gratis KI-Audit Ihrer digitalen Präsenz — 25+ deterministische Signale, aus der Schweiz. Danach Call buchen oder alle Fixes umsetzen lassen.'}
       />
       <OrganizationSchema description={t.siteDescription} />
 
@@ -80,19 +138,19 @@ export default function HomePage() {
       {/* 01 — Manifesto Hero                                          */}
       {/* ============================================================ */}
       <EditorialHero
-        eyebrow={isEnglish ? '01 / 06 · Manifesto' : '01 / 06 · Manifest'}
+        eyebrow={isEnglish ? '01 / 08 · Manifesto' : '01 / 08 · Manifest'}
         title={
           isEnglish ? (
             <>
-              Your website is <em className="font-editorial">already</em> talking.
+              AI reads the <em className="font-editorial">signals</em>.
               <br />
-              We taught the AI how to <em className="font-editorial">listen</em>.
+              Humans make the <em className="font-editorial">moves</em>.
             </>
           ) : (
             <>
-              Ihre Website <em className="font-editorial">spricht</em> bereits.
+              KI liest die <em className="font-editorial">Signale</em>.
               <br />
-              Wir haben der KI beigebracht, <em className="font-editorial">zuzuhören</em>.
+              Menschen machen die <em className="font-editorial">Moves</em>.
             </>
           )
         }
@@ -107,8 +165,8 @@ export default function HomePage() {
               {isEnglish ? 'Run my free AI audit' : 'Gratis KI-Audit starten'}
               <ArrowRight className="ml-2 w-4 h-4" />
             </CTAButton>
-            <CTAButton variant="ghost" size="lg" href={ultimatePath} location="hero">
-              {isEnglish ? 'See the Ultimate Package →' : 'Ultimate Package ansehen →'}
+            <CTAButton variant="ghost" size="lg" href={callPath} location="hero">
+              {isEnglish ? 'Book a free call →' : 'Gratis-Call buchen →'}
             </CTAButton>
           </>
         }
@@ -132,13 +190,51 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ============================================================ */}
-      {/* 02 — The Engine                                              */}
+      {/* 02 — Problem / Promise                                       */}
       {/* ============================================================ */}
-      <section className="section-padding">
+      <section data-neural-zone className="section-padding">
+        <div className="container-section">
+          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+            <div className="col-span-12 lg:col-span-8">
+              <SectionMarker index={2} total={8} label={isEnglish ? 'The Promise' : 'Das Versprechen'} />
+              <RevealText>
+                <h2 className="text-balance">
+                  {isEnglish ? (
+                    <>Most audits are either <em className="font-editorial">shallow</em> or pure sales machines. We do both differently.</>
+                  ) : (
+                    <>Die meisten Audits sind entweder <em className="font-editorial">oberflächlich</em> oder reine Verkaufsmaschinen. Wir machen beides anders.</>
+                  )}
+                </h2>
+              </RevealText>
+            </div>
+            <div className="col-span-12 lg:col-span-6 lg:col-start-7">
+              <RevealText delay={120}>
+                <p className="text-lg text-foreground/75 leading-relaxed">
+                  {isEnglish
+                    ? 'We built a deterministic scoring engine that only uses what it can observe. Then we put humans in charge of prioritization, copy, and implementation. The result: a number you can trust and a team that turns it into growth.'
+                    : 'Wir bauten eine deterministische Scoring-Engine, die nur das verwendet, was sie beobachten kann. Dann setzen wir Menschen für Priorisierung, Copy und Umsetzung ein. Das Ergebnis: eine Zahl, der Sie vertrauen können, und ein Team, das daraus Wachstum macht.'}
+                </p>
+                <AIAnnotation className="mt-8">
+                  {isEnglish
+                    ? 'Deterministic scoring + human judgment = no invented metrics.'
+                    : 'Deterministisches Scoring + menschliches Urteil = keine erfundenen Kennzahlen.'}
+                </AIAnnotation>
+              </RevealText>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* ============================================================ */}
+      {/* 03 — The Engine                                              */}
+      {/* ============================================================ */}
+      <section data-neural-zone className="section-padding">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12">
             <div className="col-span-12 lg:col-span-5">
-              <SectionMarker index={2} total={6} label={isEnglish ? 'The Engine' : 'Die Engine'} />
+              <SectionMarker index={3} total={8} label={isEnglish ? 'The Engine' : 'Die Engine'} />
               <RevealText>
                 <h2 className="text-balance">
                   {isEnglish ? (
@@ -192,13 +288,13 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ============================================================ */}
-      {/* 03 — The Ultimate Package                                    */}
+      {/* 04 — The Ultimate Package                                    */}
       {/* ============================================================ */}
-      <section className="section-padding bg-secondary/40">
+      <section data-neural-zone className="section-padding bg-secondary/40">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
             <div className="col-span-12 lg:col-span-7">
-              <SectionMarker index={3} total={6} label={isEnglish ? 'The Ultimate Package' : 'Das Ultimate Package'} />
+              <SectionMarker index={4} total={8} label={isEnglish ? 'The Ultimate Package' : 'Das Ultimate Package'} />
               <RevealText>
                 <h2 className="text-balance">
                   {isEnglish ? (
@@ -260,13 +356,13 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ============================================================ */}
-      {/* 04 — Services (editorial list, not card grid)               */}
+      {/* 05 — Services (editorial list, not card grid)               */}
       {/* ============================================================ */}
-      <section className="section-padding">
+      <section data-neural-zone className="section-padding">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-10">
             <div className="col-span-12 lg:col-span-4">
-              <SectionMarker index={4} total={6} label={isEnglish ? 'Services' : 'Services'} />
+              <SectionMarker index={5} total={8} label={isEnglish ? 'Services' : 'Services'} />
               <RevealText>
                 <h2 className="text-balance">
                   {isEnglish ? (
@@ -284,7 +380,7 @@ export default function HomePage() {
             </div>
 
             <ul className="col-span-12 lg:col-span-8 lg:border-l lg:border-border lg:pl-10">
-              {services.map((s, i) => (
+              {services.map((s) => (
                 <li key={s.path}>
                   <Link
                     to={s.path}
@@ -322,11 +418,11 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ============================================================ */}
-      {/* 05 — Real portfolio (no fabricated metrics)                  */}
+      {/* 06 — Real portfolio (no fabricated metrics)                  */}
       {/* ============================================================ */}
-      <section className="section-padding bg-secondary/40">
+      <section data-neural-zone className="section-padding bg-secondary/40">
         <div className="container-section">
-          <SectionMarker index={5} total={6} label={isEnglish ? 'Selected Work' : 'Ausgewählte Arbeit'} />
+          <SectionMarker index={6} total={8} label={isEnglish ? 'Selected Work' : 'Ausgewählte Arbeit'} />
           <RevealText>
             <div className="grid grid-cols-12 gap-x-6 gap-y-6 items-end">
               <h2 className="col-span-12 lg:col-span-8 text-balance">
@@ -373,11 +469,88 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ============================================================ */}
-      {/* 06 — Final CTA                                               */}
+      {/* 07 — Pricing Teaser                                          */}
       {/* ============================================================ */}
-      <section className="section-padding">
+      <section data-neural-zone className="section-padding">
         <div className="container-section">
-          <SectionMarker index={6} total={6} label={isEnglish ? 'Start' : 'Loslegen'} />
+          <SectionMarker index={7} total={8} label={t.pricing.sectionTitle} />
+          <RevealText>
+            <div className="grid grid-cols-12 gap-x-6 gap-y-6 items-end">
+              <h2 className="col-span-12 lg:col-span-8 text-balance">
+                {isEnglish ? (
+                  <>Three ways to grow. <em className="font-editorial">One fair rule.</em></>
+                ) : (
+                  <>Drei Wege zum Wachstum. <em className="font-editorial">Eine faire Regel.</em></>
+                )}
+              </h2>
+              <div className="col-span-12 lg:col-span-4 lg:text-right">
+                <Link
+                  to={pricingPath}
+                  className="font-mono text-sm uppercase tracking-[0.18em] text-foreground/70 hover:text-foreground inline-flex items-center gap-2 link-underline"
+                >
+                  {isEnglish ? 'Compare all packages' : 'Alle Pakete vergleichen'}
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </RevealText>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pricingPackages.map((pkg) => (
+              <div
+                key={pkg.key}
+                className="card-paper p-8 flex flex-col h-full"
+              >
+                <div className="section-marker mb-4">{pkg.duration}</div>
+                <h3 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
+                  {pkg.name}
+                </h3>
+                <div className="mt-4 flex items-baseline gap-2">
+                  <span className="text-3xl font-semibold tracking-tight">{pkg.price}</span>
+                  <span className="text-sm text-foreground/60">{pkg.billing}</span>
+                </div>
+                {'priceNote' in pkg && pkg.priceNote && (
+                  <div className="mt-1 font-mono text-xs text-foreground/55">{pkg.priceNote}</div>
+                )}
+                <ul className="mt-6 space-y-3 flex-1">
+                  {pkg.features.map((feature: string) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm text-foreground/80">
+                      <Check className="w-4 h-4 text-signal shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <CTAButton
+                  variant="ghost"
+                  size="sm"
+                  href={pricingPath}
+                  location="pricing-teaser"
+                  className="mt-8 w-full justify-center"
+                >
+                  {isEnglish ? 'See details →' : 'Details ansehen →'}
+                </CTAButton>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 p-6 rounded-xl border border-border bg-secondary/30">
+            <p className="text-sm text-foreground/70">
+              {isEnglish
+                ? 'Anti-Knebel: domains, ad accounts and customer data stay yours. We build on your accounts, you keep the keys.'
+                : 'Anti-Knebel: Domains, Ad-Accounts und Kundendaten bleiben Ihnen. Wir bauen auf Ihren Accounts auf, Sie behalten die Schlüssel.'}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container-section"><div className="rule-hairline" /></div>
+
+      {/* ============================================================ */}
+      {/* 08 — Final CTA                                               */}
+      {/* ============================================================ */}
+      <section data-neural-zone className="section-padding">
+        <div className="container-section">
+          <SectionMarker index={8} total={8} label={isEnglish ? 'Start' : 'Loslegen'} />
           <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
             <RevealText className="col-span-12 lg:col-span-8">
               <h2 className="text-balance">
