@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Loader2, LogIn, AlertCircle, UserPlus } from 'lucide-react';
+
+function safeNext(raw: string | null): string {
+  if (!raw) return '/admin/leads';
+  try {
+    // Only allow same-origin relative paths.
+    if (!raw.startsWith('/') || raw.startsWith('//')) return '/admin/leads';
+    return raw;
+  } catch {
+    return '/admin/leads';
+  }
+}
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
