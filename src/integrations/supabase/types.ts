@@ -536,16 +536,19 @@ export type Database = {
           created_at: string
           id: string
           ip_hash: string
+          scope: string
         }
         Insert: {
           created_at?: string
           id?: string
           ip_hash: string
+          scope?: string
         }
         Update: {
           created_at?: string
           id?: string
           ip_hash?: string
+          scope?: string
         }
         Relationships: []
       }
