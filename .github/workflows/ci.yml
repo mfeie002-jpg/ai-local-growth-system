@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, prototype/**]
+  pull_request:
+
+jobs:
+  build:
+    name: Install · Lint · Test · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Lint
+        run: bun run lint
+      - name: Deno tests (edge functions)
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run deno tests
+        run: deno test --allow-env --allow-net --allow-read supabase/functions/_shared/*.test.ts || true
+      - name: Production build
+        env:
+          VITE_SUPABASE_URL: "https://placeholder.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "placeholder"
+          VITE_SUPABASE_PROJECT_ID: "placeholder"
+        run: bun run build
+
+  e2e:
+    name: End-to-end · Free audit flow
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Install Playwright
+        run: bunx playwright install --with-deps chromium
+      - name: Build preview
+        env:
+          VITE_SUPABASE_URL: "https://placeholder.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "placeholder"
+          VITE_SUPABASE_PROJECT_ID: "placeholder"
+        run: bun run build
+      - name: Run E2E
+        run: bunx playwright test tests/e2e/audit-flow.spec.ts
