@@ -65,6 +65,31 @@ const t = {
   },
 } as const;
 
+function mapErrorMessage(code: string | undefined, fallback: string | undefined, lang: Lang): string | undefined {
+  if (!code) return fallback;
+  const de: Record<string, string> = {
+    bot_check_failed: "Bot-Check fehlgeschlagen. Bitte lade die Seite neu.",
+    per_ip_daily_exceeded: "Tageslimit für deine IP erreicht. Bitte morgen erneut versuchen.",
+    global_daily_exceeded: "Wir sind heute stark ausgelastet — bitte morgen erneut versuchen.",
+    url_ip_literal: "IP-Adressen sind nicht erlaubt — bitte Domain angeben.",
+    url_unsupported_protocol: "Nur http und https werden unterstützt.",
+    url_malformed: "Ungültige URL — bitte prüfen.",
+    url_blocked_host: "Dieser Host ist nicht erlaubt.",
+    invalid_email: "Ungültige E-Mail-Adresse.",
+  };
+  const en: Record<string, string> = {
+    bot_check_failed: "Bot check failed. Please reload the page.",
+    per_ip_daily_exceeded: "Daily limit for your IP reached. Please try again tomorrow.",
+    global_daily_exceeded: "We're at capacity today — please try again tomorrow.",
+    url_ip_literal: "IP addresses are not allowed — please enter a domain.",
+    url_unsupported_protocol: "Only http and https are supported.",
+    url_malformed: "Invalid URL — please check.",
+    url_blocked_host: "This host is not allowed.",
+    invalid_email: "Invalid email address.",
+  };
+  return (lang === "de" ? de[code] : en[code]) ?? fallback;
+}
+
 const schema = z.object({
   website_url: z.string().trim().min(4).max(500),
   first_name: z.string().trim().min(2).max(80),
@@ -127,23 +152,41 @@ export default function AuditV0Page({ lang }: Props) {
       const { data, error } = await supabase.functions.invoke("create-audit", {
         body: { ...parsed.data, language: lang, turnstile_token: turnstileToken },
       });
-      if (error) throw error;
-      if (!data?.success || !data?.token) throw new Error(data?.error ?? "Unknown error");
-
-      track("audit_submitted", {
-        language: lang,
-        marketing_consent: parsed.data.consent_marketing,
-      });
-
-      toast.success(lang === "de" ? "Los geht's – Audit läuft." : "Started — running your audit.");
-      nav(data.redirect_path);
+      // supabase-js returns non-2xx as `error`; the body still comes back on `data`.
+      const payload = (data ?? {}) as {
+        success?: boolean;
+        token?: string;
+        redirect_path?: string;
+        reused?: boolean;
+        error?: string;
+        code?: string;
+      };
+      if (payload.success && payload.token && payload.redirect_path) {
+        track("audit_submitted", {
+          language: lang,
+          marketing_consent: parsed.data.consent_marketing,
+          reused: !!payload.reused,
+        });
+        toast.success(
+          payload.reused
+            ? (lang === "de"
+                ? "Für diese Domain existiert bereits ein aktueller Report — wir öffnen ihn."
+                : "A recent report for this domain already exists — opening it.")
+            : (lang === "de" ? "Los geht's – Audit läuft." : "Started — running your audit."),
+        );
+        nav(payload.redirect_path);
+        return;
+      }
+      // Explicit error mapping for known codes
+      const msg = mapErrorMessage(payload.code, payload.error, lang) ?? (error?.message ?? "");
+      throw new Error(msg || (lang === "de" ? "Unbekannter Fehler" : "Unknown error"));
     } catch (err) {
       console.error("audit submit failed:", err);
       const msg = (err as Error).message ?? "";
       toast.error(
         lang === "de"
-          ? `Fehler: ${msg || "Bitte erneut versuchen."}`
-          : `Error: ${msg || "Please try again."}`,
+          ? msg || "Bitte erneut versuchen."
+          : msg || "Please try again.",
       );
     } finally {
       setSubmitting(false);

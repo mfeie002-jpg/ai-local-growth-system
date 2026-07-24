@@ -40,6 +40,9 @@ Disallow: /gratis-audit/report/
 Disallow: /en/free-audit/report/
 Disallow: /analyse/
 Disallow: /en/analysis/
+Disallow: /audit/r/
+Disallow: /en/audit/r/
+Disallow: /.lovable/
 
 # Block API endpoints
 Disallow: /api/

@@ -329,9 +329,9 @@
     66%  { transform: translate3d(-8vw, -6vh, 0) scale(0.9); }
     100% { transform: translate3d(0, 0, 0) scale(0.95); }
   }
-  .animate-orb-a { animation: orbDriftA 24s ease-in-out infinite; }
-  .animate-orb-b { animation: orbDriftB 32s ease-in-out infinite; }
-  .animate-orb-c { animation: orbDriftC 40s ease-in-out infinite; }
+  .animate-orb-a { animation: orbDriftA 42s ease-in-out infinite; }
+  .animate-orb-b { animation: orbDriftB 55s ease-in-out infinite; }
+  .animate-orb-c { animation: orbDriftC 68s ease-in-out infinite; }
 
 
 
@@ -351,5 +351,14 @@
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  /* Print-friendly report layout */
+  @media print {
+    body { background: white !important; color: black !important; }
+    [data-neural-zone] { break-inside: avoid; }
+    canvas, .animate-orb-a, .animate-orb-b, .animate-orb-c { display: none !important; }
+    header, footer, nav { display: none !important; }
+    a { color: black !important; text-decoration: underline; }
   }
 }

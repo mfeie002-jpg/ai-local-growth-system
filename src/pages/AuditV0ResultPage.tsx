@@ -163,13 +163,13 @@ export default function AuditV0ResultPage({ lang }: Props) {
     );
   }
   if (!report) {
-    return <FullState icon={<Loader2 className="w-8 h-8 animate-spin text-primary" />} title={strings.loading} />;
+    return <PendingState lang={lang} url={undefined} phase="fetching" />;
   }
   if (isPending && timedOut) {
     return <FullState icon={<AlertTriangle className="w-8 h-8 text-amber-600" />} title={strings.timeout} />;
   }
   if (isPending) {
-    return <FullState icon={<Loader2 className="w-8 h-8 animate-spin text-primary" />} title={strings.loading} detail={report.website_url} />;
+    return <PendingState lang={lang} url={report.website_url} phase={report.status as "pending" | "fetching" | "scoring"} />;
   }
   if (report.status === "failed") {
     return (
@@ -336,6 +336,85 @@ function FullState({ icon, title, detail }: { icon: React.ReactNode; title: stri
           <div className="flex justify-center">{icon}</div>
           <h1 className="text-xl font-semibold">{title}</h1>
           {detail && <p className="text-sm text-muted-foreground break-all">{detail}</p>}
+        </div>
+      </main>
+    </>
+  );
+}
+
+function PendingState({
+  lang,
+  url,
+  phase,
+}: {
+  lang: Lang;
+  url: string | undefined;
+  phase: "pending" | "fetching" | "scoring";
+}) {
+  const copy = lang === "de"
+    ? {
+        kicker: "Audit läuft",
+        title: "Wir bauen deinen Report.",
+        sub: "Das dauert 30–60 Sekunden. Der Report öffnet sich automatisch.",
+        steps: [
+          { key: "fetch", label: "Website laden & Signale sammeln" },
+          { key: "score", label: "Deterministisches Scoring (25+ Signale)" },
+          { key: "render", label: "Report zusammenstellen" },
+        ],
+        note: "Du erhältst zusätzlich einen privaten Link per E-Mail.",
+      }
+    : {
+        kicker: "Audit running",
+        title: "We're building your report.",
+        sub: "This takes 30–60 seconds. Your report opens automatically.",
+        steps: [
+          { key: "fetch", label: "Load site & collect signals" },
+          { key: "score", label: "Deterministic scoring (25+ signals)" },
+          { key: "render", label: "Assemble report" },
+        ],
+        note: "You'll also receive a private link by email.",
+      };
+
+  const activeIdx = phase === "scoring" ? 1 : phase === "pending" ? 0 : 0;
+
+  return (
+    <>
+      <NoIndex />
+      <main className="min-h-screen bg-background" data-neural-zone>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+          <p className="font-mono text-xs uppercase tracking-widest text-signal mb-4">{copy.kicker}</p>
+          <h1 className="text-3xl md:text-5xl font-serif leading-tight mb-4 text-foreground">{copy.title}</h1>
+          <p className="text-lg text-muted-foreground mb-10">{copy.sub}</p>
+
+          {url && (
+            <p className="font-mono text-sm text-muted-foreground mb-8 break-all">{url}</p>
+          )}
+
+          <ol className="space-y-3 mb-8">
+            {copy.steps.map((s, i) => {
+              const isDone = i < activeIdx;
+              const isActive = i === activeIdx;
+              return (
+                <li
+                  key={s.key}
+                  className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card/60 backdrop-blur"
+                >
+                  <span className="flex-shrink-0 w-8 h-8 grid place-items-center rounded-full border border-border">
+                    {isDone ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    ) : isActive ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    ) : (
+                      <span className="text-xs font-mono text-muted-foreground">{i + 1}</span>
+                    )}
+                  </span>
+                  <span className={isActive ? "text-foreground" : "text-muted-foreground"}>{s.label}</span>
+                </li>
+              );
+            })}
+          </ol>
+
+          <p className="text-sm text-muted-foreground">{copy.note}</p>
         </div>
       </main>
     </>
