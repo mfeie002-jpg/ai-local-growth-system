@@ -140,6 +140,14 @@
 
   <!-- Core DE -->
   <url>
+    <loc>https://itsfeierabend.ch/audit</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/audit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/audit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/audit"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://itsfeierabend.ch/gratis-audit</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/gratis-audit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/free-audit"/>
