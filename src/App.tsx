@@ -28,6 +28,8 @@ import BlogPostPage from "./pages/BlogPostPage";
 import ScanProgressPage from "./pages/ScanProgressPage";
 import ScanPage from "./pages/ScanPage";
 import NotFound from "./pages/NotFound";
+import AuditV0Page from "./pages/AuditV0Page";
+import AuditV0ResultPage from "./pages/AuditV0ResultPage";
 
 // Service Pages
 import AIImplementationPage from "./pages/services/AIImplementationPage";
@@ -134,6 +136,12 @@ const App = () => (
 
               {/* OAuth consent (MCP) */}
               <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
+              {/* Audit v0 (prototype) */}
+              <Route path="/audit" element={<AuditV0Page lang="de" />} />
+              <Route path="/audit/r/:token" element={<AuditV0ResultPage lang="de" />} />
+              <Route path="/en/audit" element={<AuditV0Page lang="en" />} />
+              <Route path="/en/audit/r/:token" element={<AuditV0ResultPage lang="en" />} />
               
               
               {/* Catch-all */}
