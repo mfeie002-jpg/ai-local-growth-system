@@ -118,6 +118,131 @@ export type Database = {
           },
         ]
       }
+      audit_events: {
+        Row: {
+          audit_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          ip_hash: string | null
+          metadata: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          audit_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          audit_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audit_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_requests: {
+        Row: {
+          category_scores: Json | null
+          completed_at: string | null
+          consent_marketing: boolean
+          consent_processing: boolean
+          created_at: string
+          cta_clicked_at: string | null
+          email: string
+          email_sent_at: string | null
+          error: string | null
+          fetch_meta: Json | null
+          first_name: string
+          id: string
+          ip_hash: string | null
+          language: string
+          last_name: string
+          normalized_domain: string
+          overall_score: number | null
+          report_viewed_at: string | null
+          score_version: string | null
+          signals: Json | null
+          status: string
+          token: string
+          top_actions: Json | null
+          updated_at: string
+          user_agent: string | null
+          website_url: string
+        }
+        Insert: {
+          category_scores?: Json | null
+          completed_at?: string | null
+          consent_marketing?: boolean
+          consent_processing?: boolean
+          created_at?: string
+          cta_clicked_at?: string | null
+          email: string
+          email_sent_at?: string | null
+          error?: string | null
+          fetch_meta?: Json | null
+          first_name: string
+          id?: string
+          ip_hash?: string | null
+          language?: string
+          last_name: string
+          normalized_domain: string
+          overall_score?: number | null
+          report_viewed_at?: string | null
+          score_version?: string | null
+          signals?: Json | null
+          status?: string
+          token?: string
+          top_actions?: Json | null
+          updated_at?: string
+          user_agent?: string | null
+          website_url: string
+        }
+        Update: {
+          category_scores?: Json | null
+          completed_at?: string | null
+          consent_marketing?: boolean
+          consent_processing?: boolean
+          created_at?: string
+          cta_clicked_at?: string | null
+          email?: string
+          email_sent_at?: string | null
+          error?: string | null
+          fetch_meta?: Json | null
+          first_name?: string
+          id?: string
+          ip_hash?: string | null
+          language?: string
+          last_name?: string
+          normalized_domain?: string
+          overall_score?: number | null
+          report_viewed_at?: string | null
+          score_version?: string | null
+          signals?: Json | null
+          status?: string
+          token?: string
+          top_actions?: Json | null
+          updated_at?: string
+          user_agent?: string | null
+          website_url?: string
+        }
+        Relationships: []
+      }
       callback_requests: {
         Row: {
           consent_ai_call: boolean | null
