@@ -312,20 +312,27 @@
   }
 
   @keyframes orbDriftA {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-    50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    33%  { transform: translate3d(14vw, 10vh, 0) scale(1.2); }
+    66%  { transform: translate3d(-6vw, 18vh, 0) scale(0.9); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
   }
   @keyframes orbDriftB {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
-    50%      { transform: translate3d(-10vw, -4vh, 0) scale(0.92); }
+    0%   { transform: translate3d(0, 0, 0) scale(1.05); }
+    33%  { transform: translate3d(-16vw, -8vh, 0) scale(0.85); }
+    66%  { transform: translate3d(-4vw, 12vh, 0) scale(1.15); }
+    100% { transform: translate3d(0, 0, 0) scale(1.05); }
   }
   @keyframes orbDriftC {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
-    50%      { transform: translate3d(6vw, -8vh, 0) scale(1.12); }
+    0%   { transform: translate3d(0, 0, 0) scale(0.95); }
+    33%  { transform: translate3d(12vw, -14vh, 0) scale(1.2); }
+    66%  { transform: translate3d(-8vw, -6vh, 0) scale(0.9); }
+    100% { transform: translate3d(0, 0, 0) scale(0.95); }
   }
-  .animate-orb-a { animation: orbDriftA 22s ease-in-out infinite; }
-  .animate-orb-b { animation: orbDriftB 28s ease-in-out infinite; }
-  .animate-orb-c { animation: orbDriftC 34s ease-in-out infinite; }
+  .animate-orb-a { animation: orbDriftA 42s ease-in-out infinite; }
+  .animate-orb-b { animation: orbDriftB 55s ease-in-out infinite; }
+  .animate-orb-c { animation: orbDriftC 68s ease-in-out infinite; }
+
 
   .delay-100 { animation-delay: 100ms; }
   .delay-200 { animation-delay: 200ms; }

@@ -157,15 +157,7 @@ export function NeuralBackdrop() {
 
     rafRef.current = requestAnimationFrame(draw);
 
-    // ── IntersectionObserver: pause when no neural-zone is on screen ──
-    // Pages mark hero/highlight sections with [data-neural-zone]. If none
-    // exist on a given route, we keep running (treat whole page as a zone).
-    let visibleZones = 0;
-    const zoneEls = Array.from(
-      document.querySelectorAll<HTMLElement>('[data-neural-zone]')
-    );
-    const hasZones = zoneEls.length > 0;
-
+    // Pause only when tab is hidden — the background must always live.
     const start = () => {
       if (running) return;
       running = true;
@@ -178,27 +170,13 @@ export function NeuralBackdrop() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
 
-    let zoneObserver: IntersectionObserver | null = null;
-    if (hasZones && 'IntersectionObserver' in window) {
-      zoneObserver = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) visibleZones++;
-            else visibleZones = Math.max(0, visibleZones - 1);
-          }
-          if (visibleZones > 0) start();
-          else stop();
-        },
-        { rootMargin: '100px 0px', threshold: 0 }
-      );
-      zoneEls.forEach((el) => zoneObserver!.observe(el));
-    }
-
     const onVis = () => {
       if (document.hidden) stop();
-      else if (!hasZones || visibleZones > 0) start();
+      else start();
     };
     document.addEventListener('visibilitychange', onVis);
+    const zoneObserver: IntersectionObserver | null = null;
+
 
     return () => {
       stop();
@@ -244,14 +222,15 @@ export function NeuralBackdrop() {
       {/* Layer B: neural net + particles canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* Layer C: paper veil — leicht, damit Hintergrund lebt */}
+      {/* Layer C: paper veil — very light so the motion breathes through */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, hsl(var(--background) / 0.45) 0%, hsl(var(--background) / 0.55) 50%, hsl(var(--background) / 0.45) 100%)',
+            'linear-gradient(180deg, hsl(var(--background) / 0.15) 0%, hsl(var(--background) / 0.25) 50%, hsl(var(--background) / 0.35) 100%)',
         }}
       />
+
     </div>
   );
 }
