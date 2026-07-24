@@ -107,7 +107,7 @@ export const translations = {
         ],
       },
       leader: {
-        name: 'Market Leader',
+        name: 'Scale Retainer',
         duration: 'Ongoing',
         forWhom: 'Multi-Location Skalierung',
         price: "CHF 6'900",
@@ -481,7 +481,7 @@ export const translations = {
         ],
       },
       leader: {
-        name: 'Market Leader',
+        name: 'Scale Retainer',
         duration: 'Ongoing',
         forWhom: 'Multi-location scaling',
         price: 'CHF 6,900',
