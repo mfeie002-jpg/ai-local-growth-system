@@ -1,8 +1,7 @@
-/* Neural Editorial Design System — itsFeierabend.ch
- * Bone canvas · Ink foreground · One electric primary · One warm signal
- * Fraunces (display serif) · Inter Tight (body sans) · JetBrains Mono (machine voice)
+/* Midnight Indigo Design System — itsFeierabend.ch
+ * Deep navy canvas · Electric indigo primary · Warm signal amber
+ * Sora (display) · Manrope (body) · JetBrains Mono (machine voice)
  */
-/* Fonts loaded via <link> in index.html with preconnect for faster FCP */
 
 @tailwind base;
 @tailwind components;
@@ -10,123 +9,83 @@
 
 @layer base {
   :root {
-    /* === Neural Editorial palette (light) === */
-    /* Bone canvas — warm off-white, slight cream cast */
-    --background: 38 30% 97%;
-    --foreground: 222 30% 9%;
+    /* === Midnight Indigo palette === */
+    --background: 240 40% 6%;
+    --foreground: 220 25% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 30% 9%;
+    --card: 235 38% 10%;
+    --card-foreground: 220 25% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 30% 9%;
+    --popover: 235 40% 8%;
+    --popover-foreground: 220 25% 96%;
 
-    /* Ink primary — electric cobalt, kept singular */
-    --primary: 224 84% 48%;
-    --primary-foreground: 38 30% 98%;
-    --primary-hover: 224 84% 42%;
+    --primary: 243 76% 59%;
+    --primary-foreground: 240 40% 6%;
+    --primary-hover: 243 82% 66%;
 
-    /* Secondary — warm paper */
-    --secondary: 38 22% 93%;
-    --secondary-foreground: 222 30% 12%;
+    --secondary: 235 45% 18%;
+    --secondary-foreground: 220 25% 96%;
 
-    /* Muted — soft ink at low opacity */
-    --muted: 38 18% 94%;
-    --muted-foreground: 222 12% 38%;
+    --muted: 235 30% 14%;
+    --muted-foreground: 225 18% 68%;
 
-    /* Accent — same as primary; we keep palette restrained */
-    --accent: 224 84% 48%;
-    --accent-foreground: 38 30% 98%;
+    --accent: 243 76% 59%;
+    --accent-foreground: 220 25% 96%;
 
-    /* Signal — warm amber, used ONLY for AI annotations + active streams */
-    --signal: 28 95% 52%;
-    --signal-foreground: 38 30% 98%;
+    --signal: 32 96% 60%;
+    --signal-foreground: 240 40% 6%;
 
-    /* Backwards-compat alias used by some legacy components */
-    --ai-accent: 28 95% 52%;
-    --ai-accent-foreground: 38 30% 98%;
+    --ai-accent: 32 96% 60%;
+    --ai-accent-foreground: 240 40% 6%;
 
-    --destructive: 0 72% 48%;
-    --destructive-foreground: 38 30% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 220 25% 96%;
 
-    /* Hairlines — barely-there ink */
-    --border: 222 15% 88%;
-    --input: 222 15% 90%;
-    --ring: 224 84% 48%;
+    --border: 235 30% 20%;
+    --input: 235 30% 18%;
+    --ring: 243 76% 66%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Layout tokens */
     --section-spacing: 7rem;
     --container-max: 1320px;
     --header-height: 4.5rem;
     --rule-weight: 1px;
-    --rule-color: 222 20% 14%;
+    --rule-color: 220 25% 96%;
 
-    /* Shadows — paper, never glow */
-    --shadow-sm: 0 1px 2px 0 hsl(222 30% 14% / 0.04);
-    --shadow-md: 0 2px 8px -2px hsl(222 30% 14% / 0.06);
-    --shadow-lg: 0 12px 32px -12px hsl(222 30% 14% / 0.10);
-    --shadow-xl: 0 24px 48px -16px hsl(222 30% 14% / 0.12);
-    --shadow-card: 0 1px 0 hsl(222 30% 14% / 0.04), 0 8px 24px -12px hsl(222 30% 14% / 0.08);
-    --shadow-button: 0 1px 0 hsl(222 30% 14% / 0.10), 0 6px 16px -6px hsl(224 84% 48% / 0.30);
-    /* Legacy glow tokens kept as no-ops so old utility classes don't crash */
-    --shadow-glow: 0 0 0 transparent;
-    --shadow-ai-glow: 0 0 0 transparent;
-    --shadow-glow-intense: 0 0 0 transparent;
-    --shadow-glow-cyan: 0 0 0 transparent;
+    --shadow-sm: 0 1px 2px 0 hsl(240 40% 2% / 0.4);
+    --shadow-md: 0 4px 12px -2px hsl(240 40% 2% / 0.5);
+    --shadow-lg: 0 16px 40px -12px hsl(240 40% 2% / 0.6);
+    --shadow-xl: 0 32px 60px -16px hsl(240 40% 2% / 0.7);
+    --shadow-card: 0 1px 0 hsl(220 25% 96% / 0.04), 0 12px 32px -12px hsl(240 40% 2% / 0.55);
+    --shadow-button: 0 1px 0 hsl(220 25% 96% / 0.10), 0 8px 24px -6px hsl(243 76% 59% / 0.55);
+    --shadow-glow: 0 0 40px hsl(243 76% 59% / 0.35);
+    --shadow-ai-glow: 0 0 40px hsl(32 96% 60% / 0.30);
+    --shadow-glow-intense: 0 0 60px hsl(243 76% 59% / 0.55);
+    --shadow-glow-cyan: 0 0 40px hsl(200 90% 60% / 0.35);
 
-    /* Score visual — the ONE place gradients are allowed */
-    --gradient-score: conic-gradient(from 220deg at 50% 50%, hsl(224 84% 48%), hsl(28 95% 52%), hsl(224 84% 48%));
-    --gradient-card-glow: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(38 22% 96%) 100%);
-    /* Legacy aliases — neutralised, kept so unmigrated pages don't go pink */
-    --gradient-aurora: linear-gradient(135deg, hsl(224 84% 48%), hsl(224 84% 38%));
-    --gradient-fire: linear-gradient(135deg, hsl(28 95% 52%), hsl(224 84% 48%));
-    --gradient-sunset: linear-gradient(180deg, hsl(38 30% 97%), hsl(38 22% 94%));
-    --gradient-border-aurora: linear-gradient(135deg, hsl(222 20% 14% / 0.18), hsl(222 20% 14% / 0.06));
+    --gradient-score: conic-gradient(from 220deg at 50% 50%, hsl(243 76% 59%), hsl(32 96% 60%), hsl(243 76% 59%));
+    --gradient-card-glow: linear-gradient(180deg, hsl(235 40% 12%) 0%, hsl(240 42% 8%) 100%);
+    --gradient-aurora: linear-gradient(135deg, hsl(243 76% 59%), hsl(266 72% 55%));
+    --gradient-fire: linear-gradient(135deg, hsl(32 96% 60%), hsl(243 76% 59%));
+    --gradient-sunset: linear-gradient(180deg, hsl(240 40% 6%), hsl(235 38% 10%));
+    --gradient-border-aurora: linear-gradient(135deg, hsl(243 76% 59% / 0.5), hsl(32 96% 60% / 0.25));
 
-    --noise-opacity: 0;
+    --noise-opacity: 0.03;
 
-    /* Sidebar — paper */
-    --sidebar-background: 38 30% 97%;
-    --sidebar-foreground: 222 30% 14%;
-    --sidebar-primary: 224 84% 48%;
-    --sidebar-primary-foreground: 38 30% 98%;
-    --sidebar-accent: 38 22% 93%;
-    --sidebar-accent-foreground: 222 30% 12%;
-    --sidebar-border: 222 15% 88%;
-    --sidebar-ring: 224 84% 48%;
+    --sidebar-background: 240 40% 5%;
+    --sidebar-foreground: 220 25% 92%;
+    --sidebar-primary: 243 76% 59%;
+    --sidebar-primary-foreground: 240 40% 6%;
+    --sidebar-accent: 235 30% 14%;
+    --sidebar-accent-foreground: 220 25% 92%;
+    --sidebar-border: 235 30% 18%;
+    --sidebar-ring: 243 76% 66%;
   }
 
   .dark {
-    /* Dark mode kept as opt-in; not used by default */
-    --background: 222 30% 6%;
-    --foreground: 38 20% 95%;
-    --card: 222 28% 9%;
-    --card-foreground: 38 20% 95%;
-    --popover: 222 28% 9%;
-    --popover-foreground: 38 20% 95%;
-    --primary: 224 90% 64%;
-    --primary-foreground: 222 30% 6%;
-    --primary-hover: 224 90% 58%;
-    --secondary: 222 24% 14%;
-    --secondary-foreground: 38 20% 95%;
-    --muted: 222 24% 14%;
-    --muted-foreground: 222 10% 62%;
-    --accent: 224 90% 64%;
-    --accent-foreground: 222 30% 6%;
-    --signal: 28 95% 60%;
-    --signal-foreground: 222 30% 6%;
-    --ai-accent: 28 95% 60%;
-    --border: 222 20% 18%;
-    --input: 222 20% 18%;
-    --ring: 224 90% 64%;
-    --rule-color: 38 20% 90%;
-    --gradient-card-glow: linear-gradient(180deg, hsl(222 28% 11%) 0%, hsl(222 28% 8%) 100%);
-    --sidebar-background: 222 30% 7%;
-    --sidebar-foreground: 38 20% 90%;
-    --sidebar-accent: 222 24% 12%;
-    --sidebar-border: 222 20% 16%;
+    --background: 240 40% 6%;
+    --foreground: 220 25% 96%;
   }
 }
 
@@ -140,60 +99,66 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color-scheme: dark;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter Tight", system-ui, sans-serif;
-    font-feature-settings: "ss01", "cv11";
+    font-family: "Manrope", system-ui, sans-serif;
     font-size: 16px;
-    line-height: 1.55;
+    line-height: 1.6;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 0%, hsl(243 76% 45% / 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%, hsl(266 72% 40% / 0.14), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 50% 100%, hsl(32 96% 50% / 0.06), transparent 70%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground;
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    font-feature-settings: "ss01", "ss02";
+    font-family: "Sora", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
 
   h1 {
-    @apply text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem];
-    line-height: 0.98;
+    @apply text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem];
+    line-height: 1.02;
     letter-spacing: -0.035em;
+    font-weight: 700;
   }
 
   h2 {
     @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
-    line-height: 1.02;
-    letter-spacing: -0.028em;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 600;
   }
 
   h3 {
     @apply text-2xl sm:text-3xl md:text-4xl;
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: -0.02em;
+    font-weight: 600;
   }
 
   h4 {
     @apply text-xl md:text-2xl;
-    line-height: 1.2;
+    line-height: 1.25;
+    font-weight: 500;
   }
 
   p {
     @apply leading-relaxed;
   }
 
-  /* Editorial italic accent */
   .font-editorial {
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Sora", system-ui, sans-serif;
     font-style: italic;
     font-weight: 300;
-    font-feature-settings: "ss01";
+    letter-spacing: -0.02em;
   }
 
-  /* Machine voice — used for AI annotations, labels, section markers */
   .font-mono {
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-feature-settings: "ss01", "zero";
@@ -204,7 +169,7 @@
   }
 
   ::selection {
-    background: hsl(var(--signal) / 0.25);
+    background: hsl(var(--primary) / 0.4);
     color: hsl(var(--foreground));
   }
 }
@@ -221,30 +186,29 @@
   .text-balance { text-wrap: balance; }
   .text-pretty  { text-wrap: pretty; }
 
-  /* Hairline horizontal rule — used as a section divider */
   .rule-hairline {
     height: var(--rule-weight);
-    background: hsl(var(--rule-color) / 0.18);
+    background: linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.22), transparent);
   }
 
-  /* Numbered section marker (e.g. 03 / 06) */
   .section-marker {
-    @apply font-mono text-xs uppercase tracking-[0.2em];
-    color: hsl(var(--foreground) / 0.55);
+    @apply font-mono text-xs uppercase tracking-[0.24em];
+    color: hsl(var(--signal));
   }
 
-  /* Editorial card — paper, ink hairline, no glass */
   .card-paper {
-    @apply bg-card text-card-foreground rounded-md border border-border/80 transition-colors duration-200;
+    @apply bg-card/70 backdrop-blur-xl text-card-foreground rounded-xl border border-border transition-all duration-300;
     box-shadow: var(--shadow-card);
   }
-  .card-paper:hover { @apply border-foreground/30; }
+  .card-paper:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: var(--shadow-card), 0 0 32px hsl(var(--primary) / 0.15);
+  }
 
-  /* AI annotation — margin note styling */
   .annotation {
     @apply font-mono text-xs leading-relaxed pl-3;
-    border-left: var(--rule-weight) solid hsl(var(--signal));
-    color: hsl(var(--foreground) / 0.7);
+    border-left: 2px solid hsl(var(--signal));
+    color: hsl(var(--foreground) / 0.75);
   }
   .annotation::before {
     content: '// ';
@@ -252,30 +216,28 @@
     font-weight: 500;
   }
 
-  /* Signal pulse — single dot used in stream visuals */
   .signal-dot {
     width: 6px; height: 6px; border-radius: 999px;
     background: hsl(var(--signal));
-    box-shadow: 0 0 0 4px hsl(var(--signal) / 0.15);
+    box-shadow: 0 0 0 4px hsl(var(--signal) / 0.2), 0 0 12px hsl(var(--signal) / 0.6);
   }
 
-  /* Score halo — the ONE allowed gradient flourish */
   .score-halo {
     background: var(--gradient-score);
-    filter: blur(28px);
-    opacity: 0.55;
+    filter: blur(40px);
+    opacity: 0.7;
   }
 
-  /* === Legacy compat shims — keep unmigrated pages from breaking === */
-  /* These map old utility names to neutral, paper-friendly styles. They will
-     be removed in the cleanup pass once every page has been migrated. */
   .glass-panel,
   .mega-menu-panel {
-    @apply bg-card border border-border rounded-md;
+    @apply bg-card/70 backdrop-blur-xl border border-border rounded-xl;
     box-shadow: var(--shadow-card);
   }
   .border-aurora {
-    border: 1px solid hsl(var(--foreground) / 0.18);
+    border: 1px solid transparent;
+    background:
+      linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+      var(--gradient-border-aurora) border-box;
   }
   .noise-overlay,
   .noise-overlay-lite,
@@ -285,8 +247,8 @@
   .hero-pattern { position: relative; }
   .grid-pattern {
     background-image:
-      linear-gradient(hsl(var(--border)) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px);
+      linear-gradient(hsl(var(--border) / 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.6) 1px, transparent 1px);
     background-size: 80px 80px;
     opacity: 0.5;
   }
@@ -294,20 +256,19 @@
   .text-gradient,
   .text-gradient-ai {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--signal)) 100%);
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(266 72% 65%) 50%, hsl(var(--signal)) 100%);
   }
-  .gradient-primary { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+  .gradient-primary { background: linear-gradient(135deg, hsl(var(--primary)), hsl(266 72% 55%)); color: hsl(var(--primary-foreground)); }
   .gradient-ai { background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--signal))); }
-  .glow-primary, .glow-ai { box-shadow: var(--shadow-md); }
+  .glow-primary { box-shadow: var(--shadow-glow); }
+  .glow-ai { box-shadow: var(--shadow-ai-glow); }
   .card-glass { @apply card-paper; }
-  .service-card {
-    @apply card-paper p-8;
-  }
+  .service-card { @apply card-paper p-8; }
   .link-underline { @apply relative; }
   .link-underline::after {
     content: '';
     @apply absolute left-0 bottom-0 h-px w-0 transition-all duration-300;
-    background: hsl(var(--foreground));
+    background: hsl(var(--primary));
   }
   .link-underline:hover::after { @apply w-full; }
 }
@@ -319,7 +280,7 @@
   .animate-float { animation: float 6s ease-in-out infinite; }
   .animate-pulse-glow { animation: pulseSignal 2.4s ease-in-out infinite; }
   .animate-stream { animation: streamFlow 3.2s linear infinite; }
-  .animate-aurora { animation: none; }
+  .animate-aurora { animation: aurora-shift 18s ease-in-out infinite; background-size: 200% 200%; }
 
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -350,7 +311,6 @@
     50% { background-position: 100% 50%; }
   }
 
-  /* Living-background glow orb drifts */
   @keyframes orbDriftA {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
     50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
