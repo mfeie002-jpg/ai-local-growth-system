@@ -319,7 +319,7 @@ export default function HomePage() {
 
 
       {/* ========== 04 — The Audit as a product (Midnight) ========== */}
-      <section data-neural-zone className="section-padding bg-foreground text-background">
+      <section data-neural-zone className="section-padding bg-card text-foreground border-y border-border">
         <div className="container-section">
           <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
             <div className="col-span-12 lg:col-span-6">
