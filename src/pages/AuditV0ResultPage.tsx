@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Loader2, AlertTriangle, CheckCircle2, XCircle, ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { trackEvent } from "@/lib/analytics";
+import { track } from "@/lib/analytics";
 import { NoIndex } from "@/components/NoIndex";
 
 type Lang = "de" | "en";
@@ -99,7 +99,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
         if ((r.status === "ready" || r.status === "partial") && !viewTracked.current) {
           viewTracked.current = true;
           fetchReport("view");
-          trackEvent("audit_report_viewed", { score: r.overall_score, status: r.status });
+          track("audit_report_viewed", { score: r.overall_score, status: r.status });
         }
       }
       if (Date.now() - startedAt.current > TIMEOUT_MS && pending) {
@@ -114,7 +114,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
   }, [token, fetchReport]);
 
   const handleCta = useCallback(() => {
-    trackEvent("audit_cta_click", { token });
+    track("audit_cta_click", { token });
     fetchReport("cta_click");
   }, [fetchReport, token]);
 

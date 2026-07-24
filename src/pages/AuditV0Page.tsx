@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { trackEvent } from "@/lib/analytics";
+import { track } from "@/lib/analytics";
 
 type Lang = "de" | "en";
 
@@ -123,7 +123,7 @@ export default function AuditV0Page({ lang }: Props) {
       if (error) throw error;
       if (!data?.success || !data?.token) throw new Error(data?.error ?? "Unknown error");
 
-      trackEvent("audit_submitted", {
+      track("audit_submitted", {
         language: lang,
         marketing_consent: parsed.data.consent_marketing,
       });
