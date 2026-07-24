@@ -134,7 +134,7 @@ export function NeuralBackdrop() {
         if (!reduced) {
           p.x += p.vx * (dt / 16);
           p.y += p.vy * (dt / 16);
-          p.phase += 0.012;
+          p.phase += 0.03;
           if (p.x < -10) p.x = w + 10;
           if (p.x > w + 10) p.x = -10;
           if (p.y < -10) p.y = h + 10;
