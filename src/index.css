@@ -352,4 +352,13 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* Print-friendly report layout */
+  @media print {
+    body { background: white !important; color: black !important; }
+    [data-neural-zone] { break-inside: avoid; }
+    canvas, .animate-orb-a, .animate-orb-b, .animate-orb-c { display: none !important; }
+    header, footer, nav { display: none !important; }
+    a { color: black !important; text-decoration: underline; }
+  }
 }

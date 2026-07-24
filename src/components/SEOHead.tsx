@@ -139,6 +139,31 @@ export function OrganizationSchema({
   return null;
 }
 
+// JSON-LD WebSite schema (sitewide, adds SearchAction potential)
+export function WebsiteSchema({ url = 'https://itsfeierabend.ch' }: { url?: string }) {
+  useEffect(() => {
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${url}#website`,
+      url,
+      name: 'itsFeierabend.ch',
+      inLanguage: ['de-CH', 'en'],
+      publisher: { '@id': `${url}#organization` },
+    };
+    let script = document.querySelector('script[data-schema="website"]');
+    if (!script) {
+      script = document.createElement('script');
+      script.setAttribute('type', 'application/ld+json');
+      script.setAttribute('data-schema', 'website');
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schema);
+    return () => { script?.remove(); };
+  }, [url]);
+  return null;
+}
+
 // JSON-LD Schema for Service pages
 interface ServiceSchemaProps {
   name: string;

@@ -1,6 +1,6 @@
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Layout } from '@/components/Layout';
-import { SEOHead, OrganizationSchema } from '@/components/SEOHead';
+import { SEOHead, OrganizationSchema, WebsiteSchema } from '@/components/SEOHead';
 import { CTAButton } from '@/components/CTAButton';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight, Check } from 'lucide-react';
@@ -133,6 +133,7 @@ export default function HomePage() {
           : 'Starten Sie ein gratis KI-Audit Ihrer digitalen Präsenz — 25+ deterministische Signale, aus der Schweiz. Danach Call buchen oder alle Fixes umsetzen lassen.'}
       />
       <OrganizationSchema description={t.siteDescription} />
+      <WebsiteSchema />
 
       {/* ============================================================ */}
       {/* 01 — Manifesto Hero                                          */}
