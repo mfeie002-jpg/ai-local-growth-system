@@ -1,13 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
+import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-
-function client(ctx: ToolContext) {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { supabaseForUser } from "../supabase-client";
 
 export default defineTool({
   name: "list_leads",
@@ -23,8 +16,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const sb = client(ctx);
-    let query = sb
+    let query = supabaseForUser(ctx)
       .from("leads")
       .select("id, created_at, name, email, phone, lead_type, status, industry, service_area, pre_score_bucket, pre_score_total, language")
       .order("created_at", { ascending: false })
@@ -32,9 +24,7 @@ export default defineTool({
     if (status) query = query.eq("status", status);
     if (lead_type) query = query.eq("lead_type", lead_type);
     const { data, error } = await query;
-    if (error) {
-      return { content: [{ type: "text", text: error.message }], isError: true };
-    }
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
       structuredContent: { leads: data ?? [], count: data?.length ?? 0 },

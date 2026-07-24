@@ -6,15 +6,21 @@
 import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.24.0";
 
 // src/lib/mcp/tools/list-leads.ts
-import { createClient } from "npm:@supabase/supabase-js@^2.89.0";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z } from "npm:zod@^4.4.3";
-function client(ctx) {
-  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+
+// src/lib/mcp/supabase-client.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.89.0";
+function supabaseForUser(ctx) {
+  const url = process.env.SUPABASE_URL ?? "";
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
+  return createClient(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
 }
+
+// src/lib/mcp/tools/list-leads.ts
 var list_leads_default = defineTool({
   name: "list_leads",
   title: "List leads",
@@ -29,14 +35,11 @@ var list_leads_default = defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const sb = client(ctx);
-    let query = sb.from("leads").select("id, created_at, name, email, phone, lead_type, status, industry, service_area, pre_score_bucket, pre_score_total, language").order("created_at", { ascending: false }).limit(limit);
+    let query = supabaseForUser(ctx).from("leads").select("id, created_at, name, email, phone, lead_type, status, industry, service_area, pre_score_bucket, pre_score_total, language").order("created_at", { ascending: false }).limit(limit);
     if (status) query = query.eq("status", status);
     if (lead_type) query = query.eq("lead_type", lead_type);
     const { data, error } = await query;
-    if (error) {
-      return { content: [{ type: "text", text: error.message }], isError: true };
-    }
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
       structuredContent: { leads: data ?? [], count: data?.length ?? 0 }
@@ -45,28 +48,19 @@ var list_leads_default = defineTool({
 });
 
 // src/lib/mcp/tools/get-lead.ts
-import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.89.0";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z2 } from "npm:zod@^4.4.3";
-function client2(ctx) {
-  return createClient2(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var get_lead_default = defineTool2({
   name: "get_lead",
   title: "Get lead detail",
   description: "Fetch full details for a single lead by id. Requires admin role.",
-  inputSchema: {
-    id: z2.string().uuid().describe("The lead UUID.")
-  },
+  inputSchema: { id: z2.string().uuid().describe("The lead UUID.") },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ id }, ctx) => {
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await client2(ctx).from("leads").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabaseForUser(ctx).from("leads").select("*").eq("id", id).maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     if (!data) return { content: [{ type: "text", text: "Lead not found" }], isError: true };
     return {
@@ -77,15 +71,8 @@ var get_lead_default = defineTool2({
 });
 
 // src/lib/mcp/tools/list-calls.ts
-import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.89.0";
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z3 } from "npm:zod@^4.4.3";
-function client3(ctx) {
-  return createClient3(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var list_calls_default = defineTool3({
   name: "list_calls",
   title: "List voice calls",
@@ -98,7 +85,7 @@ var list_calls_default = defineTool3({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await client3(ctx).from("calls").select("*").order("created_at", { ascending: false }).limit(limit);
+    const { data, error } = await supabaseForUser(ctx).from("calls").select("*").order("created_at", { ascending: false }).limit(limit);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
@@ -108,15 +95,8 @@ var list_calls_default = defineTool3({
 });
 
 // src/lib/mcp/tools/list-analysis-reports.ts
-import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.89.0";
 import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z4 } from "npm:zod@^4.4.3";
-function client4(ctx) {
-  return createClient4(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var list_analysis_reports_default = defineTool4({
   name: "list_analysis_reports",
   title: "List analysis reports",
@@ -129,7 +109,7 @@ var list_analysis_reports_default = defineTool4({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await client4(ctx).from("analysis_reports").select("*").order("created_at", { ascending: false }).limit(limit);
+    const { data, error } = await supabaseForUser(ctx).from("analysis_reports").select("*").order("created_at", { ascending: false }).limit(limit);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
@@ -139,15 +119,8 @@ var list_analysis_reports_default = defineTool4({
 });
 
 // src/lib/mcp/tools/add-do-not-call.ts
-import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.89.0";
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z5 } from "npm:zod@^4.4.3";
-function client5(ctx) {
-  return createClient5(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var add_do_not_call_default = defineTool5({
   name: "add_do_not_call",
   title: "Add phone to do-not-call list",
@@ -161,7 +134,7 @@ var add_do_not_call_default = defineTool5({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await client5(ctx).from("do_not_call").insert({ phone, reason: reason ?? null }).select().maybeSingle();
+    const { data, error } = await supabaseForUser(ctx).from("do_not_call").insert({ phone, reason: reason ?? null }).select().maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: `Added ${phone} to do-not-call list.` }],
