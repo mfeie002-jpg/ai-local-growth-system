@@ -48,6 +48,7 @@ import AdminVoiceSetupPage from "./pages/admin/AdminVoiceSetupPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
 import AdminReportDetailPage from "./pages/admin/AdminReportDetailPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +131,10 @@ const App = () => (
               <Route path="/admin/voice/setup" element={<AdminVoiceSetupPage />} />
               <Route path="/admin/reports" element={<AdminReportsPage />} />
               <Route path="/admin/reports/:id" element={<AdminReportDetailPage />} />
+
+              {/* OAuth consent (MCP) */}
+              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+              
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

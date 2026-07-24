@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Loader2, LogIn, AlertCircle, UserPlus } from 'lucide-react';
+
+function safeNext(raw: string | null): string {
+  if (!raw) return '/admin/leads';
+  try {
+    // Only allow same-origin relative paths.
+    if (!raw.startsWith('/') || raw.startsWith('//')) return '/admin/leads';
+    return raw;
+  } catch {
+    return '/admin/leads';
+  }
+}
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +20,8 @@ import { NoIndex } from '@/components/NoIndex';
 
 export default function AdminLoginPage() {
   const { isAdmin, isLoading, signIn, signUp } = useAuth();
+  const [searchParams] = useSearchParams();
+  const nextPath = safeNext(searchParams.get('next'));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +38,7 @@ export default function AdminLoginPage() {
   }
 
   if (isAdmin) {
-    return <Navigate to="/admin/leads" replace />;
+    return <Navigate to={nextPath} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1,0 +1,157 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://akxdeuvxvhecvddxyqnd.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "itsfeierabend-mcp",
+      "version": "0.1.0",
+      "title": "itsFeierabend.ch"
+    },
+    "tools": [
+      {
+        "name": "list_leads",
+        "title": "List leads",
+        "description": "List recent leads submitted through the site (newest first). Requires admin role.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "default": 20,
+              "description": "Maximum number of leads to return.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "status": {
+              "description": "Optional status filter, e.g. 'new', 'contacted'.",
+              "type": "string"
+            },
+            "lead_type": {
+              "description": "Optional lead type filter, e.g. 'audit', 'call'.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_lead",
+        "title": "Get lead detail",
+        "description": "Fetch full details for a single lead by id. Requires admin role.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The lead UUID."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_calls",
+        "title": "List voice calls",
+        "description": "List recent voice agent calls with outcome and language. Requires admin role.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "default": 20,
+              "description": "Maximum number of calls to return.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_analysis_reports",
+        "title": "List analysis reports",
+        "description": "List recent website analysis / scan reports. Requires admin role.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "default": 20,
+              "description": "Maximum number of reports.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_do_not_call",
+        "title": "Add phone to do-not-call list",
+        "description": "Add a phone number to the do-not-call list so the voice agent will no longer contact it. Requires admin role.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "phone": {
+              "type": "string",
+              "minLength": 5,
+              "description": "Phone number in E.164-ish format, e.g. +41791234567."
+            },
+            "reason": {
+              "description": "Optional reason note.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "phone"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
