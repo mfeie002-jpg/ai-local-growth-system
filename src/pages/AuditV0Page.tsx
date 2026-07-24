@@ -127,23 +127,41 @@ export default function AuditV0Page({ lang }: Props) {
       const { data, error } = await supabase.functions.invoke("create-audit", {
         body: { ...parsed.data, language: lang, turnstile_token: turnstileToken },
       });
-      if (error) throw error;
-      if (!data?.success || !data?.token) throw new Error(data?.error ?? "Unknown error");
-
-      track("audit_submitted", {
-        language: lang,
-        marketing_consent: parsed.data.consent_marketing,
-      });
-
-      toast.success(lang === "de" ? "Los geht's – Audit läuft." : "Started — running your audit.");
-      nav(data.redirect_path);
+      // supabase-js returns non-2xx as `error`; the body still comes back on `data`.
+      const payload = (data ?? {}) as {
+        success?: boolean;
+        token?: string;
+        redirect_path?: string;
+        reused?: boolean;
+        error?: string;
+        code?: string;
+      };
+      if (payload.success && payload.token && payload.redirect_path) {
+        track("audit_submitted", {
+          language: lang,
+          marketing_consent: parsed.data.consent_marketing,
+          reused: !!payload.reused,
+        });
+        toast.success(
+          payload.reused
+            ? (lang === "de"
+                ? "Für diese Domain existiert bereits ein aktueller Report — wir öffnen ihn."
+                : "A recent report for this domain already exists — opening it.")
+            : (lang === "de" ? "Los geht's – Audit läuft." : "Started — running your audit."),
+        );
+        nav(payload.redirect_path);
+        return;
+      }
+      // Explicit error mapping for known codes
+      const msg = mapErrorMessage(payload.code, payload.error, lang) ?? (error?.message ?? "");
+      throw new Error(msg || (lang === "de" ? "Unbekannter Fehler" : "Unknown error"));
     } catch (err) {
       console.error("audit submit failed:", err);
       const msg = (err as Error).message ?? "";
       toast.error(
         lang === "de"
-          ? `Fehler: ${msg || "Bitte erneut versuchen."}`
-          : `Error: ${msg || "Please try again."}`,
+          ? msg || "Bitte erneut versuchen."
+          : msg || "Please try again.",
       );
     } finally {
       setSubmitting(false);
