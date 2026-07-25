@@ -12,14 +12,14 @@ Dieser Bericht trennt belegte Implementierung, lokale Verifikation und noch auss
 
 itsfeierabend.ch wurde auf dem bestehenden React-/Vite-/TypeScript-/Supabase-Stack als eigenständige Schweizer B2B-Plattform für nachvollziehbare digitale Geschäftsaudits neu fokussiert. Der Launch-Kandidat umfasst eine neue DE-/EN-Informationsarchitektur, eine verkaufsfähige Startseite, thematische Audit-Seiten, einen progressiven dreistufigen Quick Audit, eine getrennte CRM-/Lead-Architektur, Consent-abhängiges Tracking, statische SEO-Einstiegspunkte und eine automatisierte Responsive-/Accessibility-Testmatrix.
 
-Der Code liegt auf `feat/itsfeierabend-final-launch` und ist im offenen Draft-[PR #1](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1) enthalten. Der kombinierte Launch-Code wurde als [`327a319396a07108606f4cef2f567317c2620fe4`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/327a319396a07108606f4cef2f567317c2620fe4) veröffentlicht; der in CI vollständig geprüfte PR-Head ist [`129bac16494e9aa14590bfec769410aa58b9fe67`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/129bac16494e9aa14590bfec769410aa58b9fe67).
+Der Code liegt auf `feat/itsfeierabend-final-launch` und ist im offenen Draft-[PR #1](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1) enthalten. Der kombinierte Launch-Code wurde als [`327a319396a07108606f4cef2f567317c2620fe4`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/327a319396a07108606f4cef2f567317c2620fe4) veröffentlicht; der in CI vollständig geprüfte Code-/Test-Stand ist [`129bac16494e9aa14590bfec769410aa58b9fe67`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/129bac16494e9aa14590bfec769410aa58b9fe67).
 
 | Prüfpunkt | Status | Beleg / Einschränkung |
 |---|---|---|
 | Positionierung, Inhalte und Architektur | umgesetzt | fokussierte DE-/EN-Routen, keine Räumungs-, Reinigungs- oder Umzugsangebote |
 | Lokaler Typecheck, Lint und Production Build | bestanden | `npm run typecheck`, `npm run lint -- --quiet`, `npm run build` |
 | Statische öffentliche URLs | bestanden | 26/26 Sitemap-Routen sowie `robots.txt`, Sitemap und OG-Asset lokal mit HTTP 200 |
-| Draft-PR | vorhanden | PR #1; am geprüften Head 8 Commits und 151 geänderte Dateien |
+| Draft-PR | vorhanden | PR #1; am geprüften Code-/Test-Stand 8 Commits und 151 geänderte Dateien |
 | GitHub CI | **bestanden** | Run #31: Quality/Deno, Production Build und Chromium E2E `success`; 129/129 Tests in 1.3 Minuten |
 | Lovable-Preview | **blockiert** | API-Antwort `FORBIDDEN`; kein verifizierter Release-Preview |
 | Produktionsdeployment | **bewusst nicht ausgeführt** | kein sicher abgenommener Preview, Rollback und Runtime-Setup |
@@ -446,7 +446,7 @@ Die automatisierte Accessibility-/Responsive-Basismatrix ist mit 129/129 Chromiu
 - Zielbranch: `main`
 - Basis des Remote-PRs: `74ce1154e818f9406f6d7141a8fdcc758853eef7`
 - kombinierter Launch-Code-Commit: `327a319396a07108606f4cef2f567317c2620fe4`
-- in CI geprüfter PR-Head: `129bac16494e9aa14590bfec769410aa58b9fe67`
+- in CI geprüfter Code-/Test-Stand: `129bac16494e9aa14590bfec769410aa58b9fe67`
 - Projektisolation: ausschliesslich `mfeie002-jpg/itsfeierabend.ch`
 
 Es wurde weder in `main` gemergt noch ein geschützter Production-Branch verändert.
@@ -473,14 +473,14 @@ Für GitHub wurde der geprüfte Hauptstand als kombinierter Remote-Commit veröf
 - `3fd401d79cae35cc077d104ad79b4fa00f8dac9c` — semantischen mobilen Heading-Zeilenumbruch finalisiert.
 - `b7e6eee5ba2528788cd89d979efe6724c4bc9f6d` — Abschlussbericht und visuelle Belege ergänzt.
 - `d208dd4835f478b6bdcd7e147844cd385d3846e8` — Formulare gegen synchrone Doppelübermittlung gehärtet und Hosting-/Security-Verträge ergänzt.
-- `129bac16494e9aa14590bfec769410aa58b9fe67` — sichtbare Firmenfelder im Formular-E2E exakt adressiert; vollständig geprüfter PR-Head.
+- `129bac16494e9aa14590bfec769410aa58b9fe67` — sichtbare Firmenfelder im Formular-E2E exakt adressiert; vollständig geprüfter Code-/Test-Stand.
 
 ## 24. Pull Request
 
 - [PR #1 — Launch itsfeierabend.ch audit platform](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1)
 - Status: offen, Draft, nicht gemergt
 - GitHub-Metadaten zum Berichtszeitpunkt: `mergeable: true`
-- Umfang am geprüften PR-Head `129bac1…`: 151 Dateien, 12’953 Ergänzungen, 16’765 Löschungen, 8 Remote-Commits
+- Umfang am geprüften Code-/Test-Stand `129bac1…`: 151 Dateien, 12’953 Ergänzungen, 16’765 Löschungen, 8 Remote-Commits
 - CI: Workflow `CI`, [Run #31](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146078734), ID `30146078734`
   - `Lint · Typecheck · Deno tests`: `success`
   - `Production build`: `success`
@@ -565,7 +565,7 @@ Bis P0 geschlossen und die P1-Launch-Gates bestanden sind, bleibt Production **N
 
 ### 0–30 Tage: Launch-Gates schliessen
 
-- Lovable-Preview-Berechtigung herstellen und mindestens den geprüften PR-Head `129bac1…` deployen.
+- Lovable-Preview-Berechtigung herstellen und mindestens den geprüften Code-/Test-Stand `129bac1…` deployen.
 - Den vollständig grünen CI Run #31 als Build-Baseline verwenden und Console-, Network-, Link-, 404-, Redirect- und Hosting-QA auf dem realen Preview abschliessen.
 - Rechtsträger, Anschrift, Verantwortliche, UID/Handelsregisterangaben und vollständiges Anbieter-/Regionen-/Löschinventar freigeben.
 - DNS-Rebinding-Schutz implementieren.
