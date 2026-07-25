@@ -62,6 +62,14 @@ export function CTAButton({
   );
 
   if (href) {
+    // In-page hash anchor → native <a> so browser handles scroll
+    if (href.startsWith('#')) {
+      return (
+        <a href={href} onClick={handleClick} className={baseStyles}>
+          {children}
+        </a>
+      );
+    }
     if (external) {
       return (
         <a
