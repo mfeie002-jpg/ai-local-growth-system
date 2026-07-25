@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-import-prefix
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.2";
 import {
@@ -9,13 +10,15 @@ import {
   verifyTurnstile,
 } from "../_shared/audit-utils.ts";
 import { LIMITS } from "../_shared/audit-limits.ts";
+import {
+  CURRENT_CONSENT_VERSION,
+  resolveAuditContext,
+} from "../_shared/public-contracts.ts";
 
 declare const EdgeRuntime:
   | { waitUntil: (promise: Promise<unknown>) => void }
   | undefined;
 
-const AUDIT_TYPES = new Set(["business", "website", "seo", "ai-visibility", "automation"]);
-const CONSENT_VERSION = "2026-07-25";
 const MAX_BODY_BYTES = 30_000;
 
 function text(value: unknown, max: number): string | null {
@@ -23,19 +26,6 @@ function text(value: unknown, max: number): string | null {
   const cleaned = value.trim();
   if (!cleaned) return null;
   return cleaned.slice(0, max);
-}
-
-function optionalText(value: unknown, max: number): string | null {
-  return text(value, max);
-}
-
-function stringList(value: unknown, maxItems = 8, maxLength = 120): string[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .filter((item): item is string => typeof item === "string")
-    .map((item) => item.trim().slice(0, maxLength))
-    .filter(Boolean)
-    .slice(0, maxItems);
 }
 
 async function readJsonBody(req: Request): Promise<
@@ -120,32 +110,24 @@ serve(async (req) => {
     }
 
     const websiteUrl = text(body?.website_url, 500);
-    const companyName = text(body?.company_name, 160);
-    const industry = text(body?.industry, 120);
-    const region = text(body?.region, 120);
-    const primaryGoal = text(body?.primary_goal, 160);
-    const primaryLeadSource = text(body?.primary_lead_source, 120);
     const firstName = text(body?.first_name, 80);
     const lastName = text(body?.last_name, 80);
     const email = text(body?.email, 255)?.toLowerCase() || null;
     const language = body?.language === "en" ? "en" : "de";
-    const auditType = AUDIT_TYPES.has(body?.audit_type) ? body.audit_type : "business";
-    const challenges = stringList(body?.challenges);
-    const systems = optionalText(body?.systems, 500);
     const consentProcessing = body?.consent_processing === true;
     const consentMarketing = body?.consent_marketing === true;
-    const consentVersion = CONSENT_VERSION;
+    const consentVersion = CURRENT_CONSENT_VERSION;
     const consentAt = new Date().toISOString();
 
     const attribution = {
-      landing_page: optionalText(body?.landing_page, 500),
-      referrer: optionalText(body?.referrer, 1000),
-      utm_source: optionalText(body?.utm_source, 200),
-      utm_medium: optionalText(body?.utm_medium, 200),
-      utm_campaign: optionalText(body?.utm_campaign, 300),
-      utm_term: optionalText(body?.utm_term, 300),
-      utm_content: optionalText(body?.utm_content, 300),
-      gclid: optionalText(body?.gclid, 300),
+      landing_page: text(body?.landing_page, 500),
+      referrer: text(body?.referrer, 1000),
+      utm_source: text(body?.utm_source, 200),
+      utm_medium: text(body?.utm_medium, 200),
+      utm_campaign: text(body?.utm_campaign, 300),
+      utm_term: text(body?.utm_term, 300),
+      utm_content: text(body?.utm_content, 300),
+      gclid: text(body?.gclid, 300),
     };
 
     const botVerdict = await verifyTurnstile(body?.turnstile_token, ip);
@@ -157,9 +139,20 @@ serve(async (req) => {
     if (!consentProcessing) {
       return json({ error: "Consent für Verarbeitung ist erforderlich.", code: "consent_required" }, 400);
     }
-    if (!companyName || !industry || !region || !primaryGoal || !primaryLeadSource) {
+    const contextResolution = resolveAuditContext(body);
+    if (!contextResolution.ok) {
       return json({ error: "Geschäftskontext unvollständig.", code: "business_context_required" }, 400);
     }
+    const {
+      companyName,
+      industry,
+      region,
+      primaryGoal,
+      primaryLeadSource,
+      challenges,
+      systems,
+      auditType,
+    } = contextResolution.context;
     if (!firstName || firstName.length < 2) {
       return json({ error: "Ungültiger Vorname.", code: "invalid_first_name" }, 400);
     }
@@ -253,7 +246,7 @@ serve(async (req) => {
         Authorization: `Bearer ${serviceKey}`,
       },
       body: JSON.stringify({ audit_id: audit.id }),
-    }).then(async (response) => {
+    }).then((response) => {
       if (!response.ok) {
         throw new Error(`generate-report returned ${response.status}`);
       }

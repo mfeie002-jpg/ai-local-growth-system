@@ -6,7 +6,8 @@
 | --- | --- | --- |
 | `SUPABASE_URL` | Edge Functions | Cloud project URL (auto) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions | Server writes to `audit_requests` / `audit_events` |
-| `SUPABASE_ANON_KEY` | Edge Functions | Public reads via RLS-safe helpers |
+| `SUPABASE_ANON_KEY` or `SUPABASE_PUBLISHABLE_KEY` | Edge Functions | Exact public bearer accepted by the retired scanner only during the controlled cutover |
+| `LEGACY_PUBLIC_SCANNER_ENABLED` | Edge Functions (temporary) | Set to `true` only while the old frontend still calls `business-scanner`, `scan-status` and `get-analysis-report`; unset or `false` immediately after the new frontend is live |
 | `LOVABLE_API_KEY` | Edge Functions | Semrush gateway auth |
 | `SEMRUSH_API_KEY` | Edge Functions | Semrush connection key (managed by connector) |
 | `TURNSTILE_SECRET_KEY` | Edge Functions | Cloudflare Turnstile server-side verify. **Required for beta** — when unset, submissions fail closed. |
@@ -73,11 +74,33 @@
    Swiss UID/register details, production processor inventory, transfer
    regions and retention schedule. Until then, imprint and privacy routes stay
    `noindex` and production launch is blocked.
-2. Apply `20260725050000_final_launch_lead_security.sql` and then
-   `20260725060000_atomic_audit_create.sql`.
-3. Deploy Edge Functions only after both migrations succeed.
-4. Configure Turnstile, Resend and the approved frontend GA4 ID.
-5. Publish the app with a documented rollback version.
-6. Run the manual test cases against the production URL.
-7. Enable analytics dashboards / alerting on `audit_events.rate_limited` and
+2. Apply `20260725050000_final_launch_lead_security.sql`, then
+   `20260725060000_atomic_audit_create.sql`, and finally
+   `20260725070000_legacy_scanner_cutover_claim.sql`.
+3. Configure Turnstile, Resend, the approved frontend GA4 ID and all required
+   Edge Function secrets.
+4. If Edge Functions must be deployed before the frontend, set
+   `LEGACY_PUBLIC_SCANNER_ENABLED=true` immediately before that deployment.
+   The dual-contract handlers then accept the complete new payloads and the
+   exact legacy payloads without guessing missing business context. Legacy
+   leads retain `consent_processing=false`, `consent_at=null` and
+   `consent_version=null` when the old form did not collect explicit
+   processing consent. The public scanner additionally requires a matching
+   `free_audit` lead created in the previous 15 minutes, reuses an existing
+   report for the same lead, and atomically reserves the report together with
+   one scan per IP plus ten scans globally per hour during the cutover.
+5. Deploy Edge Functions only after all three migrations succeed. Confirm the
+   existing frontend can still submit `free_audit`/`free_call`, receives its
+   legacy `lead_id`, starts the scanner and opens the legacy result.
+6. Publish the app with a documented rollback version.
+7. Run the manual test cases against the production URL.
+8. Confirm `/gratis-audit`, `/analyse/*` and their English equivalents no
+   longer expose the legacy scanner. Then unset
+   `LEGACY_PUBLIC_SCANNER_ENABLED`, change `verify_jwt` back to `true` for
+   `business-scanner`, `scan-status` and `get-analysis-report`, redeploy those
+   three functions, and verify an anonymous request returns HTTP 401. The
+   service-role bearer must remain accepted for controlled internal calls.
+9. Remove the `legacy_v0` request/response branches in a follow-up release
+   after rollback to the old frontend is no longer required.
+10. Enable analytics dashboards / alerting on `audit_events.rate_limited` and
    `audit_events.bot_check_failed`.

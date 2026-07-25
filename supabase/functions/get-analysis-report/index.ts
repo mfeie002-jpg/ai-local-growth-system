@@ -1,5 +1,7 @@
+// deno-lint-ignore-file no-import-prefix
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { acceptsTransitionalInternalAuth } from "../_shared/public-contracts.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,9 +27,22 @@ serve(async (req) => {
   }
 
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const legacyPublicEnabled =
+    Deno.env.get('LEGACY_PUBLIC_SCANNER_ENABLED') === 'true';
   if (
     !supabaseServiceKey ||
-    req.headers.get('authorization') !== `Bearer ${supabaseServiceKey}`
+    !acceptsTransitionalInternalAuth(
+      req.headers.get('authorization'),
+      req.headers.get('apikey'),
+      {
+        serviceKey: supabaseServiceKey,
+        publicKeys: [
+          Deno.env.get('SUPABASE_ANON_KEY'),
+          Deno.env.get('SUPABASE_PUBLISHABLE_KEY'),
+        ],
+        legacyPublicEnabled,
+      },
+    )
   ) {
     return new Response(JSON.stringify({ error: 'unauthorized' }), {
       status: 401,

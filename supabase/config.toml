@@ -7,7 +7,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.get-analysis-report]
-verify_jwt = true
+# Transitional: the handler still requires an exact service bearer unless
+# LEGACY_PUBLIC_SCANNER_ENABLED=true. Restore gateway JWT verification after
+# the legacy frontend has been retired (see docs/RELEASE_CHECKLIST.md).
+verify_jwt = false
 
 [functions.generate-analysis-report]
 verify_jwt = false
@@ -22,10 +25,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.business-scanner]
-verify_jwt = true
+verify_jwt = false
 
 [functions.scan-status]
-verify_jwt = true
+verify_jwt = false
 
 [functions.report-event]
 verify_jwt = false
