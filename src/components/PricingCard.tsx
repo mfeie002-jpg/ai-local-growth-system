@@ -123,7 +123,7 @@ export function PricingCard({
         {/* CTA */}
         <CTAButton
           variant={highlighted ? 'primary' : 'secondary'}
-          href={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+          href={isEnglish ? '/en/audit' : '/audit'}
           location={`pricing-${name.toLowerCase().replace(/\s/g, '-')}`}
           className={cn(
             'w-full justify-center',

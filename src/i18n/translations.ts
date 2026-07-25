@@ -97,7 +97,7 @@ export const translations = {
         name: 'Growth Retainer',
         duration: '90 Tage',
         forWhom: 'Konstanter Lead-Flow',
-        price: "CHF 3'900",
+        price: "ab CHF 3'900",
         features: [
           'Ads + Local SEO',
           'CRO (Conversion Rate Optimization)',
@@ -110,7 +110,7 @@ export const translations = {
         name: 'Scale Retainer',
         duration: 'Ongoing',
         forWhom: 'Multi-Location Skalierung',
-        price: "CHF 6'900",
+        price: "ab CHF 6'900",
         priceNote: '+ Bonus',
         features: [
           'Alles aus Growth',
@@ -471,7 +471,7 @@ export const translations = {
         name: 'Growth Retainer',
         duration: '90 days',
         forWhom: 'Consistent lead flow',
-        price: 'CHF 3,900',
+        price: 'from CHF 3,900',
         features: [
           'Ads + Local SEO',
           'CRO (Conversion Rate Optimization)',
@@ -484,7 +484,7 @@ export const translations = {
         name: 'Scale Retainer',
         duration: 'Ongoing',
         forWhom: 'Multi-location scaling',
-        price: 'CHF 6,900',
+        price: 'from CHF 6,900',
         priceNote: '+ bonus',
         features: [
           'Everything from Growth',

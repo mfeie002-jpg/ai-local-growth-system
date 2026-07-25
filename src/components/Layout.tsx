@@ -13,10 +13,10 @@ interface LayoutProps {
 
 export function Layout({ children, showPromo = false, showDemoTeaser = false }: LayoutProps) {
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip">
       <NeuralBackdrop />
       <Header />
-      <main className="relative flex-1">
+      <main className="relative flex-1 overflow-x-clip">
         {children}
         {showDemoTeaser && <DemoTeaserSection />}
         {showPromo && <PromoSection />}

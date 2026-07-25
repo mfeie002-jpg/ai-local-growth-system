@@ -46,8 +46,8 @@ export default function PricingPage() {
         }
         annotation={
           isEnglish
-            ? 'Three sizes · Launch · Growth · Leader · ad spend paid by you, directly'
-            : 'Drei Größen · Launch · Growth · Leader · Ad Spend zahlst du direkt'
+            ? 'Three sizes · Launch Sprint · Growth Retainer · Scale Retainer · ad spend paid by you, directly'
+            : 'Drei Grössen · Launch Sprint · Growth Retainer · Scale Retainer · Ad Spend zahlen Sie direkt'
         }
       />
 

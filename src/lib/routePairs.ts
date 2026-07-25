@@ -9,7 +9,13 @@ export interface RoutePair {
 const PAIRS: RoutePair[] = [
   { de: '/', en: '/en' },
   { de: '/audit', en: '/en/audit' },
-  { de: '/gratis-audit', en: '/en/free-audit' },
+  // Sprint 2 SEO landings
+  { de: '/website-audit', en: '/en/website-audit' },
+  { de: '/seo-analyse', en: '/en/seo-analysis' },
+  { de: '/ai-visibility', en: '/en/ai-visibility' },
+  { de: '/fuer-kmu', en: '/en/for-smb' },
+  { de: '/partner', en: '/en/partner' },
+  // Existing
   { de: '/gratis-call', en: '/en/free-call' },
   { de: '/system', en: '/en/system' },
   { de: '/pakete', en: '/en/pricing' },
@@ -34,10 +40,7 @@ export const BASE_URL = 'https://itsfeierabend.ch';
 
 /** Returns the DE/EN pair for a given pathname, or null if none. */
 export function findRoutePair(pathname: string): RoutePair | null {
-  // Normalize trailing slashes (except root)
   const normalized =
     pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  return (
-    PAIRS.find((p) => p.de === normalized || p.en === normalized) ?? null
-  );
+  return PAIRS.find((p) => p.de === normalized || p.en === normalized) ?? null;
 }
