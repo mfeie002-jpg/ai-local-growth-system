@@ -61,7 +61,7 @@ export function Header() {
       )}
     >
       <div className="container-section">
-        <div className="flex h-[var(--header-height)] items-center justify-between gap-6">
+        <div className="flex h-[var(--header-height)] items-center justify-between gap-3 lg:gap-6">
           {/* Logo */}
           <Link
             to={isEnglish ? '/en' : '/'}
