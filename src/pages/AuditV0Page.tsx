@@ -317,7 +317,9 @@ export default function AuditV0Page({ lang }: AuditV0PageProps) {
           <header className="max-w-3xl">
             <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal">{c.eyebrow}</p>
             <h1 ref={headingRef} tabIndex={-1} className="mt-5 text-balance outline-none">
-              {c.headline}
+              {lang === 'de'
+                ? <>Zuerst die Website. Dann der Geschäfts<wbr />kontext.</>
+                : c.headline}
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{c.intro}</p>
           </header>
