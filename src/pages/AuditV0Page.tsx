@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Loader2, ShieldCheck, Sparkles } from "lucide-react";
@@ -9,8 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { track } from "@/lib/analytics";
+import { track, trackAuditStarted } from "@/lib/analytics";
+import { getUTMParams } from "@/hooks/useUTMTracking";
 import { Turnstile, TURNSTILE_ENABLED } from "@/components/Turnstile";
+
 
 type Lang = "de" | "en";
 
@@ -118,6 +120,19 @@ export default function AuditV0Page({ lang }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
+  // Sprint 4 tracking: funnel entry with UTM attribution
+  useEffect(() => {
+    const utm = getUTMParams();
+    trackAuditStarted({
+      language: lang,
+      page_path: typeof window !== "undefined" ? window.location.pathname : "/audit",
+      utm_source: utm.utm_source,
+      utm_medium: utm.utm_medium,
+      utm_campaign: utm.utm_campaign,
+    });
+  }, [lang]);
+
+
   function update<K extends keyof typeof values>(k: K, v: (typeof values)[K]) {
     setValues((prev) => ({ ...prev, [k]: v }));
     if (errors[k as string]) setErrors((e) => ({ ...e, [k]: "" }));
@@ -162,10 +177,14 @@ export default function AuditV0Page({ lang }: Props) {
         code?: string;
       };
       if (payload.success && payload.token && payload.redirect_path) {
+        const utm = getUTMParams();
         track("audit_submitted", {
           language: lang,
           marketing_consent: parsed.data.consent_marketing,
           reused: !!payload.reused,
+          utm_source: utm.utm_source,
+          utm_medium: utm.utm_medium,
+          utm_campaign: utm.utm_campaign,
         });
         toast.success(
           payload.reused
