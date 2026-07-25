@@ -1,13 +1,15 @@
 # Project Memory
 
 ## Core
-Dark agency aesthetic: electric blue/purple gradients, glass morphism, Sora & Space Grotesk fonts.
-Bilingual routing: DE-CH (default `/`) and EN (`/en`). All routes must have paired equivalents.
+Dark "Obsidian Instrument" aesthetic: obsidian canvas, chrome hairlines, icy signal cyan. Space Grotesk (display) · Inter (body) · JetBrains Mono (machine voice).
+Bilingual routing: DE-CH (default `/`) and EN (`/en`). All routes must have paired equivalents in `src/lib/routePairs.ts`.
 Analytics/GA4 must only fire AFTER explicit consent (Consent Mode v2 default denied).
 HARD CONSTRAINT: Never invent results, metrics, or logos. Unverified proof must be feature-flagged off.
-Positioning: "AI-first digital marketing agency". Differentiator: "Connection between machine and humans".
+Positioning (Sprint 2 hybrid): "AI Business Audit Plattform für Schweizer KMU" — Audit as core product, Retainer (Launch Sprint · Growth Retainer · Scale Retainer) as implementation arm.
+Hybrid pricing live: Launch CHF 1'990 fixed, Growth "ab CHF 3'900/Mt", Scale "ab CHF 6'900/Mt".
 Voice agents must include clear AI disclosure and separate recording consent.
 Scanner architecture: Evidence → Normalize → Deterministic Score → AI Interpret (4-layer pipeline, Source of Truth v1.2).
+All primary CTAs route to `/audit` (DE) or `/en/audit` (EN) — NOT to legacy `/gratis-audit`.
 
 ## Memories
 - [Feature Flags](mem://tech/feature-flags-system) — site.ts config controls for risky features and proof elements
@@ -24,3 +26,4 @@ Scanner architecture: Evidence → Normalize → Deterministic Score → AI Inte
 - [Valid Case Studies](mem://brand/case-study-companies-featured) — Whitelisted companies allowed for use in case studies
 - [Ultimate Package](mem://product/ultimate-package-core-differentiator) — Core USP: AI-powered automated website analysis system
 - [Source of Truth v1.2](mem://strategy/source-of-truth-v1.2) — Canonical reference for scanner architecture, scoring, build order, guardrails
+- [Sprint 2 SEO Landings](mem://features/sprint-2-seo-landings) — 5 new landings, shared SEOLanding component, hybrid pricing, overflow/naming bugfixes

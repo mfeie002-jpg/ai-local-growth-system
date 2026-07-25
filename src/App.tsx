@@ -31,6 +31,13 @@ import NotFound from "./pages/NotFound";
 import AuditV0Page from "./pages/AuditV0Page";
 import AuditV0ResultPage from "./pages/AuditV0ResultPage";
 
+// Sprint 2 SEO landings
+import WebsiteAuditPage from "./pages/landings/WebsiteAuditPage";
+import SeoAnalysePage from "./pages/landings/SeoAnalysePage";
+import AIVisibilityPage from "./pages/landings/AIVisibilityPage";
+import ForSmbPage from "./pages/landings/ForSmbPage";
+import PartnerPage from "./pages/landings/PartnerPage";
+
 // Service Pages
 import AIImplementationPage from "./pages/services/AIImplementationPage";
 import SEOPage from "./pages/services/SEOPage";
@@ -84,6 +91,13 @@ const App = () => (
               <Route path="/investoren" element={<InvestorPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
+
+              {/* Sprint 2 SEO landings (DE) */}
+              <Route path="/website-audit" element={<WebsiteAuditPage />} />
+              <Route path="/seo-analyse" element={<SeoAnalysePage />} />
+              <Route path="/ai-visibility" element={<AIVisibilityPage />} />
+              <Route path="/fuer-kmu" element={<ForSmbPage />} />
+              <Route path="/partner" element={<PartnerPage />} />
               
               {/* DE Service Routes */}
               <Route path="/services/ki-implementierung" element={<AIImplementationPage />} />
@@ -113,6 +127,13 @@ const App = () => (
               <Route path="/en/scan" element={<ScanPage />} />
               <Route path="/en/blog" element={<BlogPage />} />
               <Route path="/en/blog/:slug" element={<BlogPostPage />} />
+
+              {/* Sprint 2 SEO landings (EN) */}
+              <Route path="/en/website-audit" element={<WebsiteAuditPage />} />
+              <Route path="/en/seo-analysis" element={<SeoAnalysePage />} />
+              <Route path="/en/ai-visibility" element={<AIVisibilityPage />} />
+              <Route path="/en/for-smb" element={<ForSmbPage />} />
+              <Route path="/en/partner" element={<PartnerPage />} />
               
               {/* EN Service Routes */}
               <Route path="/en/services/ai-implementation" element={<AIImplementationPage />} />
