@@ -527,7 +527,7 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ========== 07 — Process + Anti-Knebel ========== */}
-      <section data-neural-zone className="section-padding">
+      <section id="ablauf" data-neural-zone className="section-padding scroll-mt-24">
         <div className="container-section">
           <SectionMarker index={7} total={11} label={isEnglish ? 'How we work' : 'Wie wir arbeiten'} />
           <RevealText>
