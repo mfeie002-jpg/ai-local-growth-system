@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Loader2, AlertTriangle, CheckCircle2, XCircle, ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { track } from "@/lib/analytics";
+import { track, trackAuditScoreDelivered } from "@/lib/analytics";
 import { NoIndex } from "@/components/NoIndex";
 
 type Lang = "de" | "en";
@@ -100,6 +100,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
           viewTracked.current = true;
           fetchReport("view");
           track("audit_report_viewed", { score: r.overall_score, status: r.status });
+          trackAuditScoreDelivered({ score: r.overall_score ?? 0, status: r.status, language: lang });
         }
       }
       if (Date.now() - startedAt.current > TIMEOUT_MS && pending) {
