@@ -55,7 +55,9 @@ for (const flow of flows) {
     expect(response?.status()).toBeLessThan(400);
 
     await page.getByLabel(/^Name/).fill("QA Runner");
-    await page.getByLabel(/Firma|Company/).fill("Example AG");
+    await page
+      .getByRole("textbox", { name: /^(Firma|Company) \*$/ })
+      .fill("Example AG");
     await page.getByLabel(/^E-Mail|^Email/).fill("qa@example.com");
     await page.getByLabel(/Website$/).fill("https://example.com");
     await page.getByLabel(/Ausgangslage und Frage|Starting point and question/).fill(
