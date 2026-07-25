@@ -1,72 +1,119 @@
 ## Ziel
 
-Homepage konsequent auf Audit-first Lead-Generation umbauen: klare Diagnose → Audit als Produkt → Ultimate Package → Umsetzung/Preise. Bestehende 8-Sektionen-Struktur wird auf die 12-Slot-Storyline erweitert, DE/EN synchron, ohne erfundene Kennzahlen.
+itsfeierabend.ch vom aktuellen "Audit-first / Instrument Panel"-Stand zum launch-fähigen, verkaufsfähigen Lead-Gen-Produkt bringen — mit klarer Positionierung als AI Business Audit Plattform für Schweizer KMU, funktionierendem Funnel, sauberem Tracking, SEO/AI-Visibility-Basis und dokumentiertem QA-Bericht.
 
-## Umfang
+Der Umfang des Briefings (24 Phasen) übersteigt einen einzelnen Turn deutlich. Ich schlage eine **fünf-Sprint-Struktur** vor, in der jeder Sprint eigenständig abnehmbar ist. Freigabe erfolgt Sprint für Sprint — so behalten Sie Kontrolle, Rollback bleibt möglich, und wir vermeiden 8 Stunden blinde Massenänderung.
 
-**Betroffene Dateien**
-- `src/pages/HomePage.tsx` — vollständige Neustrukturierung (Sektionen 01–11)
-- `src/components/Header.tsx` — Navigation, permanenter CTA „Gratis Audit starten"
-- `src/components/Footer.tsx` — Paketnamen synchronisieren
-- `src/pages/PricingPage.tsx` — Paketnamen/Preise auf Launch Sprint / Growth / Scale Retainer vereinheitlichen
-- `src/i18n/translations.ts` — neue Copy-Blöcke DE/EN
-- `src/App.tsx` — Redirects `/gratis-audit` → `/audit`, `/en/free-audit` → `/en/audit`; Legacy-Report-URLs bleiben
-- `src/components/SEOHead.tsx` / Home-JSON-LD — FAQPage-Schema nur mit sichtbaren Fragen
-- `public/sitemap.xml` — geänderte Prioritäten falls nötig
+## Wichtige Vorentscheidungen (bitte beim Freigeben mitbeantworten)
 
-**Nicht angefasst**: Audit-Prototyp (`AuditV0Page`, `AuditV0ResultPage`), Backend/Edge-Functions, Admin.
+1. **Preise**: Memory + aktuelle Site führen Launch Sprint CHF 1'990 / Growth CHF 3'900/Mt / Scale CHF 6'900/Mt. Briefing sagt „keine Preise erfinden". → **Weiter mit diesen freigegebenen Preisen (empfohlen)** oder **auf „Analyse anfragen"/„Offerte erhalten" umstellen**?
+2. **Positionierungs-Shift**: Aktuell = „AI-first digital marketing agency". Briefing = „AI Business Audit Plattform / digitale Wachstumsberatung" (kein Agentur-Framing). → **Voll umstellen auf Audit-Plattform** oder **hybrid (Audit-Plattform-Voice, Retainer als Umsetzungsarm)**?
+3. **Deployment**: Preview only, oder nach QA direkt Publish auf itsfeierabend.lovable.app / itsfeierabend.ch?
+4. **DNS/Domain**: bleibt tabu ohne separate Freigabe — bestätigt?
 
-## Sektions-Mapping (neu → aktuell)
+---
+
+## Sprint 1 — Baseline & Foundation (Discovery + Repositioning)
+
+**Deliverables**
+- Live-Audit `itsfeierabend.ch` (DE/EN, Desktop + Mobile 375/768/1440): Screenshots, Console/Network-Errors, LCP/CLS-Messung via Playwright.
+- Repo-Audit: bestehende Routen, ungenutzte Komponenten, Bundle-Analyse, Supabase-Tabellen (`leads`, `audit_requests`, `audit_events`, `calls`), RLS-Prüfung.
+- Semrush-Analyse: Cluster „website audit schweiz", „seo audit schweiz", „ai visibility", „business audit kmu", „ai seo schweiz" — Volume, KD, Intent, Top-SERP, Gaps → **finale Keyword-Map als Markdown** (`docs/keyword-map.md`).
+- **Baseline-Tabelle** (`docs/baseline-audit.md`): Bereich · Zustand · Problem · Massnahme · Sprint.
+- Positioning-Update in `src/i18n/translations.ts` + `mem://brand/core-repositioning-ai-first`: von „AI-first Agency" → „AI Business Audit Plattform für Schweizer KMU" (falls Entscheidung 2 = voll umstellen).
+
+**Nicht in diesem Sprint**: Code-Redesign, neue Seiten.
+
+---
+
+## Sprint 2 — Information Architecture & neue Seiten
+
+**Route-Finalisierung** (DE/EN paarig, via `routePairs.ts`):
 
 ```text
-01 Hero              ← vorhandener Hero, rechts Score-Preview-Mock (statisch, kein PDF)
-02 Vertrauensleiste  ← NEU (unter Hero, hairline-Row mit 4 Claims)
-03 Problem/Diagnose  ← ersetzt „The Promise" (Sec 02) — 5 Felder statt Fließtext
-04 Audit als Produkt ← Midnight-Sektion, ersetzt „The Engine" (Sec 03), Report-Snippet
-05 Ultimate Package  ← bleibt (Sec 04), Wording „Audit zeigt, was fehlt"
-06 Umsetzung/7 Disz. ← bleibt (Sec 05), KI-Implementation als Core markiert
-07 Prozess+Anti-Knebel NEU zwischen Services und Cases
-08 Echte Arbeiten    ← bleibt (Sec 06), nur belegbarer Scope
-09 Pakete & Preise   ← bleibt (Sec 07), 3 Namen vereinheitlicht
-10 FAQ               ← NEU, 4 Einwände, JSON-LD FAQPage
-11 Finaler CTA       ← bleibt (Sec 08)
+/                       Home (bereits neu, nur Copy-Refresh)
+/ai-business-audit      NEU — Landing für Haupt-Lead-Magnet (statt /audit-Formular pur)
+/website-audit          NEU — SEO-Landing „website audit schweiz"
+/seo-analyse            NEU — SEO-Landing „seo audit schweiz"
+/ai-visibility          NEU — SEO-Landing „ai search visibility"
+/business-health-check  NEU — breiter Einstieg KMU-Diagnose
+/leistungen             ersetzt bisherige Services-Übersicht
+/pakete                 bleibt (Copy-Refresh)
+/fuer-kmu               NEU — Zielgruppenseite
+/partner                NEU — Partner/White-Label-Funnel
+/fallstudien            bleibt (nur belegbare Cases)
+/insights (blog)        bleibt
+/ueber-uns              NEU/refresh
+/kontakt                bleibt
+/audit → /audit         Prototyp bleibt technisches Funnel-End
 ```
 
-## Content-Regeln
+Alte Routen (`/system`, `/gratis-audit`, etc.) → 301-Redirects über `<Navigate replace>`.
 
-- Sie-Ansprache DE, „you" EN. Keine Wörter wie „revolutionär", keine %-Zahlen ohne Beleg.
-- Preise: **Launch Sprint CHF 1'990 einmalig**, **Growth Retainer CHF 3'900/Monat**, **Scale Retainer CHF 6'900/Monat** — überall identisch.
-- Cases: umzugscheck.ch, zuegelhelden.ch, sbpictures.ch, velolife.ch — nur Branche + tatsächlich erbrachte Leistung.
-- FAQ (sichtbar = im Schema): (1) wirklich kostenlos, (2) verwendete Daten, (3) Rolle der KI, (4) Umsetzung möglich.
+**Content-Skelett** (DE-CH-Sie, EN professional) pro Seite: Hero · Problem · Was wird analysiert · Beispiel-Output · Ablauf · CTA. Kein Lorem-Ipsum.
 
-## CTA-Tracking
+---
 
-Data-Attribut `data-cta-loc` mit Werten `header|hero|audit-engine|ultimate|pricing|final|trust-strip`. Auslesen im bestehenden Analytics-Hook (Consent-gated).
+## Sprint 3 — AI Business Audit Produkt-Härtung
 
-## Routing & Redirects
+Bestehender Prototyp `AuditV0Page` wird zum Produkt gemacht:
 
-- `/gratis-audit` → `Navigate replace` auf `/audit`
-- `/en/free-audit` → `Navigate replace` auf `/en/audit`
-- `/gratis-audit/report/:token` und `/en/free-audit/report/:token` bleiben (Legacy).
+- **Progressive Disclosure**: 3 Schritte statt Riesenformular (URL → Kontext → Kontakt).
+- **Score-Report** klar labelled: `automatisch gemessen` · `basierend auf Ihren Angaben` · `vorläufige Schätzung` — visuelle Badges pro Signal.
+- **Preliminary-Audit-Fallback**, wenn Site nicht crawlbar (Timeout/SSRF-Block/JS-only).
+- Report-UI: Gesamtscore + Top-3 Stärken + Top-3 Risiken + 3-5 priorisierte Massnahmen + „Nächster Schritt"-CTA (Beratung buchen oder vertieftes Audit).
+- Semrush-Enrichment (bereits vorhanden) im Report sichtbar & mit Herkunfts-Label.
+- E-Mail-Versand `send-report-email` auf Produktion prüfen (aktueller Zustand: verifizieren).
 
-## Performance
+---
 
-- Score-Preview als reines SVG/HTML (kein Chart-Lib).
-- FAQ als `<details>` (nativ, kein Radix-Bundle für Above-the-fold).
-- PDF-/Admin-Chunks bereits lazy — Check, dass HomePage keinen Import auf `AuditReportPage`, `AdminDashboard`, `jspdf` triggert.
-- `NeuralBackdrop` bleibt sitewide, mit vorhandenem IntersectionObserver.
+## Sprint 4 — Tracking, CRM, SEO, Trust
 
-## Abnahme
+**Tracking** (`src/lib/analytics.ts`): alle im Briefing gelisteten Events (`audit_start`, `audit_step_complete`, `audit_submit`, `lead_form_*`, `pricing_cta_click`, etc.) mit Parametern (`cta_location`, `page_type`, `audit_type`, `industry`, `utm_*`). Consent-Mode v2 bleibt, Debug-View-Screenshot als Beleg.
 
-- DE + EN identische Struktur, keine H1-Duplikate, `lang` korrekt, Canonical+hreflang.
-- Prüfung bei 390/768/1440 px ohne Overflow.
-- Alle primären CTAs landen auf `/audit` bzw. `/en/audit`; Redirects funktionieren (Playwright-Sniff).
-- FAQ sichtbar = FAQ im JSON-LD.
-- `tsgo` grün, Console/Network sauber.
-- Bundle-Check: HomePage-Chunk enthält kein `jspdf`/Admin-Modul.
+**CRM/Lead-Struktur** in Supabase `leads`: Attributions-Felder ergänzen falls fehlend (`landing_page`, `referrer`, `utm_*`, `cta_location`, `lead_score`, `status`). Migration inklusive GRANT + RLS.
 
-## Offene Punkte (bitte kurz bestätigen)
+**SEO**: pro Seite Title/Description/H1/Canonical/Hreflang/OG via `SEOHead`. `sitemap.xml` + `robots.txt` regenerieren. JSON-LD: `Organization`, `WebSite`, pro Leistungsseite `Service`, `FAQPage` nur mit sichtbaren Fragen, `BreadcrumbList`. **Keine erfundenen Reviews/AggregateRating**.
 
-1. **Score-Preview** im Hero: statisches Mock-SVG mit Beispielwerten (kein Live-API-Call) — ok?
-2. **Prozess-Sektion (07)**: als 4-Schritte-Editorial-Liste ohne Icons, Anti-Knebel als Fußnote — ok?
-3. **Alte Sektion „The Promise"**: Inhalt wandert in Diagnose (03) oder wird ersatzlos gestrichen — Präferenz?
+**AI Visibility**: About-/Methodik-Seite mit klaren Entity-Fakten (Firma, Gründer/Verantwortlich falls freigegeben, Standort, Leistungen, Prozess), Glossar (`/insights/glossar`), zitierfähige FAQ-Blöcke.
+
+**Trust-System**: nur belegbare Cases (umzugscheck.ch, zuegelhelden.ch, sbpictures.ch, velolife.ch — als „verbundene Projekte" gekennzeichnet), transparente Methodik-Seite, Beispiel-Report-Screenshot, Datenschutz/Impressum-Refresh.
+
+---
+
+## Sprint 5 — QA, Performance, Launch
+
+- Playwright-Sweep: alle Routen DE/EN bei 375/768/1440, Overflow-Detection, Konsolen-Fehler-Scan.
+- Formular-E2E: Audit-Submit, Kontakt, Callback, Partner — mit Test-Lead in DB verifiziert.
+- Lighthouse (Mobile) für `/`, `/ai-business-audit`, `/audit`: Ziel LCP < 2.5s, CLS < 0.1.
+- A11y-Sweep: axe-core via Playwright, Kontraste, Focus-States, Reduced-Motion.
+- Security: `security--run_security_scan`, RLS + GRANTs auf allen neuen Tabellen.
+- **Abschlussbericht** (`docs/launch-report.md`) mit den 29 Punkten aus dem Briefing: Screenshots vorher/nachher, Event-Liste, Bundle-Delta, verbleibende Risiken, 30/60/90-Tage-Roadmap.
+- Publish auf Lovable-URL (nur wenn Entscheidung 3 = ja).
+
+---
+
+## Constraints (durchgehend)
+
+- Keine Vermischung mit feierabendservices.ch / umzugscheck.ch — separate Leads, keine übernommenen Copy/CTAs/Kampagnen.
+- Keine erfundenen Logos, Testimonials, Zahlen, Zertifikate.
+- Alle primären CTAs → `/ai-business-audit` (neu) bzw. `/audit`-Prototyp.
+- Sie-Ansprache DE-CH, „you" EN, keine „revolutionär"/„disruptiv"-Sprache.
+- DNS/Ads/E-Mails an echte Kontakte: nur mit expliziter Freigabe.
+
+## Technische Details
+
+- Branch: `feat/itsfeierabend-final-launch` (via Lovable-GitHub-Sync).
+- Kein Framework-Wechsel, keine grosse Refactoring-Welle — bestehendes React/Vite/Tailwind/Supabase-Stack bleibt.
+- Bundle-Budget Homepage: kein `jspdf`/Admin-Import (bereits erfüllt, im QA verifizieren).
+- Neue Landings verwenden bestehende `EditorialHero`/`ScoreCard`/`SignalStream`-Komponenten — kein neues Design-System.
+
+---
+
+## Freigabe
+
+Bitte antworten mit:
+- **„Sprint 1 starten"** + Antworten auf Vorentscheidungen 1–4, oder
+- Anpassungen am Plan (z. B. andere Sprint-Reihenfolge, Seiten streichen/ergänzen).
+
+Ich starte dann mit Baseline-Audit + Semrush-Recherche und liefere die beiden Dokumente + Positioning-Diff, bevor Code für Sprint 2 entsteht.
