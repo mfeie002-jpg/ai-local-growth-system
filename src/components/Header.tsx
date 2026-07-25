@@ -105,7 +105,7 @@ export function Header() {
 
           {/* Mobile menu toggle */}
           <button
-            className="lg:hidden -mr-2 inline-flex min-h-12 min-w-12 items-center justify-center rounded-md p-2 text-foreground hover:bg-foreground/5"
+            className="inline-flex min-h-12 min-w-12 items-center justify-center rounded-md p-2 text-foreground hover:bg-foreground/5 lg:hidden"
             onClick={() => setMobileOpen((s) => !s)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >

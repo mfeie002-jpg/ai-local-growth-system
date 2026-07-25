@@ -4,7 +4,7 @@ import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer } from '@/components/SectionContainer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { siteConfig } from '@/config/site';
@@ -129,10 +129,10 @@ export default function PrivacyPage() {
         <div className="mx-auto max-w-3xl">
           <Card className="mb-10 border-destructive/40 bg-destructive/5">
             <CardHeader>
-              <CardTitle className="flex items-center gap-3">
+              <h2 className="flex items-center gap-3 text-2xl font-semibold leading-none tracking-tight">
                 <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden="true" />
                 {isEnglish ? 'Launch blocker: legal and production facts incomplete' : 'Launch-Blocker: Rechts- und Produktionsfakten unvollständig'}
-              </CardTitle>
+              </h2>
               <CardDescription>
                 {isEnglish
                   ? 'This policy is an operational working document, not legal advice or a final compliance confirmation.'
@@ -153,10 +153,10 @@ export default function PrivacyPage() {
 
           <Card className="mb-10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <h2 className="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">
                 <Settings className="h-5 w-5" aria-hidden="true" />
                 {isEnglish ? 'Cookie and measurement settings' : 'Cookie- und Mess-Einstellungen'}
-              </CardTitle>
+              </h2>
               <CardDescription>
                 {isEnglish
                   ? 'These choices permit optional categories if a corresponding service is configured. Enabling a category does not prove that a particular vendor is active.'

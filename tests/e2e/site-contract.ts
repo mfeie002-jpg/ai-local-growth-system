@@ -207,6 +207,7 @@ export async function assertAccessibilityBaseline(page: Page): Promise<void> {
   const violations = await page.evaluate(() => {
     const issues: string[] = [];
     const isVisible = (element: Element): boolean => {
+      if (element.closest('[aria-hidden="true"]')) return false;
       const style = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
       return (

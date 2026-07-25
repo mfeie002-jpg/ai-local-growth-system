@@ -223,7 +223,7 @@ export function NeuralBackdrop() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 max-w-[100vw] overflow-hidden [contain:paint]"
     >
       {/* Layer A: slow color glow orbs — bold, sichtbar */}
       <div className="absolute inset-0">

@@ -13,7 +13,7 @@ test.describe("release visual evidence", () => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await waitForHydratedPage(page);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Digitale Chancen erkennen.",
+      "Sehen, wo Ihr digitales Geschäft Potenzial verliert.",
     );
     await assertNoHorizontalOverflow(page);
 
@@ -30,7 +30,7 @@ test.describe("release visual evidence", () => {
     await page.goto("/audit", { waitUntil: "domcontentloaded" });
     await waitForHydratedPage(page);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Kostenloser Business Audit",
+      "Zuerst die Website. Dann der Geschäftskontext.",
     );
     await assertNoHorizontalOverflow(page);
 

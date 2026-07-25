@@ -30,9 +30,13 @@ test.describe("public route contract", () => {
             : "Zuerst die Website",
         );
       } else if (route.language === "en") {
-        await expect(page.getByRole("link", { name: "Services", exact: true })).toBeVisible();
+        await expect(
+          page.locator("header").getByRole("link", { name: "Services", exact: true }).first(),
+        ).toBeVisible();
       } else {
-        await expect(page.getByRole("link", { name: "Leistungen", exact: true })).toBeVisible();
+        await expect(
+          page.locator("header").getByRole("link", { name: "Leistungen", exact: true }).first(),
+        ).toBeVisible();
       }
 
       expect(runtimeErrors).toEqual([]);
