@@ -77,6 +77,18 @@ export function trackAuditSubmit(params: TrackingParams): void {
   track('audit_submit', { ...params });
 }
 
+// Audit funnel: user opened the audit page (funnel entry)
+export function trackAuditStarted(params: { language: 'de' | 'en'; page_path: string; utm_source?: string; utm_medium?: string; utm_campaign?: string }): void {
+  track('audit_started', params);
+}
+
+// Audit funnel: score was rendered to the user
+export function trackAuditScoreDelivered(params: { score: number; status: string; language: 'de' | 'en' }): void {
+  const bucket = params.score >= 75 ? 'strong' : params.score >= 50 ? 'medium' : 'weak';
+  track('audit_score_delivered', { ...params, score_bucket: bucket });
+}
+
+
 export function trackCallBook(params: TrackingParams): void {
   track('call_book', { ...params });
 }

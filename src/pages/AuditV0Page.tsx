@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Loader2, ShieldCheck, Sparkles } from "lucide-react";
@@ -9,8 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { track } from "@/lib/analytics";
+import { track, trackAuditStarted } from "@/lib/analytics";
+import { getUTMParams } from "@/hooks/useUTMTracking";
 import { Turnstile, TURNSTILE_ENABLED } from "@/components/Turnstile";
+
 
 type Lang = "de" | "en";
 
