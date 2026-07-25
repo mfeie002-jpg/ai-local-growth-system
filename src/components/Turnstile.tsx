@@ -56,7 +56,7 @@ export function Turnstile({ onToken }: Props) {
     if (!SITE_KEY || !ready || !containerRef.current || !window.turnstile) return;
     if (widgetIdRef.current) return;
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
-      sitekey: SITE_KEY,
+      sitekey: String(SITE_KEY),
       theme: "auto",
       callback: (t) => onToken(t),
       "expired-callback": () => onToken(null),
