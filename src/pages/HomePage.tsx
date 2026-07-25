@@ -195,25 +195,25 @@ export default function HomePage() {
                 </div>
                 <h1 className="uppercase text-balance">
                   {isEnglish ? (
-                    <>We find the <span className="text-muted-foreground">growth</span><br />blockers.</>
+                    <>AI Business Audit for <span className="text-muted-foreground">Swiss</span><br />SMEs.</>
                   ) : (
-                    <>Wir finden die <span className="text-muted-foreground">Wachstums-</span><br />bremsen.</>
+                    <>AI Business Audit für <span className="text-muted-foreground">Schweizer</span><br />KMU.</>
                   )}
                 </h1>
                 <p className="max-w-md text-muted-foreground text-lg leading-relaxed">
                   {isEnglish
-                    ? 'A deterministic engine reads 25+ signals on your website, visibility and conversion path. Real number, top three fixes, clear next step. Free, in minutes.'
-                    : '25+ Signale zu Website, Sichtbarkeit und Conversion — deterministisch bewertet. Echte Zahl, drei Fixes, klarer nächster Schritt. Gratis, in Minuten.'}
+                    ? 'In 60 seconds you see where your digital growth is blocked. 25+ deterministic signals across website, visibility, trust, conversion and automation — free, in Swiss quality.'
+                    : 'In 60 Sekunden sehen Sie, wo Ihr digitales Wachstum blockiert ist. 25+ deterministische Signale zu Website, Sichtbarkeit, Vertrauen, Conversion und Automation — gratis, in Schweizer Qualität.'}
                 </p>
               </div>
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <CTAButton variant="primary" size="lg" href={auditPath} location="hero">
-                  {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
+                  {isEnglish ? 'Start free business audit' : 'Kostenlosen Business Audit starten'}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </CTAButton>
-                <CTAButton variant="ghost" size="lg" href={callPath} location="hero">
-                  {isEnglish ? 'Or talk to a human →' : 'Oder mit einem Menschen sprechen →'}
+                <CTAButton variant="ghost" size="lg" href="#ablauf" location="hero-secondary">
+                  {isEnglish ? "How it works ↓" : "So funktioniert's ↓"}
                 </CTAButton>
               </div>
             </div>
@@ -527,7 +527,7 @@ export default function HomePage() {
       <div className="container-section"><div className="rule-hairline" /></div>
 
       {/* ========== 07 — Process + Anti-Knebel ========== */}
-      <section data-neural-zone className="section-padding">
+      <section id="ablauf" data-neural-zone className="section-padding scroll-mt-24">
         <div className="container-section">
           <SectionMarker index={7} total={11} label={isEnglish ? 'How we work' : 'Wie wir arbeiten'} />
           <RevealText>

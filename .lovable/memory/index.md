@@ -5,7 +5,7 @@ Dark "Obsidian Instrument" aesthetic: obsidian canvas, chrome hairlines, icy sig
 Bilingual routing: DE-CH (default `/`) and EN (`/en`). All routes must have paired equivalents in `src/lib/routePairs.ts`.
 Analytics/GA4 must only fire AFTER explicit consent (Consent Mode v2 default denied).
 HARD CONSTRAINT: Never invent results, metrics, or logos. Unverified proof must be feature-flagged off.
-Positioning (Sprint 2 hybrid): "AI Business Audit Plattform für Schweizer KMU" — Audit as core product, Retainer (Launch Sprint · Growth Retainer · Scale Retainer) as implementation arm.
+Positioning (Sprint 3 live): H1 = "AI Business Audit für Schweizer KMU" — audit-as-product voice. Header nav: Audit · Lösungen ▼ (5 landing dropdown) · Ultimate Package · Pakete.
 Hybrid pricing live: Launch CHF 1'990 fixed, Growth "ab CHF 3'900/Mt", Scale "ab CHF 6'900/Mt".
 Voice agents must include clear AI disclosure and separate recording consent.
 Scanner architecture: Evidence → Normalize → Deterministic Score → AI Interpret (4-layer pipeline, Source of Truth v1.2).

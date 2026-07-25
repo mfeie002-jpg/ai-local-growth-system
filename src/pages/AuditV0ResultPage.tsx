@@ -136,6 +136,15 @@ export default function AuditV0ResultPage({ lang }: Props) {
       evidence: "Evidenz",
       recommendation: "Empfehlung",
       backHome: "Zur Startseite",
+      explainerTitle: "Was bedeutet dieser Score?",
+      explainer: "Der Score kombiniert 25+ deterministische Signale in fünf Kategorien. Jedes Signal wird mit fester Regel bewertet — kein AI-Rateversuch. 75+ ist solide, 50–74 hat Hebel, unter 50 verliert aktiv Leads. Der Score-Zahlwert selbst ist nicht das Ziel; entscheidend sind die Top-3-Handlungen.",
+      sourcesTitle: "Datenquellen",
+      sources: [
+        { name: "HTML-Parser", desc: "Meta-Tags, strukturierte Daten, Heading-Struktur, Impressum-Check" },
+        { name: "PageSpeed / Lighthouse", desc: "Core Web Vitals, Ladezeit, Mobile-Fitness" },
+        { name: "Semrush", desc: "Organische Sichtbarkeit, Keyword-Rankings (wenn Domain indexiert)" },
+        { name: "AI-Interpretation", desc: "Übersetzt Messwerte in verständliche Empfehlungen — erfindet keine Zahlen" },
+      ],
     },
     en: {
       loading: "We're analyzing your site. This takes 30–60 seconds…",
@@ -154,6 +163,15 @@ export default function AuditV0ResultPage({ lang }: Props) {
       evidence: "Evidence",
       recommendation: "Recommendation",
       backHome: "Back to home",
+      explainerTitle: "What does this score mean?",
+      explainer: "The score combines 25+ deterministic signals across five categories. Every signal is graded by a fixed rule — no AI guessing. 75+ is solid, 50–74 has leverage, below 50 is actively losing leads. The number itself isn't the point; the top-3 actions are.",
+      sourcesTitle: "Data sources",
+      sources: [
+        { name: "HTML parser", desc: "Meta tags, structured data, heading structure, imprint check" },
+        { name: "PageSpeed / Lighthouse", desc: "Core Web Vitals, load time, mobile fitness" },
+        { name: "Semrush", desc: "Organic visibility, keyword rankings (when domain is indexed)" },
+        { name: "AI interpretation", desc: "Translates measurements into human recommendations — invents no numbers" },
+      ],
     },
   }[lang];
 
@@ -269,6 +287,27 @@ export default function AuditV0ResultPage({ lang }: Props) {
                 {strings.cta} <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
+          </section>
+
+          {/* Explainer + Sources */}
+          <section className="grid gap-6 md:grid-cols-2">
+            <div className="p-6 border border-border rounded-xl bg-card">
+              <h3 className="text-lg font-semibold mb-2 text-foreground">{strings.explainerTitle}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{strings.explainer}</p>
+            </div>
+            <div className="p-6 border border-border rounded-xl bg-card">
+              <h3 className="text-lg font-semibold mb-3 text-foreground">{strings.sourcesTitle}</h3>
+              <ul className="space-y-2">
+                {strings.sources.map((s) => (
+                  <li key={s.name} className="flex gap-3 text-sm">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-signal shrink-0 mt-1 w-32">
+                      {s.name}
+                    </span>
+                    <span className="text-muted-foreground leading-relaxed">{s.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </section>
 
           {/* All signals */}
