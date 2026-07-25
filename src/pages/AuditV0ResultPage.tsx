@@ -289,6 +289,27 @@ export default function AuditV0ResultPage({ lang }: Props) {
             </Button>
           </section>
 
+          {/* Explainer + Sources */}
+          <section className="grid gap-6 md:grid-cols-2">
+            <div className="p-6 border border-border rounded-xl bg-card">
+              <h3 className="text-lg font-semibold mb-2 text-foreground">{strings.explainerTitle}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{strings.explainer}</p>
+            </div>
+            <div className="p-6 border border-border rounded-xl bg-card">
+              <h3 className="text-lg font-semibold mb-3 text-foreground">{strings.sourcesTitle}</h3>
+              <ul className="space-y-2">
+                {strings.sources.map((s) => (
+                  <li key={s.name} className="flex gap-3 text-sm">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-signal shrink-0 mt-1 w-32">
+                      {s.name}
+                    </span>
+                    <span className="text-muted-foreground leading-relaxed">{s.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
           {/* All signals */}
           <section>
             <h2 className="text-2xl md:text-3xl font-serif mb-6">{strings.allSignals}</h2>
