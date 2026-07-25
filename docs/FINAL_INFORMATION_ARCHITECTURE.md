@@ -51,7 +51,7 @@ Die Hauptnavigation bleibt bewusst kurz:
 
 Website Audit, SEO-Analyse, AI Visibility, Automation, Partner, Fallstudien, Über uns und Kontakt werden über Seitenkontext und Footer erschlossen. Auf Mobile bleiben Navigation und CTA mit ausreichend grossen Tap Targets erreichbar.
 
-## 4. Indexierbare Routen
+## 4. Öffentliche Routen und Indexierungsstatus
 
 | Deutsch | Englisch | Primärer Intent | Haupt-CTA | Rolle |
 |---|---|---|---|---|

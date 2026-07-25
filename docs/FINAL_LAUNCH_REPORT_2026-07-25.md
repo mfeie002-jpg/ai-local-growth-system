@@ -12,15 +12,15 @@ Dieser Bericht trennt belegte Implementierung, lokale Verifikation und noch auss
 
 itsfeierabend.ch wurde auf dem bestehenden React-/Vite-/TypeScript-/Supabase-Stack als eigenständige Schweizer B2B-Plattform für nachvollziehbare digitale Geschäftsaudits neu fokussiert. Der Launch-Kandidat umfasst eine neue DE-/EN-Informationsarchitektur, eine verkaufsfähige Startseite, thematische Audit-Seiten, einen progressiven dreistufigen Quick Audit, eine getrennte CRM-/Lead-Architektur, Consent-abhängiges Tracking, statische SEO-Einstiegspunkte und eine automatisierte Responsive-/Accessibility-Testmatrix.
 
-Der Code liegt auf `feat/itsfeierabend-final-launch` und ist im offenen Draft-[PR #1](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1) enthalten. Der kombinierte Launch-Code wurde als [`327a319396a07108606f4cef2f567317c2620fe4`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/327a319396a07108606f4cef2f567317c2620fe4) veröffentlicht; der in CI vollständig geprüfte Code-/Test-Stand ist [`129bac16494e9aa14590bfec769410aa58b9fe67`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/129bac16494e9aa14590bfec769410aa58b9fe67).
+Der Code liegt auf `feat/itsfeierabend-final-launch` und ist im offenen Draft-[PR #1](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1) enthalten. Der kombinierte Launch-Code wurde als [`327a319396a07108606f4cef2f567317c2620fe4`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/327a319396a07108606f4cef2f567317c2620fe4) veröffentlicht; der vollständig geprüfte Code-/Test-Stand ist [`129bac16494e9aa14590bfec769410aa58b9fe67`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/129bac16494e9aa14590bfec769410aa58b9fe67). Der nachfolgende Bericht-/Beweis-Stand [`f95bf482bf433499719a72329bfaf8bfabbe465c`](https://github.com/mfeie002-jpg/itsfeierabend.ch/commit/f95bf482bf433499719a72329bfaf8bfabbe465c) war vor dieser Dokumentationsaktualisierung ebenfalls vollständig grün.
 
 | Prüfpunkt | Status | Beleg / Einschränkung |
 |---|---|---|
 | Positionierung, Inhalte und Architektur | umgesetzt | fokussierte DE-/EN-Routen, keine Räumungs-, Reinigungs- oder Umzugsangebote |
 | Lokaler Typecheck, Lint und Production Build | bestanden | `npm run typecheck`, `npm run lint -- --quiet`, `npm run build` |
 | Statische öffentliche URLs | bestanden | 26/26 Sitemap-Routen sowie `robots.txt`, Sitemap und OG-Asset lokal mit HTTP 200 |
-| Draft-PR | vorhanden | PR #1; am geprüften Code-/Test-Stand 8 Commits und 151 geänderte Dateien |
-| GitHub CI | **bestanden** | Run #31: Quality/Deno, Production Build und Chromium E2E `success`; 129/129 Tests in 1.3 Minuten |
+| Draft-PR | vorhanden | PR #1; geprüfte Bericht-/Beweis-Baseline mit 10 Commits und 151 geänderten Dateien |
+| GitHub CI | **bestanden** | Code-/Test-Stand Run #31: 129/129 Tests in 1.3 Minuten; Bericht-/Beweis-Baseline Run #35: 129/129 in 1.2 Minuten |
 | Lovable-Preview | **blockiert** | API-Antwort `FORBIDDEN`; kein verifizierter Release-Preview |
 | Produktionsdeployment | **bewusst nicht ausgeführt** | kein sicher abgenommener Preview, Rollback und Runtime-Setup |
 | Vollständiger Audit-zu-CRM-zu-E-Mail-Test | offen | keine echten Leads oder E-Mails erzeugt |
@@ -168,7 +168,7 @@ Im Branch umgesetzt beziehungsweise konsolidiert:
 - DE-/EN-Ausgaben aller zentralen Seiten;
 - transaktionaler Audit und private Ergebnisansicht;
 - Kontakt- und Partnerformular über die gemeinsame serverseitige Lead-Strecke;
-- Fallstudienseite ohne ungeprüfte verbundene Kundenclaims; öffentlich gezeigt wird nur der eigene Audit-v0-Produktkontext;
+- Fallstudienseite ohne ungeprüfte verbundene Kundenclaims; öffentlich gezeigt wird nur der eigene Quick-Audit-Produktkontext;
 - Impressum und Datenschutz als transparent markierter Arbeitsstand, nicht als vorgetäuschte Rechtsabnahme;
 - echte 301-Zuordnungen für alte Scanner-, Preis-, Paket-, Blog- und Agentur-Service-Routen;
 - statische 404-Seite sowie private Admin-/Report-Routen mit `noindex`.
@@ -196,8 +196,9 @@ Wesentliche technische und methodische Eigenschaften:
 - private Ergebnis-URL mit frischem Token je Audit;
 - Resultatstatus `ready`, `partial` oder `unavailable` bleibt sichtbar;
 - Report-Abfrage ist POST-only, Token bleibt aus Analytics-URL und Eventpayloads entfernt.
+- synchrone Doppelklick-Sperren verhindern parallele Audit-, Kontakt- und Partner-Submits im Client.
 
-Die Playwright-Flows für DE und EN mocken die Serverantwort und prüfen Schritte, Attribution, serverbestätigte Erstellung und private Resultatroute. Dies ist kein Beleg für eine reale Production-Speicherung oder E-Mail-Zustellung.
+Die Playwright-Flows für DE und EN mocken die Serverantwort und prüfen Schritte, Attribution, genau einen Request bei Doppelklick, serverbestätigte Erstellung und private Resultatroute. Separate Kontakt- und Partnerflows prüfen ebenfalls Attribution, Payload und genau einen Client-Request. Dies ist kein Beleg für eine reale Production-Speicherung, serverseitige Idempotenz oder E-Mail-Zustellung.
 
 ## 11. CRO- und Funnel-Struktur
 
@@ -250,7 +251,7 @@ Die Tests prüfen:
 - Formularlabels, Headings, Alttexte, Iframe-Titel, doppelte IDs und positive `tabindex`;
 - Console- und Runtime-Fehler.
 
-**Automatisierter Abnahmestatus:** GitHub CI [Run #31](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146078734) bestand vollständig. Chromium führte 129/129 E2E-Tests in sechs Spec-Dateien in 1.3 Minuten erfolgreich aus. Die Remediation-Commits schlossen responsive und semantische Testlücken (`c80128c`), den Header-Overflow bei 320 px (`cd449a1`), einen semantisch korrekten mobilen Heading-Zeilenumbruch (`3fd401d`), synchrone Doppelübermittlungsrisiken sowie Hosting-, Security-Header- und Formularverträge (`d208dd4`, `129bac1`).
+**Automatisierter Abnahmestatus:** GitHub CI [Run #31](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146078734) bestand vollständig. Chromium führte 129/129 E2E-Tests in sechs Spec-Dateien in 1.3 Minuten erfolgreich aus. Die Remediation-Commits schlossen responsive und semantische Testlücken (`c80128c`), den Header-Overflow bei 320 px (`cd449a1`), einen semantisch korrekten mobilen Heading-Zeilenumbruch (`3fd401d`) sowie Hosting- und Doppelsubmit-Contracts (`d208dd4`, `129bac1`).
 
 Damit ist die automatisierte Viewport-Matrix auf dem CI-Produktionsbuild bestanden. Nicht abgenommen sind weiterhin das reale Lovable-/Production-Hosting, gerätespezifische Browserbesonderheiten, Network-Verhalten und echte Backend-Submissions.
 
@@ -400,15 +401,15 @@ Die Legal-Seiten sind ein transparenter Arbeitsstand und keine Rechtsberatung od
 
 | Artefakt | Live-Baseline | Launch-Kandidat, lokaler/CI-Build |
 |---|---:|---:|
-| CSS | 114’757 B roh / 18’835 B gzip | 92.76 kB roh / 15.98 kB gzip |
-| Main JS | 1’689’293 B roh / 479’781 B gzip | 167.53 kB / 53.06 kB gzip |
+| CSS | 114’757 B roh / 18’835 B gzip | 92.92 kB roh / 16.04 kB gzip |
+| Main JS | 1’689’293 B roh / 479’781 B gzip | 167.56 kB / 53.07 kB gzip |
 | React Vendor | im Main-Bundle | 163.05 kB / 53.26 kB gzip |
 | Supabase Vendor | im Main-Bundle | 171.55 kB / 44.36 kB gzip |
 | Query Vendor | im Main-Bundle | 27.44 kB / 8.60 kB gzip |
 | Home lazy | im Main-Bundle | 24.03 kB / 6.99 kB gzip |
-| Platform lazy | im Main-Bundle | 54.72 kB / 17.77 kB gzip |
-| Audit lazy | im Main-Bundle | 85.11 kB / 24.14 kB gzip |
-| Admin Dashboard lazy | im Main-Bundle | 408.30 kB / 113.46 kB gzip |
+| Platform lazy | im Main-Bundle | 54.76 kB / 17.79 kB gzip |
+| Audit lazy | im Main-Bundle | 85.31 kB / 24.21 kB gzip |
+| Admin Dashboard lazy | im Main-Bundle | 408.30 kB / 113.47 kB gzip |
 
 Zusätzlich:
 
@@ -447,6 +448,7 @@ Die automatisierte Accessibility-/Responsive-Basismatrix ist mit 129/129 Chromiu
 - Basis des Remote-PRs: `74ce1154e818f9406f6d7141a8fdcc758853eef7`
 - kombinierter Launch-Code-Commit: `327a319396a07108606f4cef2f567317c2620fe4`
 - in CI geprüfter Code-/Test-Stand: `129bac16494e9aa14590bfec769410aa58b9fe67`
+- vor dieser Dokumentationsaktualisierung ebenfalls grüner Bericht-/Beweis-Stand: `f95bf482bf433499719a72329bfaf8bfabbe465c`
 - Projektisolation: ausschliesslich `mfeie002-jpg/itsfeierabend.ch`
 
 Es wurde weder in `main` gemergt noch ein geschützter Production-Branch verändert.
@@ -471,21 +473,25 @@ Für GitHub wurde der geprüfte Hauptstand als kombinierter Remote-Commit veröf
 - `c80128c` — responsive und semantische Accessibility-Testlücken geschlossen.
 - `cd449a1` — 320-px-Header-Overflow korrigiert.
 - `3fd401d79cae35cc077d104ad79b4fa00f8dac9c` — semantischen mobilen Heading-Zeilenumbruch finalisiert.
-- `b7e6eee5ba2528788cd89d979efe6724c4bc9f6d` — Abschlussbericht und visuelle Belege ergänzt.
-- `d208dd4835f478b6bdcd7e147844cd385d3846e8` — Formulare gegen synchrone Doppelübermittlung gehärtet und Hosting-/Security-Verträge ergänzt.
-- `129bac16494e9aa14590bfec769410aa58b9fe67` — sichtbare Firmenfelder im Formular-E2E exakt adressiert; vollständig geprüfter Code-/Test-Stand.
+- `b7e6eee` — Abschlussbericht und Vorher-/Nachher-Belege ergänzt.
+- `d208dd4835f478b6bdcd7e147844cd385d3846e8` — Form-Doppelsubmit-Sperren, Hosting-Contracts sowie Kontakt-/Partner-E2E ergänzt.
+- `129bac16494e9aa14590bfec769410aa58b9fe67` — sichtbare Firmenfelder im neuen E2E exakt adressiert; vollständig geprüfter Code-/Test-Stand.
+- `829db9efcf7a73810272e8193c030226785399e9` — Abschlussbericht und finale Run-31-Screenshots an den grünen Code-/Test-Stand gebunden.
+- `f95bf482bf433499719a72329bfaf8bfabbe465c` — geprüften Code-/Test-Stand vom nachfolgenden Bericht-Stand getrennt; vollständig grüne Bericht-/Beweis-Baseline vor dieser Aktualisierung.
 
 ## 24. Pull Request
 
 - [PR #1 — Launch itsfeierabend.ch audit platform](https://github.com/mfeie002-jpg/itsfeierabend.ch/pull/1)
 - Status: offen, Draft, nicht gemergt
 - GitHub-Metadaten zum Berichtszeitpunkt: `mergeable: true`
-- Umfang am geprüften Code-/Test-Stand `129bac1…`: 151 Dateien, 12’953 Ergänzungen, 16’765 Löschungen, 8 Remote-Commits
-- CI: Workflow `CI`, [Run #31](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146078734), ID `30146078734`
+- geprüfte Bericht-/Beweis-Baseline: `f95bf482bf433499719a72329bfaf8bfabbe465c`
+- Umfang dieser Baseline: 151 Dateien, 12’956 Ergänzungen, 16’765 Löschungen und 10 Remote-Commits
+- Code-/Test-Baseline: `129bac16494e9aa14590bfec769410aa58b9fe67`; [Run #31](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146078734) mit 129/129 Tests in 1.3 Minuten
+- Bericht-/Beweis-Baseline-CI: Workflow `CI`, [Run #35](https://github.com/mfeie002-jpg/itsfeierabend.ch/actions/runs/30146363221), ID `30146363221`
   - `Lint · Typecheck · Deno tests`: `success`
   - `Production build`: `success`
   - `End-to-end · Public launch QA`: `success`
-  - Chromium: 129/129 Tests in 1.3 Minuten bestanden
+  - Chromium: 129/129 Tests in 1.2 Minuten bestanden
   - Gesamtstatus: `success`
 
 `mergeable: true` bedeutet nur, dass GitHub keinen Mergekonflikt meldet; es ist keine Produktionsfreigabe.
@@ -520,7 +526,7 @@ Die gewünschte Primärdomain bleibt `https://itsfeierabend.ch`. Das neue Releas
 Verbindliche Reihenfolge vor einer Produktionsfreigabe:
 
 1. Lovable-/Hosting-Zugriff für einen commitspezifischen Preview herstellen;
-2. den grünen CI-Produktionsbuild von Head `129bac1…` als commitspezifischen Preview bereitstellen;
+2. den grünen CI-Produktionsbuild des finalen Release-Branch-Heads mit Code-/Test-Baseline `129bac1…` als commitspezifischen Preview bereitstellen;
 3. rechtliche und produktive Anbieterangaben freigeben;
 4. beide Supabase-Migrationen in dokumentierter Reihenfolge auf einer sicheren Zielumgebung anwenden;
 5. erst danach Edge Functions deployen;
@@ -565,8 +571,8 @@ Bis P0 geschlossen und die P1-Launch-Gates bestanden sind, bleibt Production **N
 
 ### 0–30 Tage: Launch-Gates schliessen
 
-- Lovable-Preview-Berechtigung herstellen und mindestens den geprüften Code-/Test-Stand `129bac1…` deployen.
-- Den vollständig grünen CI Run #31 als Build-Baseline verwenden und Console-, Network-, Link-, 404-, Redirect- und Hosting-QA auf dem realen Preview abschliessen.
+- Lovable-Preview-Berechtigung herstellen und den nach der letzten CI-Prüfung freigegebenen Release-Branch-Head deployen.
+- Den vollständig grünen CI Run #35 sowie Code-/Test-Run #31 als Build-Baseline verwenden und Console-, Network-, Link-, 404-, Redirect- und Hosting-QA auf dem realen Preview abschliessen.
 - Rechtsträger, Anschrift, Verantwortliche, UID/Handelsregisterangaben und vollständiges Anbieter-/Regionen-/Löschinventar freigeben.
 - DNS-Rebinding-Schutz implementieren.
 - Supabase-Migrationen in Reihenfolge testen; RLS und Service-Rollen verifizieren.
@@ -595,4 +601,4 @@ Bis P0 geschlossen und die P1-Launch-Gates bestanden sind, bleibt Production **N
 
 ---
 
-**Launch-Entscheidung am 25. Juli 2026:** Der Code-Kandidat ist reviewfähig, lokal und in CI buildbar und hat 129/129 Chromium-E2E-Tests bestanden. Ein Lovable-Preview oder Produktionslaunch ist wegen `FORBIDDEN`, fehlender Runtime-/Form-/E-Mail-/GA4-/Rechtsabnahme und des offenen DNS-Rebinding-Risikos dennoch nicht freigegeben.
+**Launch-Entscheidung am 25. Juli 2026:** Der Code-Kandidat ist reviewfähig, lokal und in CI buildbar. Die Bericht-/Beweis-Baseline `f95bf48…` hat in Run #35 alle drei Jobs und 129/129 Chromium-E2E-Tests bestanden. Ein Lovable-Preview oder Produktionslaunch ist wegen `FORBIDDEN`, fehlender Runtime-/Form-/E-Mail-/GA4-/Rechtsabnahme und des offenen DNS-Rebinding-Risikos dennoch nicht freigegeben.
