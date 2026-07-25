@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Mail, MapPin, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Logo } from '@/components/Logo';
+import { siteConfig } from '@/config/site';
 
 /**
  * Footer — Neural Editorial. Hairline-bordered, paper canvas, mono labels.
@@ -12,19 +13,21 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const exploreLinks = [
-    { label: t.nav.audit, path: isEnglish ? '/en/audit' : '/audit' },
-    { label: isEnglish ? 'Ultimate Package' : 'Ultimate Package', path: isEnglish ? '/en/ultimate-package' : '/ultimate-package' },
-    { label: isEnglish ? 'Services' : 'Services', path: isEnglish ? '/en/services/ai-implementation' : '/services/ki-implementierung' },
+    { label: isEnglish ? 'AI Business Audit' : 'AI Business Audit', path: isEnglish ? '/en/ai-business-audit' : '/ai-business-audit' },
+    { label: isEnglish ? 'Website Audit' : 'Website Audit', path: isEnglish ? '/en/website-audit' : '/website-audit' },
+    { label: isEnglish ? 'SEO Analysis' : 'SEO-Analyse', path: isEnglish ? '/en/seo-analysis' : '/seo-analyse' },
+    { label: 'AI Visibility', path: isEnglish ? '/en/ai-visibility' : '/ai-visibility' },
+    { label: isEnglish ? 'Automation' : 'Automatisierung', path: isEnglish ? '/en/automation' : '/automation' },
+    { label: isEnglish ? 'Services' : 'Leistungen', path: isEnglish ? '/en/services' : '/leistungen' },
     { label: isEnglish ? 'Case Studies' : 'Fallstudien', path: isEnglish ? '/en/case-studies' : '/fallstudien' },
-    { label: t.nav.pricing, path: isEnglish ? '/en/pricing' : '/pakete' },
-    { label: isEnglish ? 'System' : 'System', path: isEnglish ? '/en/system' : '/system' },
   ];
 
   const referenceLinks = [
-    { label: t.nav.faq, path: isEnglish ? '/en/faq' : '/faq' },
-    { label: isEnglish ? 'Blog' : 'Blog', path: isEnglish ? '/en/blog' : '/blog' },
-    { label: isEnglish ? 'Demo' : 'Demo', path: isEnglish ? '/en/demo' : '/demo' },
-    { label: isEnglish ? 'Investors' : 'Investoren', path: isEnglish ? '/en/investors' : '/investoren' },
+    { label: isEnglish ? 'For SMEs' : 'Für KMU', path: isEnglish ? '/en/for-smes' : '/fuer-kmu' },
+    { label: isEnglish ? 'Partners' : 'Partner', path: isEnglish ? '/en/partners' : '/partner' },
+    { label: isEnglish ? 'Insights' : 'Insights', path: isEnglish ? '/en/insights' : '/insights' },
+    { label: isEnglish ? 'About' : 'Über uns', path: isEnglish ? '/en/about' : '/ueber-uns' },
+    { label: isEnglish ? 'Contact' : 'Kontakt', path: isEnglish ? '/en/contact' : '/kontakt' },
   ];
 
   const legalLinks = [
@@ -43,17 +46,17 @@ export function Footer() {
             </Link>
             <p className="font-editorial text-2xl md:text-3xl leading-snug text-foreground/85 max-w-md">
               {isEnglish
-                ? <>Digital growth, <em>orchestrated by AI</em>. Built for Swiss service businesses.</>
-                : <>Digitales Wachstum, <em>von KI orchestriert</em>. Für Schweizer Dienstleister.</>}
+                ? <>AI Business Audits and <em>growth intelligence</em> for Swiss SMEs.</>
+                : <>AI Business Audits und <em>Growth Intelligence</em> für Schweizer KMU.</>}
             </p>
 
             <div className="mt-8 flex flex-col gap-3 font-mono text-xs">
               <a
-                href={`mailto:${t.footer.email}`}
+                href={`mailto:${siteConfig.email}`}
                 className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors w-fit"
               >
                 <Mail className="w-3.5 h-3.5" />
-                {t.footer.email}
+                {siteConfig.email}
               </a>
               <span className="inline-flex items-center gap-2 text-foreground/55">
                 <MapPin className="w-3.5 h-3.5" />
@@ -70,7 +73,7 @@ export function Footer() {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="group inline-flex items-center gap-1.5 text-base text-foreground/75 hover:text-foreground transition-colors"
+                    className="group inline-flex min-h-11 items-center gap-1.5 text-base text-foreground/75 transition-colors hover:text-foreground"
                   >
                     {link.label}
                     <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
@@ -86,7 +89,7 @@ export function Footer() {
             <ul className="space-y-3">
               {referenceLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-base text-foreground/75 hover:text-foreground transition-colors">
+                  <Link to={link.path} className="inline-flex min-h-11 items-center text-base text-foreground/75 transition-colors hover:text-foreground">
                     {link.label}
                   </Link>
                 </li>
@@ -100,7 +103,7 @@ export function Footer() {
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-base text-foreground/75 hover:text-foreground transition-colors">
+                  <Link to={link.path} className="inline-flex min-h-11 items-center text-base text-foreground/75 transition-colors hover:text-foreground">
                     {link.label}
                   </Link>
                 </li>
@@ -115,7 +118,7 @@ export function Footer() {
             © {year} · itsFeierabend.ch
           </p>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/55">
-            {isEnglish ? 'Made with AI · Crafted by humans' : 'Mit KI gemacht · von Menschen gestaltet'}
+            {isEnglish ? 'Measured by rules · interpreted with AI' : 'Regelbasiert gemessen · mit KI interpretiert'}
           </p>
         </div>
       </div>

@@ -2,16 +2,42 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.2";
 import { corsHeaders } from "../_shared/audit-utils.ts";
 import { runSignals, computeScore } from "../_shared/audit-signals.ts";
-import { fetchSiteSignals } from "../fetch-site-signals/index.ts";
+import { fetchSiteSignals } from "../_shared/fetch-site-signals.ts";
 import { enrichDomain, buildVisibilitySignal } from "../_shared/semrush.ts";
 import { makeCacheAdapter, makeUsageAdapter } from "../_shared/semrush-adapters.ts";
 
+async function deliverReportEmail(
+  projectUrl: string,
+  serviceKey: string,
+  auditId: string,
+): Promise<void> {
+  try {
+    const response = await fetch(`${projectUrl}/functions/v1/send-report-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({ audit_id: auditId }),
+    });
+    if (!response.ok) {
+      console.error(`send-report-email returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error("send-report-email request failed:", error);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  if (req.headers.get("authorization") !== `Bearer ${serviceKey}`) {
+    return json({ error: "unauthorized" }, 401);
+  }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    serviceKey,
   );
 
   try {
@@ -20,7 +46,7 @@ serve(async (req) => {
 
     const { data: audit, error: fetchErr } = await supabase
       .from("audit_requests")
-      .select("id, website_url, normalized_domain, language, email, first_name, status")
+      .select("id, lead_id, website_url, normalized_domain, language, email, first_name, audit_type, status")
       .eq("id", audit_id)
       .maybeSingle();
 
@@ -35,21 +61,48 @@ serve(async (req) => {
     const { ctx, error: fetchError, partial } = await fetchSiteSignals(audit.website_url);
 
     if (!ctx) {
-      // Failure — record error but still allow partial view
-      await supabase
+      // Public scanning was unavailable. Preserve a transparent preliminary
+      // result instead of inventing measurements.
+      const { error: partialUpdateError } = await supabase
         .from("audit_requests")
         .update({
-          status: "failed",
+          status: "partial",
           error: fetchError ?? "unknown fetch error",
-          fetch_meta: { partial: true, message: fetchError },
+          signals: [],
+          top_actions: [{
+            rank: 1,
+            signal_id: "manual_review_required",
+            category: "technical",
+            title: audit.language === "en"
+              ? "Manual website review required"
+              : "Manuelle Website-Prüfung erforderlich",
+            recommendation: audit.language === "en"
+              ? "The public scan could not reach enough evidence. Continue with an expert review before acting on a score."
+              : "Der öffentliche Scan konnte nicht genügend Evidenz abrufen. Vor Massnahmen ist eine Expertenprüfung nötig.",
+            impact: 0,
+          }],
+          fetch_meta: { partial: true, message: fetchError, evidence_state: "unavailable" },
+          completed_at: new Date().toISOString(),
         })
         .eq("id", audit_id);
-      await supabase.from("audit_events").insert({
+      if (partialUpdateError) {
+        console.error("partial audit update failed:", partialUpdateError);
+        return json({ error: "partial_result_persistence_failed" }, 500);
+      }
+      const { error: partialEventError } = await supabase.from("audit_events").insert({
         audit_id,
-        event_type: "failed",
+        event_type: "report_ready",
         metadata: { stage: "fetch", error: fetchError },
       });
-      return json({ ok: false, reason: fetchError }, 200);
+      if (partialEventError) {
+        console.error("partial report_ready event failed:", partialEventError);
+      }
+      await deliverReportEmail(
+        Deno.env.get("SUPABASE_URL")!,
+        serviceKey,
+        audit_id,
+      );
+      return json({ ok: true, status: "partial", reason: fetchError }, 200);
     }
 
     await supabase.from("audit_events").insert({
@@ -60,7 +113,7 @@ serve(async (req) => {
 
     await supabase.from("audit_requests").update({ status: "scoring" }).eq("id", audit_id);
 
-    const signals = runSignals(ctx);
+    const signals = runSignals(ctx, audit.language === "en" ? "en" : "de");
     const score = computeScore(signals);
 
     // Derive up to 5 recommended keywords from title + H1 words — never from user input.
@@ -77,14 +130,14 @@ serve(async (req) => {
       semrushApiKey: Deno.env.get("SEMRUSH_API_KEY"),
       dailyFreshLimit: Number.isFinite(dailyLimit) ? dailyLimit : 50,
       recommendedKeywords,
-      database: audit.language === "en" ? "us" : "de",
+      database: "ch",
     }).catch((e) => {
       console.warn("[semrush] enrichment threw:", (e as Error).message);
       return null;
     });
 
     // Append a non-scoring visibility signal (marked unavailable if needed).
-    const visibility = buildVisibilitySignal(enrichment);
+    const visibility = buildVisibilitySignal(enrichment, audit.language === "en" ? "en" : "de");
     const signalsWithVisibility = [...signals, visibility];
 
     await supabase.from("audit_events").insert({
@@ -93,10 +146,19 @@ serve(async (req) => {
       metadata: {
         overall_score: score.overall_score,
         score_version: score.score_version,
+        audit_type: audit.audit_type,
         semrush_status: enrichment?.status ?? "skipped_disabled",
         semrush_calls: enrichment?.calls?.length ?? 0,
       },
     });
+
+    if (audit.lead_id) {
+      const { error: leadUpdateError } = await supabase
+        .from("leads")
+        .update({ lead_score: score.overall_score, status: "scored" })
+        .eq("id", audit.lead_id);
+      if (leadUpdateError) console.error("lead score update failed:", leadUpdateError);
+    }
 
     const finalStatus = partial ? "partial" : "ready";
 
@@ -114,8 +176,12 @@ serve(async (req) => {
           status: ctx.status,
           response_time_ms: ctx.responseTimeMs,
           size_bytes: ctx.sizeBytes,
+          partial: Boolean(partial),
+          fetch_warning: fetchError ?? null,
           has_sitemap: ctx.hasSitemap,
           has_robots: ctx.hasRobots,
+          audit_type: audit.audit_type,
+          scoring_scope: "public_homepage_signals_only",
         },
         semrush_status: enrichment?.status ?? "skipped_disabled",
         semrush_data: enrichment?.data ?? null,
@@ -136,14 +202,13 @@ serve(async (req) => {
       metadata: { overall_score: score.overall_score },
     });
 
-    // Fire and forget email
-    const projectUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    fetch(`${projectUrl}/functions/v1/send-report-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${serviceKey}` },
-      body: JSON.stringify({ audit_id }),
-    }).catch((e) => console.error("send-report-email kick failed:", e));
+    // Complete the delivery attempt before the function exits. The email
+    // handler records sent/skipped/failed states and is idempotent per audit.
+    await deliverReportEmail(
+      Deno.env.get("SUPABASE_URL")!,
+      serviceKey,
+      audit_id,
+    );
 
     return json({ ok: true, overall_score: score.overall_score, status: finalStatus }, 200);
   } catch (e) {
@@ -196,4 +261,3 @@ export function deriveKeywords(html: string): string[] {
   }
   return out;
 }
-

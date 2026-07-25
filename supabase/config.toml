@@ -7,7 +7,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.get-analysis-report]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-analysis-report]
 verify_jwt = false
@@ -22,10 +22,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.business-scanner]
-verify_jwt = false
+verify_jwt = true
 
 [functions.scan-status]
-verify_jwt = false
+verify_jwt = true
 
 [functions.report-event]
 verify_jwt = false
@@ -37,16 +37,16 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.generate-report]
-verify_jwt = false
+verify_jwt = true
 
 [functions.fetch-site-signals]
-verify_jwt = false
+verify_jwt = true
 
 [functions.compute-score]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-report-email]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-audit-report-v0]
 verify_jwt = false

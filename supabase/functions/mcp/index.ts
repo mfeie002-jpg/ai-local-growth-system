@@ -99,8 +99,8 @@ import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z4 } from "npm:zod@^4.4.3";
 var list_analysis_reports_default = defineTool4({
   name: "list_analysis_reports",
-  title: "List analysis reports",
-  description: "List recent website analysis / scan reports. Requires admin role.",
+  title: "List canonical audits",
+  description: "List recent canonical website audit states. Requires admin role.",
   inputSchema: {
     limit: z4.number().int().min(1).max(100).default(20).describe("Maximum number of reports.")
   },
@@ -109,11 +109,11 @@ var list_analysis_reports_default = defineTool4({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await supabaseForUser(ctx).from("analysis_reports").select("*").order("created_at", { ascending: false }).limit(limit);
+    const { data, error } = await supabaseForUser(ctx).from("audit_requests").select("id, normalized_domain, company_name, language, audit_type, status, overall_score, score_version, report_viewed_at, cta_clicked_at, email_sent_at, created_at").order("created_at", { ascending: false }).limit(limit);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { reports: data ?? [], count: data?.length ?? 0 }
+      structuredContent: { audits: data ?? [], count: data?.length ?? 0 }
     };
   }
 });

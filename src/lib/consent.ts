@@ -43,10 +43,14 @@ export function setConsent(preferences: Partial<ConsentPreferences>): void {
   };
   
   const value = encodeURIComponent(JSON.stringify(consent));
-  document.cookie = `${CONSENT_COOKIE_NAME}=${value}; path=/; max-age=${CONSENT_MAX_AGE}; SameSite=Lax`;
+  document.cookie = `${CONSENT_COOKIE_NAME}=${value}; path=/; max-age=${CONSENT_MAX_AGE}; SameSite=Lax; Secure`;
   
   // Update gtag consent if available
   updateGtagConsent(consent);
+
+  if (!consent.analytics) {
+    clearGoogleAnalyticsCookies();
+  }
   
   // Dispatch event for listeners
   window.dispatchEvent(new CustomEvent('consentUpdate', { detail: consent }));
@@ -72,11 +76,9 @@ export function acceptNecessaryOnly(): void {
 
 // Consent Mode v2 integration
 function updateGtagConsent(consent: ConsentPreferences): void {
-  if (typeof window === 'undefined' || !(window as any).gtag) return;
+  if (typeof window === 'undefined' || !window.gtag) return;
   
-  const gtag = (window as any).gtag;
-  
-  gtag('consent', 'update', {
+  window.gtag('consent', 'update', {
     analytics_storage: consent.analytics ? 'granted' : 'denied',
     ad_storage: consent.marketing ? 'granted' : 'denied',
     ad_user_data: consent.marketing ? 'granted' : 'denied',
@@ -87,17 +89,33 @@ function updateGtagConsent(consent: ConsentPreferences): void {
 // Initialize consent defaults for gtag
 export function initializeGtagConsentDefaults(): void {
   if (typeof window === 'undefined') return;
-  
-  const gtag = (window as any).gtag;
-  if (!gtag) return;
+  if (!window.gtag) return;
   
   const consent = getConsent();
   
-  gtag('consent', 'default', {
+  window.gtag('consent', 'default', {
     analytics_storage: consent?.analytics ? 'granted' : 'denied',
     ad_storage: consent?.marketing ? 'granted' : 'denied',
     ad_user_data: consent?.marketing ? 'granted' : 'denied',
     ad_personalization: consent?.marketing ? 'granted' : 'denied',
     wait_for_update: 500,
   });
+}
+
+function clearGoogleAnalyticsCookies(): void {
+  if (typeof document === 'undefined') return;
+  const hostnameParts = window.location.hostname.split('.');
+  const domains = [
+    window.location.hostname,
+    `.${window.location.hostname}`,
+    hostnameParts.length > 1 ? `.${hostnameParts.slice(-2).join('.')}` : window.location.hostname,
+  ];
+  for (const cookie of document.cookie.split(';')) {
+    const name = cookie.split('=')[0]?.trim();
+    if (!name || !(name === '_ga' || name.startsWith('_ga_'))) continue;
+    for (const domain of domains) {
+      document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}; SameSite=Lax; Secure`;
+    }
+    document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax; Secure`;
+  }
 }

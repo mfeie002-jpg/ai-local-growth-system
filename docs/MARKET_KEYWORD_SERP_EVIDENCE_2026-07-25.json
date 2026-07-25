@@ -1,0 +1,554 @@
+{
+  "project": "itsfeierabend.ch",
+  "as_of": "2026-07-25",
+  "timezone": "Europe/Zurich",
+  "market": "Switzerland",
+  "language_focus": "German-speaking Switzerland",
+  "methodology": {
+    "semrush": {
+      "connection_active": true,
+      "status": "blocked_before_report_discovery",
+      "reason": "insufficient API units",
+      "discovery_families_attempted": [
+        "Keyword Analytics",
+        "Domain Overview",
+        "Organic Search Analytics",
+        "Competitive Research",
+        "Backlink Analytics",
+        "Paid Search Analytics"
+      ],
+      "report_schema_called": false,
+      "execute_report_called": false,
+      "why_not": "No report list was returned, so exact report names and schemas were unavailable.",
+      "units_url": "https://www.semrush.com/mcp-access",
+      "unavailable_metrics": [
+        "search_volume",
+        "keyword_difficulty",
+        "cpc",
+        "semrush_intent",
+        "organic_domain_totals",
+        "organic_rankings",
+        "authority_score",
+        "backlinks",
+        "referring_domains",
+        "paid_keyword_history"
+      ]
+    },
+    "public_serp": {
+      "status": "completed",
+      "limitation": "Public search sampling; not a location-locked, device-specific Google rank tracker and not search-volume evidence.",
+      "representative_queries": [
+        "\"website audit\" Schweiz",
+        "\"SEO Audit\" Schweiz",
+        "\"AI SEO\" Schweiz",
+        "\"AI Search Visibility\" Schweiz",
+        "\"Digitalisierungscheck\" KMU Schweiz",
+        "\"Business Health Check\" Schweiz KMU",
+        "\"Website Analyse\" Schweiz Unternehmen",
+        "\"Online Marketing Audit\" Schweiz",
+        "\"Leadgenerierung\" KMU Schweiz",
+        "\"Conversion Optimierung\" Schweiz KMU",
+        "\"CRM Automation\" Schweiz KMU",
+        "\"Marketing Automation\" KMU Schweiz",
+        "\"Google Sichtbarkeit verbessern\" Schweiz Unternehmen",
+        "\"lokale Sichtbarkeit\" verbessern Schweiz KMU",
+        "\"Website Optimierung\" KMU Schweiz",
+        "\"Google Business Profil Optimierung\" Schweiz",
+        "site:.ch \"SEO Audit\" \"Schweiz\"",
+        "site:.ch \"AI Visibility\" Schweiz Agentur",
+        "site:.ch \"GEO Agentur\" Schweiz",
+        "site:itsfeierabend.ch",
+        "\"itsfeierabend.ch\" -site:itsfeierabend.ch"
+      ]
+    }
+  },
+  "positioning": {
+    "recommended": "A transparent digital business diagnostic for Swiss SMEs that separates measured signals, owner inputs and expert judgement, then prioritises visibility, conversion, tracking, CRM and automation work by business impact.",
+    "avoid": [
+      "generic full-service AI marketing agency",
+      "another free SEO scanner",
+      "claims of guaranteed ChatGPT or Google visibility",
+      "claims of being the first Swiss AI visibility tool without proof",
+      "business audit wording without a digital-growth qualifier"
+    ]
+  },
+  "market_evidence": [
+    {
+      "claim": "More than 99% of Swiss businesses are SMEs.",
+      "source_title": "BFS — Kleine und mittlere Unternehmen",
+      "source_url": "https://www.bfs.admin.ch/bfs/de/home/statistiken/industrie-dienstleistungen/unternehmen-beschaeftigte/wirtschaftsstruktur-unternehmen/kmu.html"
+    },
+    {
+      "claim": "The federal SME portal reports that 55% of Swiss SMEs had integrated AI into work processes in 2024, citing an AXA/Sotomo study.",
+      "source_title": "KMU-Portal — Die Chancen der künstlichen Intelligenz",
+      "source_url": "https://www.kmu.admin.ch/de/die-chancen-der-kuenstlichen-intelligenz"
+    },
+    {
+      "claim": "The federal SME portal says Swiss SMEs struggle to embed AI effectively and recommends defined use cases, a data/process inventory and impact measurement.",
+      "source_title": "KMU-Portal — Fünf Tipps, wie man KI wirksam im Unternehmen einsetzt",
+      "source_url": "https://www.kmu.admin.ch/de/fuenf-tipps-wie-man-ki-wirksam-im-unternehmen-einsetzt"
+    }
+  ],
+  "current_public_footprint": {
+    "urls_surfaced": [
+      "https://itsfeierabend.ch/",
+      "https://itsfeierabend.ch/ultimate-package",
+      "https://itsfeierabend.ch/gratis-call",
+      "https://itsfeierabend.ch/services/design-entwicklung",
+      "https://itsfeierabend.ch/en/services/design-development",
+      "https://itsfeierabend.ch/en/case-studies"
+    ],
+    "notes": [
+      "Some index presence is visible, but this is not an index-count audit.",
+      "The homepage public snippet leads with KI-First Digital Growth and a scanner reading 25+ signals.",
+      "German and English service URLs surface publicly.",
+      "A public English case-studies result showed a generic German agency title/description in one sample, indicating a metadata/localisation issue to verify.",
+      "The domain did not surface among returned results for sampled unbranded seed queries; this is directional, not a definitive rank claim.",
+      "Exact-domain searches did not surface an obvious independent editorial mention; this is not a backlink count.",
+      "The Feierabend term has unrelated entity collisions, so a consistent brand descriptor is important."
+    ]
+  },
+  "keyword_clusters": [
+    {
+      "cluster": "website_diagnostic",
+      "seeds": [
+        "website analyse schweiz",
+        "website check unternehmen",
+        "website audit schweiz",
+        "website optimierung kmu"
+      ],
+      "observed_intent": "mixed commercial investigation and free-tool intent",
+      "primary_page": "/website-audit",
+      "secondary_keywords": [
+        "Website-Check KMU",
+        "Website-Analyse Unternehmen",
+        "Website Performance Check",
+        "UX Audit",
+        "Conversion Audit"
+      ],
+      "cta": "Website prüfen lassen",
+      "organic_priority": "high",
+      "paid_readiness": "conditional_test",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "seo_diagnostic",
+      "seeds": [
+        "seo audit schweiz",
+        "seo analyse schweiz",
+        "seo beratung schweiz"
+      ],
+      "observed_intent": "strong commercial investigation with many free-analysis funnels and paid expert audits",
+      "primary_page": "/seo-analyse",
+      "secondary_keywords": [
+        "Technisches SEO Audit",
+        "SEO Check KMU",
+        "Local SEO Audit",
+        "Content Gap Analyse"
+      ],
+      "cta": "SEO-Analyse anfragen",
+      "organic_priority": "high",
+      "paid_readiness": "conditional_test",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "ai_visibility",
+      "seeds": [
+        "ai visibility",
+        "ai search visibility",
+        "chatgpt seo",
+        "ai seo schweiz"
+      ],
+      "observed_intent": "mixed informational and commercial; crowded Swiss GEO/LLMO agency and software category",
+      "primary_page": "/ai-visibility",
+      "secondary_keywords": [
+        "KI-Sichtbarkeit",
+        "GEO",
+        "LLMO",
+        "AI Readiness",
+        "ChatGPT-Sichtbarkeit",
+        "Entity-Klarheit"
+      ],
+      "cta": "AI-Sichtbarkeit prüfen",
+      "organic_priority": "high_strategic",
+      "paid_readiness": "small_exploratory_test_only",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "digital_growth_diagnostic",
+      "seeds": [
+        "online marketing audit",
+        "digitalisierungscheck kmu",
+        "business audit schweiz",
+        "business health check"
+      ],
+      "observed_intent": "highly mixed; financial assurance, management, HR, DMS, ERP and workflow meanings overlap",
+      "primary_page": "/ai-business-audit",
+      "secondary_keywords": [
+        "Digitaler Wachstumscheck",
+        "Digital Business Health Check",
+        "Online-Marketing Bestandsaufnahme"
+      ],
+      "cta": "Kostenlosen Business Audit starten",
+      "organic_priority": "high_branded_category_creation",
+      "paid_readiness": "not_on_generic_business_audit_terms",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "lead_and_conversion",
+      "seeds": [
+        "lead generierung kmu",
+        "conversion optimierung schweiz"
+      ],
+      "observed_intent": "commercial and informational; proof and reliable tracking are prerequisites",
+      "primary_page": "/leistungen",
+      "secondary_keywords": [
+        "Lead-Potenzial",
+        "Funnel Analyse",
+        "Conversion Audit",
+        "Tracking Audit"
+      ],
+      "cta": "Lead-Potenzial analysieren",
+      "organic_priority": "medium",
+      "paid_readiness": "later",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "crm_and_automation",
+      "seeds": [
+        "crm automation schweiz",
+        "marketing automation kmu",
+        "automation"
+      ],
+      "observed_intent": "mixed software/vendor and implementation intent with a longer buying cycle",
+      "primary_page": "/automation",
+      "secondary_keywords": [
+        "CRM-Optimierung",
+        "Lead Routing",
+        "Follow-up Automation",
+        "Marketing Automation Beratung",
+        "Workflow Audit"
+      ],
+      "cta": "Automations-Potenzial prüfen",
+      "organic_priority": "medium",
+      "paid_readiness": "later_or_outbound_led",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "visibility_how_to",
+      "seeds": [
+        "google sichtbarkeit verbessern",
+        "lokale sichtbarkeit verbessern",
+        "google business profil optimierung"
+      ],
+      "observed_intent": "predominantly informational with Local SEO service overlap",
+      "primary_page": "/insights",
+      "secondary_keywords": [
+        "Local SEO Schweiz",
+        "Google Unternehmensprofil",
+        "NAP Konsistenz",
+        "Bewertungen",
+        "lokale Landingpages"
+      ],
+      "cta": "Sichtbarkeit analysieren",
+      "organic_priority": "high_content",
+      "paid_readiness": "no_generic_paid_page_initially",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    },
+    {
+      "cluster": "kmu_positioning",
+      "seeds": [
+        "website optimierung kmu",
+        "online marketing beratung kmu",
+        "seo beratung kmu"
+      ],
+      "observed_intent": "commercial category plus audience qualifier; competitive generic agency language",
+      "primary_page": "/fuer-kmu",
+      "secondary_keywords": [
+        "Digitaler Wachstumscheck KMU",
+        "Marketing- und Lead-System für KMU"
+      ],
+      "cta": "Audit für mein KMU starten",
+      "organic_priority": "medium_high",
+      "paid_readiness": "supporting_audience_page_not_standalone_ad_group",
+      "search_volume": null,
+      "keyword_difficulty": null,
+      "cpc": null,
+      "metrics_note": "Unavailable because Semrush API units were exhausted."
+    }
+  ],
+  "cannibalisation_rules": [
+    "/website-audit owns website check/analyse/audit intent.",
+    "/seo-analyse owns SEO audit/analyse/check intent.",
+    "/ai-visibility owns AI visibility/GEO/LLMO/ChatGPT SEO intent.",
+    "/ai-business-audit owns the cross-functional lead magnet and digital business diagnostic narrative.",
+    "Do not launch a separate /business-health-check until it has a distinct paid scope and enough unique evidence.",
+    "/automation owns CRM and marketing workflow assessment, not generic AI automation.",
+    "Informational how-to queries belong under /insights.",
+    "Industry pages require verified use cases and unique content; no doorway pages."
+  ],
+  "audience_priority": {
+    "primary": {
+      "description": "Swiss owner-led service SMEs and B2B service firms with an existing website, meaningful lead value and no reliable view of where digital demand leaks.",
+      "traits": [
+        "roughly 5–50 employees or equivalent operational maturity",
+        "existing website, Google profile and some demand-generation activity",
+        "leads matter more than ecommerce checkout volume",
+        "multiple hand-offs between website, email/phone, CRM and follow-up",
+        "ability to fund implementation after a credible audit"
+      ],
+      "vertical_families": [
+        "property and renovation services",
+        "established trades and field-service firms",
+        "local professional services",
+        "selected medical/local practices",
+        "consultancies and specialised B2B providers"
+      ]
+    },
+    "secondary": [
+      "agencies, consultants and IT providers needing a partner or white-label diagnostic",
+      "multi-location local businesses",
+      "SMEs already spending on SEO or Ads but lacking clean tracking and follow-up"
+    ],
+    "later": [
+      "gastronomy and very small local operators",
+      "larger enterprises",
+      "ecommerce"
+    ],
+    "avoid_at_launch": [
+      "pre-revenue ideas without a working website or implementation budget",
+      "firms seeking guaranteed Google or ChatGPT rankings",
+      "generic AI transformation without a defined use case",
+      "low-value consumer leads that cannot support a high-touch audit",
+      "regulated or enterprise work beyond the current security and delivery system"
+    ]
+  },
+  "competitors": [
+    {
+      "domain": "webscore.ch",
+      "url": "https://webscore.ch/",
+      "category": "automated Swiss website analysis",
+      "public_funnel": "free basic analysis; paid extended analysis",
+      "lesson": "Differentiate through business context, CRM, lead process and implementation prioritisation."
+    },
+    {
+      "domain": "zottermedia.ch",
+      "url": "https://www.zottermedia.ch/website-check",
+      "category": "human website check and analysis",
+      "public_funnel": "free 30-minute live check; detailed paid report and call",
+      "lesson": "Clearly separate automated checks, human review and deliverables."
+    },
+    {
+      "domain": "mikgroup.ch",
+      "url": "https://www.mikgroup.ch/seo-analyse/",
+      "category": "SEO/GEO agency lead magnet",
+      "public_funnel": "URL and email for a free report",
+      "lesson": "Give visible value before requesting a long qualification form."
+    },
+    {
+      "domain": "seox.ch",
+      "url": "https://seox.ch/",
+      "category": "broad Swiss SEO/GEO agency",
+      "public_funnel": "free analysis and consultation",
+      "lesson": "Do not compete as a generic full-service SEO/GEO agency."
+    },
+    {
+      "domain": "jvm.ch",
+      "url": "https://www.jvm.ch/de/leistungen-themen/leistungen/geo-generative-engine-optimization",
+      "category": "enterprise GEO consulting",
+      "public_funnel": "consulting contact",
+      "lesson": "Keep SEO as the basis and explain prompt visibility and measurement clearly."
+    },
+    {
+      "domain": "th-analytica.com",
+      "url": "https://th-analytica.com/ai-visibility",
+      "category": "AI visibility/readiness framework",
+      "public_funnel": "quick check and full analysis",
+      "lesson": "Publish transparent definitions, methodology and explicit no-guarantee language."
+    },
+    {
+      "domain": "aimaco.ai",
+      "url": "https://aimaco.ai/",
+      "category": "AI visibility monitoring software",
+      "public_funnel": "free GEO check and SaaS trial",
+      "lesson": "Do not mimic real-time SaaS unless the product actually supports it."
+    },
+    {
+      "domain": "business-solutions.gmbh",
+      "url": "https://www.business-solutions.gmbh/",
+      "category": "digitalisation and workflow automation",
+      "public_funnel": "five-minute digitalisation check",
+      "lesson": "Clarify that the itsfeierabend diagnostic focuses on digital growth and lead systems, not generic DMS/ERP."
+    },
+    {
+      "domain": "obt.ch",
+      "url": "https://www.obt.ch/de/starten-sie-durch-dank-der-digitalisierung",
+      "category": "institutional Swiss digitalisation advisory",
+      "public_funnel": "digitalisation check and adviser contact",
+      "lesson": "Compete through a narrower measurable growth focus rather than institutional breadth."
+    }
+  ],
+  "authority_opportunities": {
+    "foundational": [
+      "consistent legal and entity data across the website, Swiss register/UID records, Google Business Profile and LinkedIn",
+      "one canonical brand descriptor",
+      "real author and methodology pages"
+    ],
+    "qualified_directories_and_associations": [
+      {
+        "name": "swissICT",
+        "url": "https://www.swissict.ch/",
+        "condition": "membership/eligibility"
+      },
+      {
+        "name": "swiss made software / swiss digital services",
+        "url": "https://www.swissmadesoftware.org/en/about/join-the-label.html",
+        "condition": "must satisfy label rules and register before using the label"
+      },
+      {
+        "name": "Schweizerischer KMU Verein",
+        "url": "https://skv.swiss/",
+        "condition": "legitimate membership/profile"
+      },
+      {
+        "name": "KMU Verband Schweiz",
+        "url": "https://kmuverband.ch/",
+        "condition": "legitimate membership/profile"
+      },
+      {
+        "name": "Clutch Switzerland",
+        "url": "https://clutch.co/ch/agencies/digital-marketing",
+        "condition": "real verified clients and accurate categorisation only"
+      }
+    ],
+    "earned": [
+      "co-authored client and partner case studies",
+      "an anonymised Swiss SME Digital Growth Benchmark with reproducible methodology",
+      "data-led editorial pitches to relevant Swiss trade and digital publications",
+      "educational webinars with SME, regional innovation or university networks",
+      "disclosed partner-audit pages"
+    ],
+    "avoid": [
+      "bulk-link packages",
+      "fabricated certifications or reviews",
+      "city/industry doorway pages",
+      "unverified market-leader claims",
+      "client names or logos without permission"
+    ]
+  },
+  "recommended_semrush_follow_up": [
+    "Keyword overview for every seed term in the Swiss database where supported.",
+    "Related, broad-match and question reports for the four core clusters.",
+    "Domain overview and organic positions for itsfeierabend.ch.",
+    "Organic competitor and keyword-gap reports.",
+    "Paid competitor keyword and ad-copy reports for free-audit funnels.",
+    "Backlink and referring-domain reports for itsfeierabend.ch and selected competitors."
+  ],
+  "sources": [
+    {
+      "title": "BFS — Kleine und mittlere Unternehmen",
+      "url": "https://www.bfs.admin.ch/bfs/de/home/statistiken/industrie-dienstleistungen/unternehmen-beschaeftigte/wirtschaftsstruktur-unternehmen/kmu.html"
+    },
+    {
+      "title": "KMU-Portal — Die Chancen der künstlichen Intelligenz",
+      "url": "https://www.kmu.admin.ch/de/die-chancen-der-kuenstlichen-intelligenz"
+    },
+    {
+      "title": "KMU-Portal — Fünf Tipps, wie man KI wirksam im Unternehmen einsetzt",
+      "url": "https://www.kmu.admin.ch/de/fuenf-tipps-wie-man-ki-wirksam-im-unternehmen-einsetzt"
+    },
+    {
+      "title": "webscore.ch",
+      "url": "https://webscore.ch/"
+    },
+    {
+      "title": "zottermedia Website Check",
+      "url": "https://www.zottermedia.ch/website-check"
+    },
+    {
+      "title": "MIK Group SEO Analysis",
+      "url": "https://www.mikgroup.ch/seo-analyse/"
+    },
+    {
+      "title": "SEOX",
+      "url": "https://seox.ch/"
+    },
+    {
+      "title": "JvM GEO",
+      "url": "https://www.jvm.ch/de/leistungen-themen/leistungen/geo-generative-engine-optimization"
+    },
+    {
+      "title": "TH Analytica AI Visibility",
+      "url": "https://th-analytica.com/ai-visibility"
+    },
+    {
+      "title": "AIMACO",
+      "url": "https://aimaco.ai/"
+    },
+    {
+      "title": "Wieland Business Solutions",
+      "url": "https://www.business-solutions.gmbh/"
+    },
+    {
+      "title": "OBT Digitalisierungscheck",
+      "url": "https://www.obt.ch/de/starten-sie-durch-dank-der-digitalisierung"
+    },
+    {
+      "title": "Cloudweb Conversion Optimisation",
+      "url": "https://www.cloudweb.ch/conversion-optimierung/"
+    },
+    {
+      "title": "Rocket9 Business Automation",
+      "url": "https://rocket9.ch/services/business-automation/"
+    },
+    {
+      "title": "SimplyFound SEO Audit",
+      "url": "https://simplyfound.ch/seo-audit/"
+    },
+    {
+      "title": "Gryps — SEO costs",
+      "url": "https://www.gryps.ch/produkte/seo-agentur-39/seo-kosten/"
+    },
+    {
+      "title": "swissICT",
+      "url": "https://www.swissict.ch/"
+    },
+    {
+      "title": "swiss made software",
+      "url": "https://www.swissmadesoftware.org/en/home.html"
+    },
+    {
+      "title": "Schweizerischer KMU Verein",
+      "url": "https://skv.swiss/"
+    },
+    {
+      "title": "KMU Verband Schweiz",
+      "url": "https://kmuverband.ch/"
+    },
+    {
+      "title": "Clutch — Swiss digital marketing agencies",
+      "url": "https://clutch.co/ch/agencies/digital-marketing"
+    }
+  ]
+}

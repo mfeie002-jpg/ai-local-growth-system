@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BASE_URL, findRoutePair } from '@/lib/routePairs';
+import { siteConfig } from '@/config/site';
 
 interface SEOHeadProps {
   title: string;
@@ -12,8 +13,15 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, canonical, ogImage, noIndex = false }: SEOHeadProps) {
   const location = useLocation();
-  const fullCanonical = canonical || `${BASE_URL}${location.pathname}`;
-  const fullTitle = `${title} | itsFeierabend.ch`;
+  const fullCanonical = canonical
+    ? (canonical.startsWith('http') ? canonical : `${BASE_URL}${canonical.startsWith('/') ? '' : '/'}${canonical}`)
+    : `${BASE_URL}${location.pathname}`;
+  const fullTitle = title.toLowerCase().includes('itsfeierabend.ch')
+    ? title
+    : `${title} | itsFeierabend.ch`;
+  const fullOgImage = ogImage
+    ? (ogImage.startsWith('http') ? ogImage : `${BASE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`)
+    : `${BASE_URL}/og/itsfeierabend-audit.png`;
 
   useEffect(() => {
     document.title = fullTitle;
@@ -39,13 +47,13 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
     updateMeta('og:url', fullCanonical, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:site_name', 'itsFeierabend.ch', true);
-    if (ogImage) updateMeta('og:image', ogImage, true);
+    updateMeta('og:image', fullOgImage, true);
 
     // Twitter
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', description);
-    if (ogImage) updateMeta('twitter:image', ogImage);
+    updateMeta('twitter:image', fullOgImage);
 
     // Canonical
     let link = document.querySelector('link[rel="canonical"]');
@@ -71,11 +79,11 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
         l.setAttribute('data-seo-hreflang', '');
         document.head.appendChild(l);
       };
-      addAlternate('de', `${BASE_URL}${pair.de}`);
+      addAlternate('de-CH', `${BASE_URL}${pair.de}`);
       addAlternate('en', `${BASE_URL}${pair.en}`);
       addAlternate('x-default', `${BASE_URL}${pair.de}`);
     }
-  }, [fullTitle, description, fullCanonical, ogImage, noIndex, location.pathname]);
+  }, [fullTitle, description, fullCanonical, fullOgImage, noIndex, location.pathname]);
 
   return null;
 }
@@ -102,23 +110,29 @@ export function OrganizationSchema({
       description,
       logo: `${url}/favicon.png`,
       image: `${url}/favicon.png`,
-      email: 'info@itsfeierabend.ch',
+      email: siteConfig.email,
       areaServed: {
         '@type': 'Country',
         name: 'Switzerland',
       },
       serviceType: [
-        'Digital Marketing',
-        'SEO',
-        'Google Ads',
+        'AI Business Audit',
+        'Website Audit',
+        'SEO Analysis',
+        'AI Search Visibility Analysis',
+        'CRM and Funnel Optimization',
         'Marketing Automation',
-        'AI Implementation',
-        'Brand Management',
-        'Web Design',
-        'Social Media Marketing'
+        'Digital Growth Consulting'
       ],
-      priceRange: '$$',
       knowsLanguage: ['de', 'en'],
+      knowsAbout: [
+        'Digital business diagnostics',
+        'Search visibility',
+        'Conversion optimization',
+        'Lead attribution',
+        'CRM processes',
+        'Automation readiness',
+      ],
       sameAs: [],
     };
 

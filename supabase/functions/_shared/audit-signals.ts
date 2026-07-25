@@ -1,7 +1,7 @@
-// Deterministic signal definitions for the v0.1 audit engine.
-// Each signal has a max score contribution; the total is normalized to 100.
+// Deterministic signal definitions for the public preliminary audit.
+// AI may interpret these results but must not change the score.
 
-export const SCORE_VERSION = "v0.1";
+export const SCORE_VERSION = "v1.0";
 
 export type SignalCategory =
   | "technical"
@@ -20,6 +20,9 @@ export interface SignalResult {
   max_score: number;
   recommendation: string;
   passed: boolean;
+  state?: "measured" | "user_provided" | "inferred" | "estimated" | "unavailable";
+  source?: "html" | "http" | "network_probe" | "semrush" | "engine";
+  confidence?: "high" | "medium" | "low";
 }
 
 export interface SiteContext {
@@ -30,8 +33,8 @@ export interface SiteContext {
   headers: Record<string, string>;
   responseTimeMs: number;
   sizeBytes: number;
-  hasSitemap: boolean;
-  hasRobots: boolean;
+  hasSitemap: boolean | null;
+  hasRobots: boolean | null;
 }
 
 // Utility: extract text between tags (rough — no JSDOM in edge)
@@ -435,6 +438,21 @@ function sigOpenGraph(ctx: SiteContext): SignalResult {
   };
 }
 function sigSitemap(ctx: SiteContext): SignalResult {
+  if (ctx.hasSitemap === null) {
+    return {
+      id: "sitemap",
+      category: "automation",
+      name: "sitemap.xml",
+      value: null,
+      evidence: "sitemap.xml konnte nicht zuverlässig geprüft werden",
+      score: 0,
+      max_score: 0,
+      recommendation: "Sitemap in einer vertieften technischen Prüfung verifizieren.",
+      passed: false,
+      state: "unavailable",
+      confidence: "low",
+    };
+  }
   return {
     id: "sitemap",
     category: "automation",
@@ -448,6 +466,21 @@ function sigSitemap(ctx: SiteContext): SignalResult {
   };
 }
 function sigRobots(ctx: SiteContext): SignalResult {
+  if (ctx.hasRobots === null) {
+    return {
+      id: "robots",
+      category: "automation",
+      name: "robots.txt",
+      value: null,
+      evidence: "robots.txt konnte nicht zuverlässig geprüft werden",
+      score: 0,
+      max_score: 0,
+      recommendation: "robots.txt in einer vertieften technischen Prüfung verifizieren.",
+      passed: false,
+      state: "unavailable",
+      confidence: "low",
+    };
+  }
   return {
     id: "robots",
     category: "automation",
@@ -488,21 +521,160 @@ const SIGNAL_FNS: Array<(ctx: SiteContext) => SignalResult> = [
   sigJsonLd, sigOpenGraph, sigSitemap, sigRobots, sigFavicon,
 ];
 
-export function runSignals(ctx: SiteContext): SignalResult[] {
+const ENGLISH_NAMES: Record<string, string> = {
+  https: "HTTPS enabled",
+  http_status: "HTTP status",
+  response_time: "Response time",
+  compression: "Compression",
+  doctype: "HTML5 doctype",
+  mobile_viewport: "Mobile viewport",
+  title: "Title tag",
+  meta_description: "Meta description",
+  h1: "H1 structure",
+  canonical: "Canonical URL",
+  html_lang: "HTML language attribute",
+  content_length: "Homepage copy",
+  imprint: "Imprint / legal notice",
+  privacy: "Privacy notice",
+  contact_info: "Visible contact details",
+  social_profiles: "Linked social profiles",
+  primary_cta: "Primary call to action",
+  contact_form: "Contact form",
+  tel_link: "Clickable phone number",
+  mailto_link: "Clickable email address",
+  social_proof: "Social proof / reviews",
+  json_ld: "Structured data (JSON-LD)",
+  open_graph: "Open Graph tags",
+  sitemap: "sitemap.xml",
+  robots: "robots.txt",
+  favicon: "Favicon",
+};
+
+const ENGLISH_RECOMMENDATIONS: Record<string, string> = {
+  https: "Enable HTTPS with a valid TLS certificate.",
+  http_status: "Fix the homepage so it responds with a 2xx status.",
+  response_time: "Reduce TTFB with caching, a CDN and server optimization.",
+  compression: "Enable gzip or Brotli compression at the web server or CDN.",
+  doctype: "Put <!DOCTYPE html> at the start of the document.",
+  mobile_viewport: "Add a responsive viewport meta tag.",
+  title: "Use one descriptive title of roughly 20–65 characters.",
+  meta_description: "Add a useful meta description of roughly 70–160 characters.",
+  h1: "Use exactly one H1 that states the page's primary topic.",
+  canonical: "Add a canonical link in the document head.",
+  html_lang: "Set the correct lang attribute on the html element.",
+  content_length: "Add enough useful homepage copy to explain the offer and customer value.",
+  imprint: "Link a complete legal notice from the footer.",
+  privacy: "Link a current privacy notice from the footer.",
+  contact_info: "Make at least one direct contact option visible; ideally provide both email and phone.",
+  social_profiles: "Link only the relevant, maintained social profiles.",
+  primary_cta: "Add one clear primary call to action.",
+  contact_form: "Provide an accessible enquiry or contact form.",
+  tel_link: "Make the phone number clickable with a tel: link.",
+  mailto_link: "Make the email address clickable with a mailto: link.",
+  social_proof: "Add verifiable case studies, reviews or customer evidence.",
+  json_ld: "Add accurate JSON-LD for the organization and relevant services.",
+  open_graph: "Add at least og:title, og:description and og:image.",
+  sitemap: "Publish a sitemap.xml at the domain root.",
+  robots: "Publish a robots.txt that references the sitemap.",
+  favicon: "Add a favicon link in the document head.",
+};
+
+function englishEvidence(signal: SignalResult, ctx: SiteContext): string {
+  switch (signal.id) {
+    case "https": return `Final URL: ${ctx.finalUrl}`;
+    case "http_status": return `Status code: ${ctx.status}`;
+    case "response_time": return `${ctx.responseTimeMs} ms measured time to first byte`;
+    case "compression": return `content-encoding: ${signal.value === "keine" ? "not set" : signal.value}`;
+    case "doctype": return signal.passed ? "<!DOCTYPE html> found" : "No HTML5 doctype found";
+    case "mobile_viewport": return signal.passed ? "Viewport meta tag found" : "No viewport meta tag found";
+    case "title":
+    case "meta_description": return `${String(signal.value ?? "").length} characters`;
+    case "h1": return `${signal.value ?? 0} H1 element(s) found`;
+    case "canonical": return signal.passed ? "Canonical link found" : "No canonical link found";
+    case "html_lang": return signal.passed ? `lang="${signal.value}"` : "No lang attribute found";
+    case "content_length": return `${signal.value ?? 0} words of homepage copy`;
+    case "imprint": return signal.passed ? "Legal-notice link found" : "No legal-notice link found";
+    case "privacy": return signal.passed ? "Privacy link found" : "No privacy link found";
+    case "contact_info": return `Detected contact signals: ${signal.value}`;
+    case "social_profiles": return signal.value === "-" ? "No linked social profile found" : `Found: ${signal.value}`;
+    case "primary_cta": return signal.passed ? "A clear call to action was detected" : "No clear call to action was detected";
+    case "contact_form": return signal.passed ? "Form element found" : "No form element found on the homepage";
+    case "tel_link": return signal.passed ? "tel: link found" : "No tel: link found";
+    case "mailto_link": return signal.passed ? "mailto: link found" : "No mailto: link found";
+    case "social_proof": return signal.passed ? "Review or case-study language detected" : "No review or case-study language detected";
+    case "json_ld": return signal.passed ? "JSON-LD script found" : "No JSON-LD script found";
+    case "open_graph": return `${signal.value ?? 0} Open Graph tags found`;
+    case "sitemap": return signal.passed ? "Accessible at /sitemap.xml" : "No accessible sitemap.xml found";
+    case "robots": return signal.passed ? "Accessible at /robots.txt" : "No accessible robots.txt found";
+    case "favicon": return signal.passed ? "Favicon link found" : "No favicon link found";
+    default: return signal.evidence;
+  }
+}
+
+function localizeSignal(signal: SignalResult, ctx: SiteContext, language: "de" | "en"): SignalResult {
+  if (language !== "en") return signal;
+  if (signal.state === "unavailable") {
+    const subject = signal.id === "sitemap" ? "sitemap.xml" : "robots.txt";
+    return {
+      ...signal,
+      name: ENGLISH_NAMES[signal.id] ?? signal.name,
+      evidence: `${subject} could not be checked reliably`,
+      recommendation: `Verify ${subject} in a deeper technical review.`,
+    };
+  }
+  return {
+    ...signal,
+    name: ENGLISH_NAMES[signal.id] ?? signal.name,
+    evidence: englishEvidence(signal, ctx),
+    recommendation: signal.passed ? "OK" : (ENGLISH_RECOMMENDATIONS[signal.id] ?? signal.recommendation),
+  };
+}
+
+export function runSignals(ctx: SiteContext, language: "de" | "en" = "de"): SignalResult[] {
   return SIGNAL_FNS.map((fn) => {
     try {
-      return fn(ctx);
+      const result = localizeSignal(fn(ctx), ctx, language);
+      const source: SignalResult["source"] =
+        ["https", "http_status", "compression"].includes(result.id)
+          ? "http"
+          : ["response_time", "sitemap", "robots"].includes(result.id)
+            ? "network_probe"
+            : "html";
+      const confidence: SignalResult["confidence"] =
+        ["primary_cta", "social_proof", "contact_info", "content_length"].includes(result.id)
+          ? "medium"
+          : "high";
+      const heuristic = [
+        "primary_cta",
+        "contact_form",
+        "tel_link",
+        "mailto_link",
+        "social_proof",
+        "contact_info",
+        "content_length",
+      ].includes(result.id);
+      return {
+        ...result,
+        state: result.state ?? (heuristic ? "inferred" : "measured"),
+        source,
+        confidence: result.confidence ?? confidence,
+      };
     } catch (e) {
       return {
         id: fn.name,
         category: "technical" as const,
-        name: fn.name,
+        name: language === "en" ? "Signal unavailable" : fn.name,
         value: null,
         evidence: `error: ${(e as Error).message}`,
         score: 0,
         max_score: 0,
-        recommendation: "Signal konnte nicht ausgewertet werden.",
+        recommendation: language === "en"
+          ? "This signal could not be evaluated."
+          : "Signal konnte nicht ausgewertet werden.",
         passed: false,
+        state: "unavailable" as const,
+        source: "engine" as const,
+        confidence: "low" as const,
       };
     }
   });
@@ -510,9 +682,17 @@ export function runSignals(ctx: SiteContext): SignalResult[] {
 
 export function computeScore(signals: SignalResult[]) {
   const categories: SignalCategory[] = ["technical","content","trust","conversion","automation"];
+  const weights: Record<SignalCategory, number> = {
+    technical: 15,
+    content: 25,
+    trust: 20,
+    conversion: 25,
+    automation: 15,
+  };
   const category_scores: Record<string, { score: number; max: number; percent: number }> = {};
   let totalScore = 0;
   let totalMax = 0;
+  let weightedOverall = 0;
 
   for (const cat of categories) {
     const catSignals = signals.filter((s) => s.category === cat);
@@ -525,15 +705,20 @@ export function computeScore(signals: SignalResult[]) {
     };
     totalScore += catScore;
     totalMax += catMax;
+    weightedOverall += (category_scores[cat].percent * weights[cat]) / 100;
   }
 
-  const overall = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+  const overall = totalMax > 0 ? Math.round(weightedOverall) : 0;
 
-  // Top 3 actions: worst-passing signals with highest max_score impact
+  // Top actions: largest weighted gaps first.
   const failing = signals
     .filter((s) => !s.passed && s.max_score > 0)
-    .sort((a, b) => (b.max_score - b.score) - (a.max_score - a.score))
-    .slice(0, 3);
+    .sort((a, b) => {
+      const aImpact = ((a.max_score - a.score) / a.max_score) * weights[a.category];
+      const bImpact = ((b.max_score - b.score) / b.max_score) * weights[b.category];
+      return bImpact - aImpact;
+    })
+    .slice(0, 5);
 
   const top_actions = failing.map((s, i) => ({
     rank: i + 1,
@@ -541,7 +726,7 @@ export function computeScore(signals: SignalResult[]) {
     category: s.category,
     title: s.name,
     recommendation: s.recommendation,
-    impact: s.max_score - s.score,
+    impact: Math.round((((s.max_score - s.score) / s.max_score) * weights[s.category]) * 10) / 10,
   }));
 
   return {
@@ -550,6 +735,7 @@ export function computeScore(signals: SignalResult[]) {
     total_score: totalScore,
     total_max: totalMax,
     category_scores,
+    category_weights: weights,
     top_actions,
   };
 }

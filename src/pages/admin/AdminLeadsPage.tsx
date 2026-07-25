@@ -13,8 +13,6 @@ import {
   RefreshCw,
   Search,
   Download,
-  Copy,
-  Check
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,12 +31,16 @@ interface Lead {
   created_at: string;
   lead_type: string;
   name: string;
+  company_name: string | null;
   email: string;
   phone: string | null;
   industry: string;
   service_area: string;
+  region: string | null;
+  landing_page: string | null;
+  audit_type: string | null;
+  lead_score: number | null;
   status: string;
-  public_token: string | null;
   pre_score_total: number | null;
   pre_score_bucket: string | null;
   is_duplicate: boolean | null;
@@ -51,14 +53,12 @@ export default function AdminLeadsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-
   const fetchLeads = async () => {
     setIsLoading(true);
     try {
       let query = supabase
         .from('leads')
-        .select('id, created_at, lead_type, name, email, phone, industry, service_area, status, public_token, pre_score_total, pre_score_bucket, is_duplicate')
+        .select('id, created_at, lead_type, name, company_name, email, phone, industry, service_area, region, landing_page, audit_type, lead_score, status, pre_score_total, pre_score_bucket, is_duplicate')
         .order('created_at', { ascending: false });
 
       if (statusFilter !== 'all') {
@@ -100,18 +100,20 @@ export default function AdminLeadsPage() {
   }, [leads, searchQuery]);
 
   const exportCSV = () => {
-    const headers = ['Datum', 'Typ', 'Name', 'Email', 'Telefon', 'Branche', 'Ort', 'Status', 'Score', 'Bucket'];
+    const headers = ['Datum', 'Typ', 'Firma', 'Name', 'Email', 'Telefon', 'Branche', 'Region', 'Landingpage', 'Audit-Typ', 'Status', 'Score'];
     const rows = filteredLeads.map(lead => [
       format(new Date(lead.created_at), 'yyyy-MM-dd HH:mm'),
-      lead.lead_type === 'free_audit' ? 'Audit' : 'Call',
+      lead.lead_type,
+      lead.company_name || '',
       lead.name,
       lead.email,
       lead.phone || '',
       lead.industry,
-      lead.service_area,
+      lead.region || '',
+      lead.landing_page || '',
+      lead.audit_type || '',
       statusLabels[lead.status] || lead.status,
-      lead.pre_score_total?.toString() || '',
-      lead.pre_score_bucket || '',
+      (lead.lead_score ?? lead.pre_score_total)?.toString() || '',
     ]);
 
     const csvContent = [headers, ...rows]
@@ -127,14 +129,6 @@ export default function AdminLeadsPage() {
     URL.revokeObjectURL(url);
     
     toast.success(`${filteredLeads.length} Leads exportiert`);
-  };
-
-  const copyReportLink = async (token: string) => {
-    const url = `https://itsfeierabend.ch/gratis-audit/report/${token}`;
-    await navigator.clipboard.writeText(url);
-    setCopiedId(token);
-    setTimeout(() => setCopiedId(null), 2000);
-    toast.success('Link kopiert');
   };
 
   if (authLoading) {
@@ -188,6 +182,8 @@ export default function AdminLeadsPage() {
             <SelectItem value="all">Alle Typen</SelectItem>
             <SelectItem value="free_audit">Audit</SelectItem>
             <SelectItem value="free_call">Call</SelectItem>
+            <SelectItem value="contact">Kontakt</SelectItem>
+            <SelectItem value="partner">Partner</SelectItem>
           </SelectContent>
         </Select>
 
@@ -217,10 +213,10 @@ export default function AdminLeadsPage() {
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Datum</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Typ</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Firma / Name</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Kontakt</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Branche</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Ort</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Region</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Score</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground"></th>
@@ -241,10 +237,15 @@ export default function AdminLeadsPage() {
                           <FileText className="w-4 h-4 text-primary" />
                           <span>Audit</span>
                         </div>
-                      ) : (
+                      ) : lead.lead_type === 'free_call' ? (
                         <div className="flex items-center gap-1 text-sm">
                           <PhoneCall className="w-4 h-4 text-green-600" />
                           <span>Call</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 text-sm">
+                          <Mail className="w-4 h-4 text-primary" />
+                          <span>{lead.lead_type === 'partner' ? 'Partner' : 'Kontakt'}</span>
                         </div>
                       )}
                       {lead.is_duplicate && (
@@ -252,7 +253,8 @@ export default function AdminLeadsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 font-medium text-foreground">
-                      {lead.name}
+                      <span className="block">{lead.company_name || lead.name}</span>
+                      {lead.company_name && <span className="block text-xs font-normal text-muted-foreground">{lead.name}</span>}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -276,29 +278,13 @@ export default function AdminLeadsPage() {
                       {lead.industry}
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">
-                      {lead.service_area}
+                      {lead.region || '—'}
                     </td>
                     <td className="px-4 py-3">
-                      {lead.pre_score_bucket ? (
-                        <div className="flex items-center gap-2">
-                          <Badge className={cn('font-normal text-xs', bucketColors[lead.pre_score_bucket])}>
-                            {lead.pre_score_total}
-                          </Badge>
-                          {lead.public_token && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={() => copyReportLink(lead.public_token!)}
-                            >
-                              {copiedId === lead.public_token ? (
-                                <Check className="w-3 h-3 text-green-600" />
-                              ) : (
-                                <Copy className="w-3 h-3" />
-                              )}
-                            </Button>
-                          )}
-                        </div>
+                      {(lead.lead_score ?? lead.pre_score_total) != null ? (
+                        <Badge className={cn('font-normal text-xs', lead.pre_score_bucket ? bucketColors[lead.pre_score_bucket] : '')}>
+                          {lead.lead_score ?? lead.pre_score_total}
+                        </Badge>
                       ) : (
                         <span className="text-muted-foreground text-xs">-</span>
                       )}

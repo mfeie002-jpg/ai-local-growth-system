@@ -1,5 +1,4 @@
 import { useLocation, Link } from 'react-router-dom';
-import { useEffect } from 'react';
 import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
@@ -8,10 +7,6 @@ import { useLanguage } from '@/i18n/LanguageContext';
 const NotFound = () => {
   const location = useLocation();
   const { isEnglish } = useLanguage();
-
-  useEffect(() => {
-    console.error('404 Error: User attempted to access non-existent route:', location.pathname);
-  }, [location.pathname]);
 
   const homePath = isEnglish ? '/en' : '/';
 
@@ -60,7 +55,7 @@ const NotFound = () => {
               <p className="mt-6 max-w-xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
                 {isEnglish
                   ? 'The link you followed may be broken, or the page may have been moved. Let\u2019s get you back on track.'
-                  : 'Der Link ist möglicherweise defekt oder die Seite wurde verschoben. Lass uns dich wieder auf Kurs bringen.'}
+                  : 'Der Link ist möglicherweise defekt oder die Seite wurde verschoben. Wechseln Sie zurück zur Startseite oder starten Sie den Audit.'}
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
@@ -72,10 +67,10 @@ const NotFound = () => {
                   {isEnglish ? 'Back to Home' : 'Zur Startseite'}
                 </Link>
                 <Link
-                  to={isEnglish ? '/en/free-audit' : '/gratis-audit'}
+                  to={isEnglish ? '/en/audit' : '/audit'}
                   className="group inline-flex items-center gap-3 border border-foreground/40 px-6 py-4 font-editorial text-sm font-semibold tracking-[0.2em] uppercase hover:border-foreground transition-all"
                 >
-                  {isEnglish ? 'Get Free Audit' : 'Gratis Audit holen'}
+                  {isEnglish ? 'Start free audit' : 'Kostenlosen Audit starten'}
                   <ArrowUpRight className="w-4 h-4 transition-transform group-hover:rotate-45" />
                 </Link>
               </div>

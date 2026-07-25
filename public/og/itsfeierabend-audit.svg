@@ -1,0 +1,54 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#05070A"/>
+  <circle cx="1080" cy="80" r="360" fill="url(#glow)" opacity=".24"/>
+  <path d="M0 523H1200M0 418H1200M0 313H1200M0 208H1200M0 103H1200" stroke="#2A2F38"/>
+  <path d="M150 0V630M300 0V630M450 0V630M600 0V630M750 0V630M900 0V630M1050 0V630" stroke="#12151B"/>
+
+  <g transform="translate(72 62)">
+    <circle cx="30" cy="30" r="29" stroke="#F4F5F7" stroke-opacity=".25" stroke-width="2"/>
+    <circle cx="30" cy="30" r="26" fill="#F4F5F7"/>
+    <path d="M17 41V32M26 41V25M35 41V19M44 41V28" stroke="#05070A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 45H47" stroke="#05070A" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="44" cy="16" r="3" fill="#05070A"/>
+    <text x="78" y="39" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">itsFeierabend.ch</text>
+  </g>
+
+  <text x="72" y="196" fill="#E8F4FF" font-family="JetBrains Mono, monospace" font-size="17" letter-spacing="3">AI BUSINESS AUDIT · SCHWEIZ</text>
+  <text x="72" y="264" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="700">Digitale Geschäftslage</text>
+  <text x="72" y="326" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="700">verstehen.</text>
+  <text x="72" y="388" fill="#B8BEC7" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="400">Massnahmen priorisieren.</text>
+  <text x="72" y="445" fill="#B8BEC7" font-family="Inter, Arial, sans-serif" font-size="22">Sichtbarkeit · Conversion · Tracking · CRM · Automatisierung</text>
+
+  <g transform="translate(760 165)">
+    <rect width="365" height="356" rx="22" fill="#12151B" stroke="#2A2F38" stroke-width="2"/>
+    <text x="30" y="47" fill="#B8BEC7" font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">PRELIMINARY AUDIT</text>
+    <path d="M30 71H335" stroke="#2A2F38"/>
+    <g transform="translate(30 99)">
+      <rect width="305" height="50" rx="8" fill="#191D24"/>
+      <circle cx="25" cy="25" r="6" fill="#E8F4FF"/>
+      <text x="46" y="22" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600">Website &amp; Technik</text>
+      <text x="46" y="39" fill="#8E96A3" font-family="JetBrains Mono, monospace" font-size="10">MESSBAR</text>
+    </g>
+    <g transform="translate(30 161)">
+      <rect width="305" height="50" rx="8" fill="#191D24"/>
+      <circle cx="25" cy="25" r="6" fill="#B8BEC7"/>
+      <text x="46" y="22" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600">SEO &amp; AI Visibility</text>
+      <text x="46" y="39" fill="#8E96A3" font-family="JetBrains Mono, monospace" font-size="10">MESSUNG + KONTEXT</text>
+    </g>
+    <g transform="translate(30 223)">
+      <rect width="305" height="50" rx="8" fill="#191D24"/>
+      <circle cx="25" cy="25" r="6" fill="#8E96A3"/>
+      <text x="46" y="22" fill="#F4F5F7" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600">CRM &amp; Automatisierung</text>
+      <text x="46" y="39" fill="#8E96A3" font-family="JetBrains Mono, monospace" font-size="10">ANGABE + PRÜFUNG</text>
+    </g>
+    <rect x="30" y="299" width="188" height="34" rx="17" fill="#F4F5F7"/>
+    <text x="49" y="321" fill="#05070A" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700">PRIORISIERTER REPORT</text>
+  </g>
+
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E8F4FF"/>
+      <stop offset="1" stop-color="#E8F4FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,86 @@
+# Canonical host. This changes HTTP routing only; it does not alter DNS.
+https://www.itsfeierabend.ch/* https://itsfeierabend.ch/:splat 301!
+
+# Canonical public routes map to their build-generated, route-specific HTML.
+/en /en.html 200
+/ai-business-audit /ai-business-audit.html 200
+/en/ai-business-audit /en/ai-business-audit.html 200
+/website-audit /website-audit.html 200
+/en/website-audit /en/website-audit.html 200
+/seo-analyse /seo-analyse.html 200
+/en/seo-analysis /en/seo-analysis.html 200
+/ai-visibility /ai-visibility.html 200
+/en/ai-visibility /en/ai-visibility.html 200
+/automation /automation.html 200
+/en/automation /en/automation.html 200
+/leistungen /leistungen.html 200
+/en/services /en/services.html 200
+/fuer-kmu /fuer-kmu.html 200
+/en/for-smes /en/for-smes.html 200
+/partner /partner.html 200
+/en/partners /en/partners.html 200
+/fallstudien /fallstudien.html 200
+/en/case-studies /en/case-studies.html 200
+/insights /insights.html 200
+/en/insights /en/insights.html 200
+/ueber-uns /ueber-uns.html 200
+/en/about /en/about.html 200
+/kontakt /kontakt.html 200
+/en/contact /en/contact.html 200
+/audit /audit.html 200
+/en/audit /en/audit.html 200
+/impressum /impressum.html 200
+/en/imprint /en/imprint.html 200
+/datenschutz /datenschutz.html 200
+/en/privacy /en/privacy.html 200
+
+# Current private results and authenticated admin routes stay client-rendered.
+/audit/r/* /index.html 200
+/en/audit/r/* /index.html 200
+/admin/* /index.html 200
+/.lovable/oauth/consent /index.html 200
+
+# Legacy public routes get real HTTP redirects to the focused architecture.
+/analyse/progress/* /audit 301
+/en/analysis/progress/* /en/audit 301
+/analyse/* /audit 301
+/en/analysis/* /en/audit 301
+/gratis-audit /audit 301
+/en/free-audit /en/audit 301
+/gratis-call /kontakt 301
+/en/free-call /en/contact 301
+/pakete /leistungen 301
+/preise /leistungen 301
+/en/pricing /en/services 301
+/system /ueber-uns 301
+/en/system /en/about 301
+/faq /ai-business-audit 301
+/en/faq /en/ai-business-audit 301
+/ultimate-package /leistungen 301
+/en/ultimate-package /en/services 301
+/demo /audit 301
+/en/demo /en/audit 301
+/scan /audit 301
+/en/scan /en/audit 301
+/investoren / 301
+/en/investors /en 301
+/blog/* /insights 301
+/en/blog/* /en/insights 301
+/services/ki-implementierung /automation 301
+/en/services/ai-implementation /en/automation 301
+/services/seo /seo-analyse 301
+/en/services/seo /en/seo-analysis 301
+/services/sea /leistungen 301
+/en/services/sea /en/services 301
+/services/reputation /website-audit 301
+/en/services/reputation /en/website-audit 301
+/services/design-entwicklung /website-audit 301
+/en/services/design-development /en/website-audit 301
+/services/brand-deployment /leistungen 301
+/en/services/brand-deployment /en/services 301
+/services/social-media /leistungen 301
+/en/services/social-media /en/services 301
+
+# Unknown URLs use the generated noindex document with a real 404 status on
+# hosts that support the standard static _redirects contract.
+/* /404.html 404

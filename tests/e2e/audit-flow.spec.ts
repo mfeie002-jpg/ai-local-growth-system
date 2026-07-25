@@ -1,57 +1,181 @@
 import { test, expect } from "@playwright/test";
+import {
+  assertAccessibilityBaseline,
+  assertNoHorizontalOverflow,
+  captureRuntimeErrors,
+  installEssentialConsent,
+} from "./site-contract";
 
-// Smoke test for the complete free-audit flow.
-// - Loads the public /audit form
-// - Fills every required field
-// - Mocks the create-audit edge function so CI does not touch prod
-// - Confirms the form redirects to a private report URL that renders
+const corsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "authorization, x-client-info, apikey, content-type",
+};
 
-test("free audit flow: submit → redirect → report skeleton", async ({ page }) => {
-  const fakeToken = "00000000-0000-4000-8000-000000000001";
+const flows = [
+  {
+    language: "de",
+    path: "/audit?type=business&utm_source=qa&utm_medium=e2e&utm_campaign=launch",
+    resultPath: "/audit/r/",
+    continueLabel: "Weiter",
+    submitLabel: "Business Audit starten",
+    businessHeading: "Welcher Geschäftskontext zählt?",
+    contactHeading: "Wohin darf der private Report-Link?",
+    processingConsent: /Ich willige ein/,
+  },
+  {
+    language: "en",
+    path: "/en/audit?type=business&utm_source=qa&utm_medium=e2e&utm_campaign=launch",
+    resultPath: "/en/audit/r/",
+    continueLabel: "Continue",
+    submitLabel: "Start Business Audit",
+    businessHeading: "Which business context matters?",
+    contactHeading: "Where should the private report link go?",
+    processingConsent: /I agree that my information/,
+  },
+] as const;
 
-  // Intercept the create-audit invocation and return a successful response.
-  await page.route("**/functions/v1/create-audit", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        success: true,
-        token: fakeToken,
-        redirect_path: `/audit/r/${fakeToken}`,
-      }),
+for (const [index, flow] of flows.entries()) {
+  test(`${flow.language.toUpperCase()} audit: three steps → attributed submission → private report`, async ({
+    page,
+  }) => {
+    const fakeToken = `00000000-0000-4000-8000-00000000000${index + 1}`;
+    let submittedPayload: Record<string, unknown> | null = null;
+    const runtimeErrors = captureRuntimeErrors(page);
+    await installEssentialConsent(page);
+
+    await page.route("**/functions/v1/create-audit", async (route) => {
+      if (route.request().method() === "OPTIONS") {
+        await route.fulfill({ status: 204, headers: corsHeaders });
+        return;
+      }
+      submittedPayload = route.request().postDataJSON() as Record<string, unknown>;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: corsHeaders,
+        body: JSON.stringify({
+          success: true,
+          token: fakeToken,
+          redirect_path: `${flow.resultPath}${fakeToken}`,
+        }),
+      });
     });
-  });
 
-  // Intercept the report fetch so the result page has something to render.
-  await page.route("**/functions/v1/get-audit-report-v0**", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        status: "ready",
-        overall_score: 72,
-        category_scores: { technical: 80, content: 70, trust: 65, conversion: 60, automation: 90 },
-        top_actions: [],
-        signals: [],
-        website_url: "https://example.com",
-      }),
+    await page.route("**/functions/v1/get-audit-report-v0**", async (route) => {
+      if (route.request().method() === "OPTIONS") {
+        await route.fulfill({ status: 204, headers: corsHeaders });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: corsHeaders,
+        body: JSON.stringify({
+          token: fakeToken,
+          status: "ready",
+          overall_score: 72,
+          category_scores: {
+            technical: { score: 16, max: 20, percent: 80 },
+            content: { score: 14, max: 20, percent: 70 },
+            trust: { score: 13, max: 20, percent: 65 },
+            conversion: { score: 12, max: 20, percent: 60 },
+            automation: { score: 18, max: 20, percent: 90 },
+          },
+          top_actions: [
+            {
+              rank: 1,
+              signal_id: "primary_cta",
+              category: "conversion",
+              title: "Primären CTA schärfen",
+              recommendation: "Eine klare nächste Handlung verwenden.",
+              impact: 5,
+            },
+          ],
+          signals: [
+            {
+              id: "https",
+              category: "technical",
+              name: "HTTPS aktiv",
+              value: true,
+              evidence: "Final URL uses HTTPS",
+              score: 5,
+              max_score: 5,
+              recommendation: "OK",
+              passed: true,
+              state: "measured",
+              source: "http",
+              confidence: "high",
+            },
+          ],
+          website_url: "https://example.com/",
+          normalized_domain: "example.com",
+          language: flow.language,
+          score_version: "v1.0",
+          completed_at: "2026-07-25T10:00:00.000Z",
+          created_at: "2026-07-25T09:59:00.000Z",
+          fetch_meta: {},
+          error: null,
+        }),
+      });
     });
+
+    const response = await page.goto(flow.path, { waitUntil: "domcontentloaded" });
+    expect(response?.status()).toBeLessThan(400);
+
+    await expect(page.getByRole("heading", { level: 2 })).toContainText(
+      flow.language === "de"
+        ? "Welche Website soll geprüft werden?"
+        : "Which website should be assessed?",
+    );
+    await page.getByLabel(/Website-URL|Website URL/i).fill("example.com");
+    await page.getByLabel(/Firmenname|Company name/i).fill("Example AG");
+    await page.getByRole("button", { name: flow.continueLabel }).click();
+
+    await expect(page.getByRole("heading", { level: 2 })).toHaveText(flow.businessHeading);
+    await page.getByLabel(/Branche|Industry/i).fill("B2B Beratung");
+    await page.getByLabel(/Region \/ Markt|Region \/ market/i).fill("Deutschschweiz");
+    await page.getByLabel(/Wichtigstes Geschäftsziel|Primary business goal/i).selectOption(
+      "qualified_leads",
+    );
+    await page.getByLabel(/Wichtigste Lead-Quelle|Primary lead source/i).selectOption("organic");
+    await page.getByLabel(/Vorhandene Tools|Current tools/i).fill("GA4, HubSpot");
+    await page.getByRole("button", { name: flow.continueLabel }).click();
+
+    await expect(page.getByRole("heading", { level: 2 })).toHaveText(flow.contactHeading);
+    await page.getByLabel(/Vorname|First name/i).fill("Test");
+    await page.getByLabel(/Nachname|Last name/i).fill("Runner");
+    await page.getByLabel(/E-Mail-Adresse|Email address/i).fill("qa@example.com");
+    await page.getByRole("checkbox", { name: flow.processingConsent }).check();
+
+    await assertNoHorizontalOverflow(page);
+    await assertAccessibilityBaseline(page);
+    await page.getByRole("button", { name: flow.submitLabel }).click();
+
+    await page.waitForURL(new RegExp(`${flow.resultPath}${fakeToken}$`));
+    await expect(page.locator("main header")).toContainText("72/100");
+    await expect(page.getByText("80%", { exact: true })).toBeVisible();
+    await expect(page.getByText(/Primären CTA schärfen/)).toBeVisible();
+
+    expect(submittedPayload).toMatchObject({
+      website_url: "https://example.com/",
+      company_name: "Example AG",
+      industry: "B2B Beratung",
+      region: "Deutschschweiz",
+      primary_goal: "qualified_leads",
+      primary_lead_source: "organic",
+      systems: "GA4, HubSpot",
+      first_name: "Test",
+      last_name: "Runner",
+      email: "qa@example.com",
+      consent_processing: true,
+      consent_marketing: false,
+      consent_version: "2026-07-25",
+      audit_type: "business",
+      language: flow.language,
+      utm_source: "qa",
+      utm_medium: "e2e",
+      utm_campaign: "launch",
+    });
+    expect(runtimeErrors).toEqual([]);
   });
-
-  await page.goto("/audit");
-
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-
-  await page.getByLabel(/Website-URL|Website URL/i).fill("https://example.com");
-  await page.getByLabel(/Vorname|First name/i).fill("Test");
-  await page.getByLabel(/Nachname|Last name/i).fill("Runner");
-  await page.getByLabel(/E-Mail|Email/i).fill("qa@example.com");
-
-  // The processing consent checkbox is the first checkbox.
-  await page.getByRole("checkbox").first().check();
-
-  await page.getByRole("button", { name: /Audit starten|Start audit/i }).click();
-
-  await page.waitForURL(new RegExp(`/audit/r/${fakeToken}`));
-  await expect(page.locator("body")).toContainText(/72|Score|Report/i);
-});
+}

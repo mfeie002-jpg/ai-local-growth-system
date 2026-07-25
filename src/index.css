@@ -1,6 +1,6 @@
 /* Obsidian Instrument Design System — itsFeierabend.ch
  * Deep obsidian canvas · Graphite panels · Chrome hairlines · Icy signal
- * Space Grotesk (display) · Inter (body) · JetBrains Mono (machine voice)
+ * Privacy-safe system font stacks; no third-party font request.
  */
 
 @tailwind base;
@@ -107,7 +107,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 16px;
     line-height: 1.6;
     background-image:
@@ -119,7 +119,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground;
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-weight: 600;
     letter-spacing: -0.025em;
   }
@@ -156,7 +156,7 @@
   }
 
   .font-editorial {
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-style: normal;
     font-weight: 300;
     letter-spacing: -0.02em;
@@ -164,7 +164,7 @@
   }
 
   .font-mono {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
     font-feature-settings: "ss01", "zero";
   }
 

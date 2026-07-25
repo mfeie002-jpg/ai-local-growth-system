@@ -23,7 +23,19 @@ declare global {
   }
 }
 
-const SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+function resolveSiteKey(raw: unknown): string | undefined {
+  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  if (raw && typeof raw === "object") {
+    const candidate = raw as Record<string, unknown>;
+    for (const key of ["sitekey", "siteKey", "value", "key"]) {
+      const value = candidate[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+  }
+  return undefined;
+}
+
+const SITE_KEY = resolveSiteKey(import.meta.env.VITE_TURNSTILE_SITE_KEY);
 const SCRIPT_ID = "cf-turnstile-script";
 
 interface Props {
@@ -56,7 +68,7 @@ export function Turnstile({ onToken }: Props) {
     if (!SITE_KEY || !ready || !containerRef.current || !window.turnstile) return;
     if (widgetIdRef.current) return;
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
-      sitekey: String(SITE_KEY),
+      sitekey: SITE_KEY,
       theme: "auto",
       callback: (t) => onToken(t),
       "expired-callback": () => onToken(null),

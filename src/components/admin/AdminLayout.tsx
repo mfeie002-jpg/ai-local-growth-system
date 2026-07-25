@@ -39,7 +39,7 @@ const navItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Leads', url: '/admin/leads', icon: Users },
   { title: 'Calls', url: '/admin/calls', icon: Phone },
-  { title: 'Reports', url: '/admin/reports', icon: FileText },
+  { title: 'Audits', url: '/admin/reports', icon: FileText },
   { title: 'Voice Setup', url: '/admin/voice/setup', icon: Settings },
 ];
 

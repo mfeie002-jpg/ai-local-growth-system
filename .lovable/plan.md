@@ -1,82 +1,157 @@
-## Kontext
+# itsfeierabend.ch — Final Launch Plan
 
-**Projekt:** `itsfeierabend.ch` — eigenständige Schweizer B2B-Plattform für AI Business Audits, Website-/SEO-Analysen, AI-Visibility, Growth Intelligence. Nicht zu verwechseln mit feierabendservices.ch. Ads komplett out-of-scope (per vorheriger Anweisung).
+**Branch:** `feat/itsfeierabend-final-launch`
 
-**Stand (verifiziert Ende Sprint 2):** Obsidian-Instrument-Design live, Homepage 11-Sektionen, 5 SEO-Landings live (`/website-audit`, `/seo-analyse`, `/ai-visibility`, `/fuer-kmu`, `/partner`), Audit-Prototyp v0.1 funktional, Hybrid-Pricing (Launch CHF 1'990 fix / Growth ab 3'900 / Scale ab 6'900), Semrush-Enrichment, Rate-Limits, Turnstile, CI-Tests, MCP-Server. Baseline: `docs/baseline-audit.md`, `docs/keyword-map.md`.
+**Positioning:** Swiss platform for transparent digital business diagnostics
 
-**Realitäts-Check der Ausführungsumgebung** (weil das Briefing aus ChatGPT-Work stammt):
-- Kein Chrome-/Computer-Use-Plugin → Live-QA via Playwright im Sandbox (Screenshots, Console, Network, DOM).
-- Kein Google-Drive, kein GA4/GSC-Direktzugriff → Tracking-QA via dataLayer-Inspektion und Playwright-Network-Sniffing.
-- Kein GitHub-PR-Workflow → Commits landen direkt im aktuellen Branch; „Branch" ist hier ein Label, kein separater Push.
-- Semrush ✅, Supabase/Cloud ✅, Lovable-AI ✅, Analytics-Read ✅, `websearch`/`fetch_website` ✅.
-- Publish nur mit Ihrer expliziten Freigabe.
+**Primary outcome:** qualified Swiss B2B leads through a useful Quick Audit and evidence-based follow-up
 
----
+**Isolation:** separate from feierabendservices.ch and umzugscheck.ch
 
-## 5-Sprint-Plan (sequenziell, mit Checkpoint pro Sprint)
+## Non-negotiable evidence rules
 
-### Sprint 3 — Positionierung & Audit-Produkt-Härtung
-**Ziel:** Marke steht sichtbar als „AI Business Audit Plattform für Schweizer KMU" da. Audit funktioniert einwandfrei End-to-End.
+- Do not publish invented search volume, Keyword Difficulty, CPC, traffic, rankings, Authority Score or backlink figures.
+- Current Semrush metrics are unavailable because report discovery stopped on insufficient API units. Use the dated market-evidence files.
+- Do not publish fixed itsfeierabend prices until they are explicitly approved.
+- Do not claim guaranteed Google, ChatGPT or AI-answer visibility.
+- Do not publish fictional customers, logos, testimonials, certifications, partnerships or performance results.
+- Keep measured signals, user inputs, estimates, external enrichment and expert review visibly separate.
+- Treat connected businesses only as disclosed project context with verified claims and permission.
 
-- **Homepage-Hero neu:** H1 auf Plattform-Framing („AI Business Audit für Schweizer KMU — in 60 Sekunden sehen Sie, wo Ihr digitales Potenzial liegt"). CTA-Hierarchie: Primär `Kostenlosen Business Audit starten` → `/audit`, Sekundär `So funktioniert's` → `#ablauf`.
-- **Navigation umbauen:** Header-Dropdown „Lösungen" (Website-Audit, SEO-Analyse, AI-Visibility, Für KMU, Partner), Footer-Sync, `/ultimate-package` als sichtbarer Menüpunkt.
-- **Legacy-Routen aufräumen:** `/system`, `/demo`, `/scan` → Redirect auf `/audit` oder aus Nav entfernen (Files bleiben).
-- **Audit-Flow Progressive Disclosure:** URL-First (1 Feld) → Ergebnis-Preview → Kontaktdaten optional für vollen Report. Kein Multi-Step-Wall.
-- **Audit-Report v0.1 polieren:** Quellen-Badges (Lighthouse / Semrush / HTML-Parser) sichtbar pro Signal, „Was bedeutet dieser Score?"-Erklärbox, Preliminary-Fallback wenn Fetch fehlschlägt, PDF-Export testen.
-- **Semrush-Baseline** über eigene Domain + 2 Wettbewerber dokumentiert.
+## Launch blockers known on 2026-07-25
 
-**Deliverable:** `docs/sprint-3-report.md` mit Vorher/Nachher-Screenshots, Semrush-Snapshots, verifizierter Audit-Flow.
+| Blocker | Evidence | Exit condition |
+|---|---|---|
+| Legal provider facts incomplete | No approved legal entity, legal form, UID, postal address or responsible person in repository | Verified facts supplied and imprint reviewed |
+| Privacy inventory incomplete | Active production processors, regions, transfers, agreements and retention schedule not verified end to end | Production data-flow register completed and policy reviewed |
+| Audit anti-abuse error on live site | Turnstile console error for invalid/missing `sitekey` type | Preview and production synthetic submission pass |
+| Live route metadata depended on JS | Raw sampled HTML shared homepage title/description/canonical | Built and deployed route HTML verified without JS |
+| Soft-404 | Unknown live route returned HTTP 200 | Hosting returns real 404 with noindex page |
+| Canonical host split | `www` and non-`www` both returned 200 | Approved permanent redirect to non-`www` |
+| Language not URL-deterministic | English state persisted on German paths; `html lang` remained `de` on EN | Direct DE/EN URL matrix passes in fresh contexts |
+| Exact mobile QA missing | Connected browser fixed at 1363 × 936 | 320/375/390/430/768/1024/1440 preview matrix passes |
+| Tracking acceptance missing | Fresh live session showed no GA4/GTM data layer or consent UI | Event, consent, UTM and PII QA passes |
+| Semrush numeric evidence unavailable | Dated evidence files record insufficient API units | Valid reports exported or all numeric cells remain unavailable |
 
-### Sprint 4 — Tracking, CRM, Trust, Recht, Content-Qualität
-- **GA4-Events** (via bestehendes `analytics.ts` + `useUTMTracking`) verifizieren: `audit_start`, `audit_submit`, `lead_form_success`, `consultation_cta_click`, `pricing_cta_click`, `contact_click` — mit Parametern `page_type`, `audit_type`, `cta_location`, `utm_*`. Playwright-Netzwerk-Sniff mit/ohne Consent.
-- **Duplicate-Event-Check** über dataLayer-Inspektion.
-- **UTM-Persistenz** über Anchor-Navigation und Formular-Submit bestätigt.
-- **Lead-Datenmodell:** `leads`-Tabelle Felder-Audit (Quelle, UTM, fs_intent, Audit-Typ, Consent, Timestamp) — fehlende Spalten via Migration ergänzen, RLS-Linter grün.
-- **E-Mail-Benachrichtigung** (`send-report-email`) End-to-End getestet, kein Silent-Fail.
-- **Impressum + Datenschutz** vollständig: Verantwortlicher, Auftragsverarbeiter (Supabase/Lovable AI/Semrush/Turnstile), Cookies, Betroffenenrechte, CH-DSG.
-- **JSON-LD-Sweep:** Organization, WebSite, Service (5 Landings), FAQPage (Home+FAQ+Landings) — alle Rich-Results-valide.
-- **Content-QA:** grep nach „Feierabend Services", „Räumung", „Zug", „Lovable App", TODO/FIXME/Lorem, kaputte interne Links.
-- **Sitemap+robots-Diff:** alle öffentlichen Routen drin, alle privaten raus.
+## Product architecture
 
-**Deliverable:** `docs/sprint-4-tracking-qa.md` mit Event-Matrix, Consent-Screenshots, RLS-Linter-Report.
+### Canonical conversion path
 
-### Sprint 5 — Mobile-QA, Performance, Accessibility, Publish-Vorbereitung
-- **Playwright-Screenshots** aller Public-Routen bei **320 / 375 / 390 / 430 / 768 / 1024 / 1440 px** DE+EN.
-- **Overflow-Check** (kein horizontaler Scroll, kein cut-off).
-- **Core Web Vitals:** Lighthouse via Playwright auf Home + Audit + einer Landing. Targets: LCP <2.5s, CLS <0.1, INP <200ms. Fixes wo nötig (AVIF/WebP, Preload, Font-Subsetting, Third-Party-Weight).
-- **Accessibility:** axe via Playwright, Focus-States, Kontraste, aria-Labels an Icon-Buttons, Reduced-Motion respektiert.
-- **Broken-Link-Sweep** (interne Links, CTAs, Anchors, Sitelink-Targets `#ablauf`, `#preise`, `#wertanrechnung`).
-- **Security-Scan** + Supabase-Linter → kritische Findings adressieren.
-- **DNS-Verifikation** (nur read-only): itsfeierabend.ch / www / SSL / Redirect-Verhalten dokumentieren, keine DNS-Änderung.
-- **Preview grün** → **Freigabe für Publish von Ihnen einholen** → dann `preview_ui--publish`.
+Traffic or outreach
+→ intent-matched page
+→ free Quick Audit
+→ preliminary result with evidence labels
+→ qualified lead
+→ deeper audit or consultation
+→ scoped implementation project
+→ optional ongoing optimisation
 
-**Deliverable:** Finaler Abschlussbericht `docs/final-launch-report.md` nach dem 29-Punkte-Schema aus Ihrem Briefing, inkl. 30/60/90-Tage-Prioritäten.
+### Page ownership
 
----
+- `/` — positioning, method, fit and primary audit CTA
+- `/ai-business-audit` — cross-functional lead magnet and audit explanation
+- `/website-audit` — website, technical, mobile, trust and conversion diagnostic
+- `/seo-analyse` — indexation, search intent, architecture, local visibility and content gaps
+- `/ai-visibility` — entity clarity, semantics, source/citation readiness and technical accessibility
+- `/automation` — lead capture, routing, CRM, follow-up, attribution and reporting
+- `/leistungen` — offer ladder without unapproved prices
+- `/fuer-kmu` — audience qualification
+- `/partner` — partner enquiry without claiming an unapproved programme or commission
+- `/fallstudien` — verified relationship and work only
+- `/insights` — educational support content
+- `/ueber-uns` — method, accountability and entity facts
+- `/kontakt` — scoped analysis/contact enquiry
+- `/audit` — private multi-step Quick Audit
+- `/impressum`, `/datenschutz` — non-indexed legal information; currently blocked on missing facts
 
-## Guardrails (nicht verhandelbar)
+Do not add `/business-health-check` as a thin duplicate at launch.
 
-- **Keine erfundenen** Reviews, Kennzahlen, Zertifikate, Logos, Kundenlisten, Erfolgsquoten. Proof nur mit Quelle oder hinter `site.ts`-Flag.
-- **Keine Preise erfinden** — Hybrid-Pricing bleibt, weitere Zahlen nur nach Ihrer Freigabe.
-- **Ads komplett out-of-scope.**
-- **Kein DNS-Change** ohne Freigabe.
-- **Kein Publish** ohne Freigabe.
-- **Design-System bleibt Obsidian Instrument** — kein Rebrand nach Navy/Gold.
-- **Keine Feierabend-Services-Inhalte** übernehmen; Umzugscheck/Feierabend Services als Fallstudie nur wenn Aussagen belegbar und Verbindung transparent gekennzeichnet.
-- **Keine Löschungen** in Supabase, keine RLS-Weichspülung.
+## Workstream 1 — Positioning and content integrity
 
----
+- Replace generic agency language with concrete digital-diagnostic language.
+- Use Swiss B2B wording and one clear primary CTA.
+- Remove unapproved prices and package-value claims.
+- Label sample dashboards and scores as examples.
+- Remove or qualify claims such as “live”, “deterministic”, “real-time” or fixed signal counts unless the production implementation proves them.
+- Ensure case studies disclose the relationship and contain no unverifiable results.
 
-## Checkpoint-Regel
+## Workstream 2 — Audit product and lead flow
 
-Nach jedem Sprint pausiere ich und zeige Ergebnisse. Nächster Sprint erst nach Ihrem OK. Publish nur nach explizitem „Publish"-Kommando am Ende Sprint 5.
+- Use progressive disclosure: website → business context → contact/consent.
+- Show preliminary value before asking for excessive details.
+- Validate URL, company context and contact data server-side.
+- Store source, landing page, referrer, UTM values, audit type, region, business goal, consent, lead status and timestamps in the dedicated itsfeierabend data model.
+- Keep reports private through server-validated identifiers.
+- Distinguish automatic observations, self-reported facts, estimates and expert review.
+- Return explicit partial/fallback states when a site or external provider cannot be measured.
+- Verify database write, deduplication, notification and result delivery using synthetic test data.
 
----
+## Workstream 3 — SEO and AI-search foundations
 
-## Vor Start — 3 kurze Bestätigungen
+- Generate route-specific built HTML with the correct title, description, canonical, language and visible fallback content.
+- Keep one intent owner per page according to `docs/keyword-map.md`.
+- Regenerate sitemap and robots from canonical routes only.
+- Return a real HTTP 404 for unknown paths.
+- Use only accurate `Organization`, `WebSite`, `Service`, breadcrumb and visible-FAQ structured data.
+- Publish clear entity, method and expert/accountability facts after they are verified.
+- Explain AI visibility without guarantees.
+- Re-run Semrush only when report units are available; preserve dated evidence.
 
-1. **Sprint-Reihenfolge OK** (3 → 4 → 5), oder anderes Bündel zuerst?
-2. **Audit-Report-Tonalität:** sachlich-analytisch (Beratungs-Tonalität) oder motivierend-aktivierend (Wachstums-Tonalität)? Prägt `ai-interpret`-Prompts.
-3. **Fallstudien:** Umzugscheck / Feierabend Services als „verbundenes Projekt" auf Case-Studies-Seite ausweisen — mit welchem konkret belegbaren Scope (Leistung, Zeitraum)? Ohne Belege lasse ich sie feature-flagged off.
+## Workstream 4 — Tracking, consent and security
 
-Nach kurzer Antwort auf diese 3 Punkte starte ich mit Sprint 3.
+- Gate analytics and marketing code behind the correct consent state.
+- Implement the approved audit, lead, consultation, partner, case-study, scroll and outbound events without PII.
+- Persist UTM and source attribution once per session/lead without duplicate conversion events.
+- Prevent direct result/thank-you URLs from generating conversions.
+- Verify RLS, grants, rate limits, Turnstile, secret separation and error redaction.
+- Keep service-role and provider secrets server-side.
+- Complete the production processor, region, transfer and retention inventory before legal review.
+
+## Workstream 5 — QA and release
+
+Run and record:
+
+```sh
+npm run typecheck
+npm run lint
+npm run build
+npm run test:e2e
+```
+
+Preview acceptance:
+
+- direct-load every canonical DE/EN URL in a fresh browser context;
+- inspect built HTML without JavaScript;
+- test 320, 375, 390, 430, 768, 1024 and 1440 px;
+- detect horizontal overflow and targets below 44 px;
+- test keyboard, labels, errors, focus and reduced motion;
+- submit synthetic audit, contact and partner leads;
+- verify database records, attribution, consent and notifications;
+- inspect console and failed network requests;
+- run Lighthouse/field-independent performance checks without inventing unavailable numbers;
+- validate structured data, sitemap, robots, canonicals and 404 responses.
+
+## Approval boundaries
+
+Allowed within the launch branch:
+
+- repository inspection and reversible code/content changes;
+- tests, builds and preview deployment;
+- synthetic test records under the agreed cleanup rules;
+- pull-request preparation and evidence documentation.
+
+Require explicit approval:
+
+- DNS or domain changes;
+- protected-branch merge;
+- production deployment without a tested rollback;
+- destructive production migrations;
+- fixed price publication;
+- paid subscriptions;
+- advertising campaigns, budgets, bids or ads;
+- email/newsletter/voice messages to real contacts;
+- claims that legal copy is final legal advice.
+
+## Completion definition
+
+The site is launch-ready only when every blocker above has an evidence-backed exit, the production build and relevant E2E tests pass, the preview URL is documented, legal/provider facts are supplied, and no placeholder, fake claim, unapproved price or cross-project data remains.

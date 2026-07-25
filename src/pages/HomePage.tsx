@@ -1,522 +1,252 @@
-import { useLanguage } from '@/i18n/LanguageContext';
-import { Layout } from '@/components/Layout';
-import { SEOHead, OrganizationSchema, WebsiteSchema } from '@/components/SEOHead';
-import { CTAButton } from '@/components/CTAButton';
+import { ArrowRight, ArrowUpRight, Check, Info, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-import { ArrowUpRight, ArrowRight, Check, Plus } from 'lucide-react';
+import { Layout } from '@/components/Layout';
+import { CTAButton } from '@/components/CTAButton';
 import {
-  EditorialHero,
-  SectionMarker,
-  SignalStream,
-  ScoreCard,
-  AIAnnotation,
-  RevealText,
-} from '@/components/neural';
+  FAQSchema,
+  OrganizationSchema,
+  SEOHead,
+  WebsiteSchema,
+} from '@/components/SEOHead';
+import { useLanguage } from '@/i18n/LanguageContext';
 
-/**
- * HomePage — Audit-first Lead Generation.
- * 11 sections: hero → trust → problem → audit-engine → ultimate →
- * services → process → cases → pricing → faq → final CTA.
- * Sie-Ansprache DE, no fabricated metrics.
- */
+const auditAreas = {
+  de: [
+    ['Website & Technik', 'öffentlich messbar'],
+    ['SEO & lokale Sichtbarkeit', 'teilweise messbar'],
+    ['AI Search Visibility', 'beobachtbar'],
+    ['Conversion & Vertrauen', 'messbar + Kontext'],
+    ['Tracking, CRM & Automation', 'Kontext + Prüfung'],
+  ],
+  en: [
+    ['Website & technical health', 'publicly measurable'],
+    ['SEO & local visibility', 'partly measurable'],
+    ['AI Search Visibility', 'observable'],
+    ['Conversion & trust', 'measurement + context'],
+    ['Tracking, CRM & automation', 'context + review'],
+  ],
+};
+
+const businessQuestions = {
+  de: [
+    'Warum entstehen aus bestehendem Traffic zu wenige qualifizierte Anfragen?',
+    'Welche SEO- oder AI-Visibility-Lücke hat tatsächlich Geschäftswert?',
+    'Wo gehen Leads zwischen Formular, CRM und Follow-up verloren?',
+    'Welcher Hebel sollte zuerst umgesetzt werden – und welcher kann warten?',
+  ],
+  en: [
+    'Why does existing traffic produce too few qualified enquiries?',
+    'Which SEO or AI visibility gap has real commercial value?',
+    'Where are leads lost between form, CRM and follow-up?',
+    'Which action should be implemented first—and which can wait?',
+  ],
+};
+
+const method = {
+  de: [
+    ['Erfassen', 'Öffentliche Signale und freiwillige Geschäftsdaten bleiben getrennt.'],
+    ['Normalisieren', 'Jeder Befund erhält Quelle, Konfidenz und einen definierten Wertebereich.'],
+    ['Bewerten', 'Deterministische Regeln berechnen Kategorien und Gesamtscore.'],
+    ['Priorisieren', 'Der Quick Audit priorisiert regelbasiert nach gewichteten Lücken. KI- und Experteneinordnung folgt nur im vertieften Audit.'],
+  ],
+  en: [
+    ['Collect', 'Public signals and voluntary business inputs remain separate.'],
+    ['Normalize', 'Every finding receives a source, confidence and defined range.'],
+    ['Score', 'Deterministic rules calculate category and overall scores.'],
+    ['Prioritize', 'The Quick Audit ranks weighted gaps by deterministic rules. AI and expert interpretation are reserved for a deeper audit.'],
+  ],
+};
+
+const offerLadder = {
+  de: [
+    ['01', 'Kostenloser Quick Audit', 'Vorläufiger Befund, Reifegrad und drei bis fünf priorisierte Massnahmen.'],
+    ['02', 'Vertiefter Audit', 'Website, SEO, AI Visibility oder digitale Geschäftslage mit freigegebenen Datenzugängen.'],
+    ['03', 'Growth Sprint', 'Klar abgegrenzte Umsetzung der wichtigsten Hebel mit Abnahmekriterien.'],
+    ['04', 'Laufende Optimierung', 'SEO, AI Visibility, Conversion, Analytics und Reporting nach vereinbartem Umfang.'],
+    ['05', 'Partner-Modell', 'Referral und Co-Delivery; White Label erst nach erfolgreichem Pilot.'],
+  ],
+  en: [
+    ['01', 'Free Quick Audit', 'Preliminary findings, maturity level and three to five prioritized actions.'],
+    ['02', 'Deep Audit', 'Website, SEO, AI visibility or digital business analysis with approved data access.'],
+    ['03', 'Growth Sprint', 'Tightly scoped implementation of the most important actions with acceptance criteria.'],
+    ['04', 'Ongoing optimization', 'SEO, AI visibility, conversion, analytics and reporting within an agreed scope.'],
+    ['05', 'Partner model', 'Referral and co-delivery; white label only after a successful pilot.'],
+  ],
+};
+
+const faqs = {
+  de: [
+    {
+      question: 'Was ist itsFeierabend.ch?',
+      answer: 'itsFeierabend.ch ist eine eigenständige Schweizer Plattform für AI Business Audits und digitale Wachstumsdiagnose. Sie analysiert Sichtbarkeit, Website, Conversion, Tracking, CRM und Automatisierung – nicht Räumung, Reinigung oder Umzug.',
+    },
+    {
+      question: 'Ist der kostenlose Audit eine Fake-AI-Demo?',
+      answer: 'Nein. Öffentlich messbare Signale werden regelbasiert bewertet. Selbstangaben, Schätzungen und manuell zu prüfende Punkte werden sichtbar getrennt. Wenn ein Scan technisch nicht möglich ist, wird der Report als vorläufig und teilweise gekennzeichnet.',
+    },
+    {
+      question: 'Wer ist die primäre Zielgruppe?',
+      answer: 'Etablierte, inhabergeführte Schweizer Dienstleistungs- und B2B-KMU mit wertvollen Leads, aber schwacher Messung, lokaler Sichtbarkeit oder Nachbearbeitung. Agenturen und IT-Dienstleister sind ein sekundärer Partnerkanal.',
+    },
+    {
+      question: 'Gibt es feste Preise?',
+      answer: 'Für den kostenlosen Quick Audit nicht. Vertiefte Audits, Sprints und Betreuung werden nach bestätigtem Umfang offeriert. Ohne Freigabe werden keine konkreten Preise veröffentlicht.',
+    },
+    {
+      question: 'Garantiert AI Visibility eine Nennung in ChatGPT?',
+      answer: 'Nein. Keine Agentur kann Nennungen oder Rankings in ChatGPT, Google AI Overviews oder anderen Antwortsystemen garantieren. Optimiert werden nachvollziehbare Grundlagen wie Entity-Klarheit, Zugänglichkeit, Fakten, Quellen und semantische Abdeckung.',
+    },
+  ],
+  en: [
+    {
+      question: 'What is itsFeierabend.ch?',
+      answer: 'itsFeierabend.ch is an independent Swiss platform for AI business audits and digital growth diagnostics. It analyses visibility, websites, conversion, tracking, CRM and automation—not clearance, cleaning or moving services.',
+    },
+    {
+      question: 'Is the free audit a fake AI demo?',
+      answer: 'No. Publicly measurable signals are scored by rules. User inputs, estimates and items requiring expert review are clearly separated. If a technical scan is not possible, the report is labelled preliminary and partial.',
+    },
+    {
+      question: 'Who is the primary audience?',
+      answer: 'Established, owner-led Swiss service and B2B SMEs with valuable leads but weak measurement, local visibility or follow-up. Agencies and IT providers are a secondary partner channel.',
+    },
+    {
+      question: 'Are there fixed prices?',
+      answer: 'The Quick Audit is free. Deep audits, sprints and ongoing support are proposed after scope is confirmed. No specific prices are published without approval.',
+    },
+    {
+      question: 'Does AI visibility guarantee a mention in ChatGPT?',
+      answer: 'No. No agency can guarantee mentions or rankings in ChatGPT, Google AI Overviews or other answer systems. We optimize explainable foundations such as entity clarity, accessibility, facts, sources and semantic coverage.',
+    },
+  ],
+};
+
 export default function HomePage() {
-  const { t, isEnglish } = useLanguage();
+  const { isEnglish } = useLanguage();
+  const lang = isEnglish ? 'en' : 'de';
   const auditPath = isEnglish ? '/en/audit' : '/audit';
-  const callPath = isEnglish ? '/en/free-call' : '/gratis-call';
-  const ultimatePath = isEnglish ? '/en/ultimate-package' : '/ultimate-package';
+  const auditLandingPath = isEnglish ? '/en/ai-business-audit' : '/ai-business-audit';
+  const servicesPath = isEnglish ? '/en/services' : '/leistungen';
   const casesPath = isEnglish ? '/en/case-studies' : '/fallstudien';
-  const pricingPath = isEnglish ? '/en/pricing' : '/pakete';
-
-  // ---- 03 Diagnose fields ----
-  const diagnostics = isEnglish
-    ? [
-        { num: '01', k: 'Technical', v: 'Speed, Core Web Vitals, indexability, mobile fitness — the invisible ceiling.' },
-        { num: '02', k: 'Content',   v: 'Positioning, clarity, keyword-to-page fit, information architecture.' },
-        { num: '03', k: 'Trust',     v: 'Reviews, imprint, real people, verifiable proof — Swiss standards.' },
-        { num: '04', k: 'Conversion', v: 'Forms, CTAs, friction, response times — the leaks between visit and lead.' },
-        { num: '05', k: 'Automation', v: 'Lead routing, follow-up, AI-readiness — leverage you don\'t have yet.' },
-      ]
-    : [
-        { num: '01', k: 'Technik',      v: 'Speed, Core Web Vitals, Indexierbarkeit, Mobile-Fitness — die unsichtbare Decke.' },
-        { num: '02', k: 'Content',      v: 'Positionierung, Klarheit, Keyword-zu-Seite-Passung, Informationsarchitektur.' },
-        { num: '03', k: 'Vertrauen',    v: 'Bewertungen, Impressum, echte Menschen, prüfbarer Proof — Schweizer Standard.' },
-        { num: '04', k: 'Conversion',   v: 'Formulare, CTAs, Reibung, Reaktionszeiten — die Lecks zwischen Besuch und Lead.' },
-        { num: '05', k: 'Automation',   v: 'Lead-Routing, Follow-up, KI-Reife — Hebel, den Sie noch nicht nutzen.' },
-      ];
-
-  // ---- 04 Audit engine stages ----
-  const stages = isEnglish
-    ? ['Collect', 'Normalize', 'Score', 'Interpret']
-    : ['Erfassen', 'Normalisieren', 'Bewerten', 'Interpretieren'];
-
-  // ---- 05 Ultimate bullets ----
-  const ultimateBullets = isEnglish
-    ? [
-        'The full AI scan of your digital presence',
-        'A prioritized roadmap — impact over effort, not opinions',
-        'Implementation: our team ships every fix, on your accounts',
-    ]
-    : [
-        'Der vollständige KI-Scan Ihrer digitalen Präsenz',
-        'Priorisierte Roadmap — Wirkung vor Aufwand, nicht Meinungen',
-        'Umsetzung: unser Team baut jeden Fix — auf Ihren Accounts',
-    ];
-
-  // ---- 06 Services ----
-  const services = isEnglish
-    ? [
-        { num: '01', name: 'AI Implementation', desc: 'Voice agents, scanners, autonomous funnels.', path: '/en/services/ai-implementation', anchor: true },
-        { num: '02', name: 'SEO',                desc: 'Local rankings, evergreen organic traffic.',  path: '/en/services/seo' },
-        { num: '03', name: 'SEA / PPC',          desc: 'Performance ads with measurable ROAS.',       path: '/en/services/sea' },
-        { num: '04', name: 'Reputation',         desc: 'Reviews, response systems, trust capital.',   path: '/en/services/reputation' },
-        { num: '05', name: 'Design & Dev',       desc: 'Sites that convert by construction.',         path: '/en/services/design-development' },
-        { num: '06', name: 'Brand Deployment',   desc: 'Identity systems shipped at speed.',          path: '/en/services/brand-deployment' },
-        { num: '07', name: 'Social Media',       desc: 'Channels with editorial discipline.',         path: '/en/services/social-media' },
-      ]
-    : [
-        { num: '01', name: 'KI-Implementierung', desc: 'Voice-Agents, Scanner, autonome Funnels.',       path: '/services/ki-implementierung', anchor: true },
-        { num: '02', name: 'SEO',                desc: 'Lokale Rankings, nachhaltiger Traffic.',          path: '/services/seo' },
-        { num: '03', name: 'SEA / PPC',          desc: 'Performance-Ads mit messbarem ROAS.',             path: '/services/sea' },
-        { num: '04', name: 'Reputation',         desc: 'Bewertungen, Antwortsysteme, Vertrauen.',         path: '/services/reputation' },
-        { num: '05', name: 'Design & Entwicklung', desc: 'Websites, die per Konstruktion konvertieren.',  path: '/services/design-entwicklung' },
-        { num: '06', name: 'Brand Deployment',   desc: 'Identitätssysteme, schnell ausgerollt.',           path: '/services/brand-deployment' },
-        { num: '07', name: 'Social Media',       desc: 'Kanäle mit redaktioneller Disziplin.',             path: '/services/social-media' },
-      ];
-
-  // ---- 07 Process steps ----
-  const process = isEnglish
-    ? [
-        { num: '01', k: 'Analyse',    v: 'The audit runs and produces a real number with real evidence.' },
-        { num: '02', k: 'Prioritize', v: 'We rank fixes by impact-per-effort — one page, no theatrics.' },
-        { num: '03', k: 'Implement',  v: 'Our team ships on your domain, your ad accounts, your CRM.' },
-        { num: '04', k: 'Optimize',   v: 'We re-measure monthly. The score is the receipt.' },
-      ]
-    : [
-        { num: '01', k: 'Analysieren', v: 'Das Audit läuft und liefert eine echte Zahl mit echter Evidenz.' },
-        { num: '02', k: 'Priorisieren', v: 'Wir ranken Fixes nach Wirkung-pro-Aufwand — eine Seite, kein Theater.' },
-        { num: '03', k: 'Umsetzen',    v: 'Unser Team baut auf Ihrer Domain, Ihren Ad-Accounts, Ihrem CRM.' },
-        { num: '04', k: 'Optimieren',  v: 'Wir messen monatlich nach. Der Score ist die Quittung.' },
-      ];
-
-  // ---- 09 Pricing ----
-  const pricingPackages = [
-    {
-      key: 'launch',
-      name: t.pricing.launch.name,
-      price: t.pricing.launch.price,
-      duration: t.pricing.launch.duration,
-      billing: t.pricing.oneTime,
-      features: t.pricing.launch.features,
-    },
-    {
-      key: 'growth',
-      name: t.pricing.growth.name,
-      price: t.pricing.growth.price,
-      duration: t.pricing.growth.duration,
-      billing: t.pricing.perMonth,
-      features: t.pricing.growth.features,
-    },
-    {
-      key: 'scale',
-      name: t.pricing.leader.name,
-      price: t.pricing.leader.price,
-      duration: t.pricing.leader.duration,
-      billing: t.pricing.perMonth,
-      priceNote: t.pricing.leader.priceNote,
-      features: t.pricing.leader.features,
-    },
-  ];
-
-  // ---- 10 FAQ ----
-  const faq = isEnglish
-    ? [
-        { q: 'Is the audit really free?', a: 'Yes. No credit card, no follow-up call required. You get the report — what you do with it is your call.' },
-        { q: 'What data do you use?',    a: 'Only public signals: your website, meta data, structured data, Google indexation and — if available — Semrush visibility. No scraping of protected areas.' },
-        { q: 'What is the role of AI?',  a: 'AI translates observations into a prioritized recommendation. It never invents scores or cites data that is not in the input.' },
-        { q: 'Can you implement the fixes?', a: 'Yes. Launch Sprint or Growth Retainer covers the roadmap. Everything ships on your accounts — you keep the keys.' },
-      ]
-    : [
-        { q: 'Ist das Audit wirklich gratis?', a: 'Ja. Keine Kreditkarte, kein Pflicht-Call. Sie bekommen den Report — was Sie damit machen, entscheiden Sie.' },
-        { q: 'Welche Daten werden verwendet?', a: 'Nur öffentliche Signale: Ihre Website, Meta-Daten, strukturierte Daten, Google-Indexierung und — sofern verfügbar — Semrush-Sichtbarkeit. Kein Scraping geschützter Bereiche.' },
-        { q: 'Welche Rolle spielt die KI?',    a: 'Die KI übersetzt Beobachtungen in eine priorisierte Empfehlung. Sie erfindet keine Scores und zitiert keine Daten, die nicht im Input sind.' },
-        { q: 'Setzen Sie die Fixes auch um?',  a: 'Ja. Launch Sprint oder Growth Retainer decken die Roadmap ab. Alles läuft auf Ihren Accounts — Sie behalten die Schlüssel.' },
-      ];
-
-  // FAQPage JSON-LD (only visible questions)
-  useEffect(() => {
-    const data = {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: faq.map((f) => ({
-        '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
-      })),
-    };
-    let script = document.querySelector('script[data-schema="home-faq"]');
-    if (!script) {
-      script = document.createElement('script');
-      script.setAttribute('type', 'application/ld+json');
-      script.setAttribute('data-schema', 'home-faq');
-      document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(data);
-    return () => { script?.remove(); };
-  }, [isEnglish]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const trustClaims = isEnglish
-    ? ['25+ signals', 'Transparent scoring', 'No commitment', 'Built in Switzerland']
-    : ['25+ Signale', 'Transparentes Scoring', 'Keine Verpflichtung', 'In der Schweiz gebaut'];
+  const partnerPath = isEnglish ? '/en/partners' : '/partner';
+  const faqItems = faqs[lang];
 
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'Free AI Audit · AI-First Marketing · itsFeierabend.ch' : 'Gratis KI-Audit · KI-First Marketing · itsFeierabend.ch'}
+        title={isEnglish ? 'AI Business Audit for Swiss SMEs' : 'AI Business Audit für Schweizer KMU'}
         description={isEnglish
-          ? 'Find what is holding back your digital growth in minutes. 25+ deterministic signals, Swiss-based, no commitment.'
-          : 'Finden Sie in Minuten, was Ihr digitales Wachstum bremst. 25+ deterministische Signale, aus der Schweiz, keine Verpflichtung.'}
+          ? 'Evidence-based digital business audits for visibility, leads, conversion, tracking, CRM and automation. Start with a free Quick Audit.'
+          : 'Evidenzbasierte digitale Standortbestimmung für Sichtbarkeit, Leads, Conversion, Tracking, CRM und Automatisierung. Start mit kostenlosem Quick Audit.'}
+        canonical={isEnglish ? 'https://itsfeierabend.ch/en' : 'https://itsfeierabend.ch/'}
       />
-      <OrganizationSchema description={t.siteDescription} />
+      <OrganizationSchema
+        description={isEnglish
+          ? 'Swiss platform for AI business audits and digital growth diagnostics.'
+          : 'Schweizer Plattform für AI Business Audits und digitale Wachstumsdiagnose.'}
+      />
       <WebsiteSchema />
+      <FAQSchema items={faqItems} />
 
-      {/* ========== 01 — Hero (Instrument Panel Bento) ========== */}
-      <section data-neural-zone className="pt-8 md:pt-12 pb-6">
+      <section className="border-b border-border pb-12 pt-10 md:pb-20 md:pt-16">
         <div className="container-section">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-            {/* Headline panel */}
-            <div className="md:col-span-8 bg-card border border-border p-8 md:p-12 rounded-md flex flex-col justify-between min-h-[520px]">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 border border-border bg-background rounded-full">
-                  <span className="w-2 h-2 rounded-full bg-signal shadow-[0_0_8px_hsl(var(--signal))] animate-pulse-glow" />
-                  <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-muted-foreground">
-                    {isEnglish ? 'System Status · Active' : 'Systemstatus · Aktiv'}
-                  </span>
-                </div>
-                <h1 className="uppercase text-balance">
-                  {isEnglish ? (
-                    <>AI Business Audit for <span className="text-muted-foreground">Swiss</span><br />SMEs.</>
-                  ) : (
-                    <>AI Business Audit für <span className="text-muted-foreground">Schweizer</span><br />KMU.</>
-                  )}
-                </h1>
-                <p className="max-w-md text-muted-foreground text-lg leading-relaxed">
-                  {isEnglish
-                    ? 'In 60 seconds you see where your digital growth is blocked. 25+ deterministic signals across website, visibility, trust, conversion and automation — free, in Swiss quality.'
-                    : 'In 60 Sekunden sehen Sie, wo Ihr digitales Wachstum blockiert ist. 25+ deterministische Signale zu Website, Sichtbarkeit, Vertrauen, Conversion und Automation — gratis, in Schweizer Qualität.'}
-                </p>
-              </div>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                <CTAButton variant="primary" size="lg" href={auditPath} location="hero">
-                  {isEnglish ? 'Start free business audit' : 'Kostenlosen Business Audit starten'}
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </CTAButton>
-                <CTAButton variant="ghost" size="lg" href="#ablauf" location="hero-secondary">
-                  {isEnglish ? "How it works ↓" : "So funktioniert's ↓"}
-                </CTAButton>
-              </div>
-            </div>
-
-            {/* Live audit score tile */}
-            <div className="md:col-span-4 bg-card border border-border p-8 rounded-md flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[520px]">
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-signal to-transparent opacity-40" />
-              <div className="w-36 h-36 rounded-full border-2 border-border flex items-center justify-center relative mb-6">
-                <div className="absolute inset-0 rounded-full border-t-2 border-signal animate-spin" style={{ animationDuration: '6s' }} />
-                <span className="font-mono text-4xl font-bold text-foreground">84<span className="text-lg text-muted-foreground">%</span></span>
-              </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                {isEnglish ? 'Efficiency Score' : 'Efficiency Score'}
-              </span>
-              <div className="mt-6 w-full h-px bg-border" />
-              <div className="mt-4 grid grid-cols-2 w-full gap-4 text-left">
+          <div className="grid gap-3 lg:grid-cols-12">
+            <div className="rounded-md border border-border bg-card p-7 sm:p-10 lg:col-span-8 lg:min-h-[560px] lg:p-12">
+              <div className="flex h-full flex-col justify-between">
                 <div>
-                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Scanning</div>
-                  <div className="font-mono text-xs font-bold text-foreground">FUNNEL_01</div>
+                  <div className="inline-flex min-h-8 items-center gap-2 rounded-full border border-border bg-background px-3">
+                    <span className="h-2 w-2 rounded-full bg-signal" aria-hidden="true" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                      {isEnglish ? 'Swiss digital business diagnostic' : 'Schweizer digitale Geschäftsdiagnose'}
+                    </span>
+                  </div>
+                  <h1 className="mt-8 max-w-5xl text-balance">
+                    {isEnglish
+                      ? 'See where your digital business is losing potential.'
+                      : 'Sehen, wo Ihr digitales Geschäft Potenzial verliert.'}
+                  </h1>
+                  <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+                    {isEnglish
+                      ? 'itsFeierabend.ch analyses visibility, websites, conversion, tracking, CRM and automation—and turns the evidence into a prioritized next step.'
+                      : 'itsFeierabend.ch analysiert Sichtbarkeit, Website, Conversion, Tracking, CRM und Automatisierung – und macht aus den Befunden einen priorisierten nächsten Schritt.'}
+                  </p>
                 </div>
-                <div className="text-right">
-                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Signals</div>
-                  <div className="font-mono text-xs font-bold text-foreground">25+</div>
+
+                <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                  <CTAButton variant="primary" size="lg" href={auditPath} location="hero" className="min-h-12">
+                    {isEnglish ? 'Start the free Business Audit' : 'Kostenlosen Business Audit starten'}
+                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  </CTAButton>
+                  <a
+                    href="#methodik"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-foreground/40 px-8 py-4 text-base font-medium transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+                  >
+                    {isEnglish ? 'How it works' : 'So funktioniert’s'}
+                  </a>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* ========== 02 — Trust chips + Live signals feed ========== */}
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-12 gap-3" data-cta-loc="trust-strip">
-            <div className="md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { k: 'METRIC_01', v: trustClaims[0] },
-                { k: 'METHOD',    v: trustClaims[1] },
-                { k: 'STATUS',    v: trustClaims[2] },
-                { k: 'ORIGIN',    v: trustClaims[3] },
-              ].map((c) => (
-                <div key={c.k} className="bg-card border border-border p-4 rounded-md flex flex-col justify-between min-h-[86px]">
-                  <span className="font-mono text-[10px] text-muted-foreground tracking-wider">{c.k}</span>
-                  <span className="text-sm font-bold uppercase tracking-tight text-foreground">{c.v}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="md:col-span-4 bg-card border border-border p-4 rounded-md overflow-hidden">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-mono text-[10px] text-muted-foreground tracking-wider">LIVE_SIGNALS</span>
-                <span className="font-mono text-[9px] px-1.5 py-0.5 border border-border text-signal">STREAMING</span>
+            <div className="rounded-md border border-border bg-card p-6 sm:p-8 lg:col-span-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {isEnglish ? 'Audit map' : 'Audit-Landkarte'}
+                </p>
+                <span className="rounded-full border border-signal/40 px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider text-signal">
+                  {isEnglish ? 'Evidence first' : 'Evidenz zuerst'}
+                </span>
               </div>
-              <div className="space-y-2 font-mono text-[10px] leading-relaxed">
-                <div className="flex justify-between text-muted-foreground"><span>[OK] CONVERSION_ANALYSIS</span><span>14:02:11</span></div>
-                <div className="flex justify-between text-muted-foreground"><span>[OK] TECH_STACK_AUDIT</span><span>14:02:08</span></div>
-                <div className="flex justify-between text-signal"><span>[..] SEO_SEM_LINKAGE</span><span>LIVE</span></div>
-                <div className="flex justify-between text-muted-foreground"><span>[OK] TRUST_SIGNAL_INDEX</span><span>14:01:55</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 03 — Diagnose strip ========== */}
-      <section data-neural-zone className="py-16 md:py-24">
-        <div className="container-section">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-px flex-1 bg-border" />
-            <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground !text-[10px]" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', lineHeight: 1.5 }}>
-              {isEnglish ? '03 / 11 · Diagnostic Zones' : '03 / 11 · Diagnosebereiche'}
-            </h2>
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <div className="mb-10 max-w-2xl">
-            <RevealText>
-              <h2 className="uppercase text-balance">
-                {isEnglish ? <>Growth rarely fails <span className="text-muted-foreground">everywhere</span>.</> : <>Wachstum scheitert selten <span className="text-muted-foreground">überall</span>.</>}
-              </h2>
-              <p className="mt-4 text-muted-foreground">
+              <ul className="mt-8 space-y-3">
+                {auditAreas[lang].map(([area, evidence], index) => (
+                  <li key={area} className="rounded-sm border border-border bg-background p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="font-mono text-xs text-signal">{String(index + 1).padStart(2, '0')}</span>
+                      <div>
+                        <p className="font-medium">{area}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{evidence}</p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-signal" aria-hidden="true" />
                 {isEnglish
-                  ? 'It fails at one or two points you cannot see. The audit isolates the constraint before you spend a franc on more traffic.'
-                  : 'Es scheitert an ein bis zwei Stellen, die Sie nicht sehen. Das Audit isoliert die Bremse, bevor Sie einen Franken in mehr Traffic stecken.'}
+                  ? 'No sample score is presented as a real measurement.'
+                  : 'Kein Beispiel-Score wird als echte Messung dargestellt.'}
               </p>
-            </RevealText>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 border border-border divide-y md:divide-y-0 md:divide-x divide-border rounded-md overflow-hidden">
-            {diagnostics.map((d, i) => (
-              <div key={d.num} className="p-6 group hover:bg-card transition-colors">
-                <span className="font-mono text-[10px] text-muted-foreground block mb-3 tracking-wider">{d.num}.</span>
-                <h3 className="text-xl font-bold uppercase text-foreground mb-4">{d.k}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-4 min-h-[3.5rem]">{d.v}</p>
-                <div className="h-1 w-full bg-border overflow-hidden rounded-full">
-                  <div
-                    className="h-full bg-signal transition-all duration-700"
-                    style={{ width: `${[50, 75, 66, 100, 33][i]}%`, boxShadow: i === 3 ? '0 0 8px hsl(var(--signal))' : undefined }}
-                  />
-                </div>
+          <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {(isEnglish
+              ? ['Rule-based scores', 'Visible evidence', 'No purchase obligation', 'Built in Switzerland']
+              : ['Regelbasierte Scores', 'Sichtbare Evidenz', 'Keine Kaufpflicht', 'In der Schweiz gebaut']
+            ).map((claim) => (
+              <div key={claim} className="flex min-h-20 items-end rounded-md border border-border bg-card p-4">
+                <span className="text-sm font-medium">{claim}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-
-
-      {/* ========== 04 — The Audit as a product (Midnight) ========== */}
-      <section data-neural-zone className="section-padding bg-card text-foreground border-y border-border">
-        <div className="container-section">
-          <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
-            <div className="col-span-12 lg:col-span-6">
-              <div className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-6">
-                {isEnglish ? '04 / 11 · The Audit' : '04 / 11 · Das Audit'}
-              </div>
-              <RevealText>
-                <h2 className="text-balance">
-                  {isEnglish ? (
-                    <>A deterministic engine. <em className="font-editorial">Not a chatbot guess.</em></>
-                  ) : (
-                    <>Eine deterministische Engine. <em className="font-editorial">Kein Chatbot-Rateversuch.</em></>
-                  )}
-                </h2>
-                <p className="mt-6 text-lg text-muted-foreground max-w-lg">
-                  {isEnglish
-                    ? 'Signals are collected, normalized, scored by rules, then interpreted. AI translates — never invents.'
-                    : 'Signale werden gesammelt, normalisiert, per Regeln bewertet, dann interpretiert. KI übersetzt — sie erfindet nicht.'}
-                </p>
-              </RevealText>
-
-              <div className="mt-10 [&_.text-foreground\\/55]:text-muted-foreground [&_.text-foreground]:text-background">
-                <SignalStream stages={stages} />
-              </div>
-
-              <div className="mt-10">
-                <CTAButton variant="primary" size="lg" href={auditPath} location="audit-engine">
-                  {isEnglish ? 'Run the free audit' : 'Gratis Audit starten'}
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </CTAButton>
-              </div>
-            </div>
-
-            {/* Sample report mock */}
-            <div className="col-span-12 lg:col-span-6">
-              <RevealText delay={120}>
-                <div className="rounded-2xl bg-background text-foreground p-8 md:p-10 border border-background/20 shadow-2xl">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/55">
-                      {isEnglish ? 'Sample report' : 'Beispielreport'}
-                    </div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
-                      Live
-                    </div>
-                  </div>
-                  <ScoreCard
-                    score={62}
-                    label={isEnglish ? 'Overall' : 'Gesamt'}
-                    verdict={isEnglish
-                      ? 'Visibility solid. Conversion is the cheapest lever. Three fixes can move the score >75.'
-                      : 'Sichtbarkeit solide. Conversion ist der günstigste Hebel. Drei Fixes bringen den Score >75.'}
-                  />
-                  <ul className="mt-8 space-y-3 text-sm">
-                    {(isEnglish
-                      ? [
-                          { p: 'Hi', t: 'Add primary CTA above the fold on 3 service pages' },
-                          { p: 'Med', t: 'Fix missing meta descriptions on 12 URLs' },
-                          { p: 'Med', t: 'Enable structured data for LocalBusiness' },
-                        ]
-                      : [
-                          { p: 'Hoch', t: 'Primären CTA above the fold auf 3 Service-Seiten ergänzen' },
-                          { p: 'Mittel', t: '12 fehlende Meta-Descriptions ergänzen' },
-                          { p: 'Mittel', t: 'Strukturierte Daten für LocalBusiness aktivieren' },
-                        ]
-                    ).map((r) => (
-                      <li key={r.t} className="flex items-start gap-3 pb-3 border-b border-border last:border-b-0">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal mt-1 shrink-0 w-12">{r.p}</span>
-                        <span className="text-foreground/85">{r.t}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </RevealText>
-            </div>
+      <section className="py-16 md:py-24">
+        <div className="container-section grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              01 · {isEnglish ? 'Business questions' : 'Geschäftsfragen'}
+            </p>
+            <h2 className="mt-4 text-balance">
+              {isEnglish ? 'More traffic is not always the answer.' : 'Mehr Traffic ist nicht immer die Antwort.'}
+            </h2>
           </div>
-        </div>
-      </section>
-
-      {/* ========== 05 — Ultimate Package ========== */}
-      <section data-neural-zone className="section-padding bg-secondary/40">
-        <div className="container-section">
-          <div className="grid grid-cols-12 gap-x-6 gap-y-12 items-start">
-            <div className="col-span-12 lg:col-span-7">
-              <SectionMarker index={5} total={11} label={isEnglish ? 'The Ultimate Package' : 'Das Ultimate Package'} />
-              <RevealText>
-                <h2 className="text-balance">
-                  {isEnglish ? (
-                    <>The audit shows what's missing. <em className="font-editorial">We implement it.</em></>
-                  ) : (
-                    <>Der Audit zeigt, was fehlt. <em className="font-editorial">Wir setzen es um.</em></>
-                  )}
-                </h2>
-                <p className="mt-6 text-lg text-foreground/75 max-w-2xl">
-                  {isEnglish
-                    ? 'One contract. One timeline. One accountable partner — from diagnosis to shipped fix.'
-                    : 'Ein Vertrag. Eine Timeline. Ein verantwortlicher Partner — von der Diagnose bis zum umgesetzten Fix.'}
-                </p>
-              </RevealText>
-
-              <ul className="mt-10 space-y-4">
-                {ultimateBullets.map((b, i) => (
-                  <li key={i} className="flex items-start gap-4">
-                    <span className="font-mono text-xs text-foreground/55 mt-1.5 w-6 shrink-0">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="text-base text-foreground/85">{b}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-10 flex flex-wrap gap-4">
-                <CTAButton variant="primary" size="lg" href={ultimatePath} location="ultimate">
-                  {isEnglish ? 'Open the Ultimate Package' : 'Ultimate Package öffnen'}
-                  <ArrowUpRight className="ml-2 w-4 h-4" />
-                </CTAButton>
-                <CTAButton variant="ghost" size="lg" href={callPath} location="ultimate">
-                  {isEnglish ? 'Talk it through →' : 'Persönlich besprechen →'}
-                </CTAButton>
-              </div>
-            </div>
-
-            <div className="col-span-12 lg:col-span-5">
-              <RevealText delay={120}>
-                <div className="card-paper p-8">
-                  <div className="section-marker mb-6">{isEnglish ? 'What you get' : 'Was Sie erhalten'}</div>
-                  <ol className="space-y-6">
-                    {(isEnglish
-                      ? [
-                          { k: 'Audit', v: 'Score + evidence per signal' },
-                          { k: 'Roadmap', v: 'Prioritized by impact-per-effort' },
-                          { k: 'Implementation', v: 'Our team ships. On your accounts.' },
-                        ]
-                      : [
-                          { k: 'Audit', v: 'Score + Evidenz je Signal' },
-                          { k: 'Roadmap', v: 'Priorisiert nach Wirkung-pro-Aufwand' },
-                          { k: 'Umsetzung', v: 'Unser Team baut. Auf Ihren Accounts.' },
-                        ]
-                    ).map((row, i) => (
-                      <li key={row.k} className="grid grid-cols-12 gap-3 items-baseline">
-                        <span className="col-span-1 font-mono text-xs text-foreground/55">{String(i + 1).padStart(2, '0')}</span>
-                        <span className="col-span-4 font-editorial text-xl md:text-2xl font-light">{row.k}</span>
-                        <span className="col-span-7 text-sm text-foreground/70">{row.v}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              </RevealText>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 06 — Services ========== */}
-      <section data-neural-zone className="section-padding">
-        <div className="container-section">
-          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-            <div className="col-span-12 lg:col-span-4">
-              <SectionMarker index={6} total={11} label={isEnglish ? 'Delivery' : 'Umsetzung'} />
-              <RevealText>
-                <h2 className="text-balance">
-                  {isEnglish ? (
-                    <>Seven disciplines. <em className="font-editorial">One operating system.</em></>
-                  ) : (
-                    <>Sieben Disziplinen. <em className="font-editorial">Ein Operating System.</em></>
-                  )}
-                </h2>
-                <p className="mt-6 text-base text-foreground/70 max-w-sm">
-                  {isEnglish
-                    ? 'AI implementation is the spine. The other six wrap around it so every tactic feeds the same growth model.'
-                    : 'KI-Implementierung ist das Rückgrat. Die anderen sechs ordnen sich darum an, damit jede Taktik dasselbe Wachstumsmodell nährt.'}
-                </p>
-              </RevealText>
-            </div>
-
-            <ul className="col-span-12 lg:col-span-8 lg:border-l lg:border-border lg:pl-10">
-              {services.map((s) => (
-                <li key={s.path}>
-                  <Link
-                    to={s.path}
-                    className="group block py-7 border-t border-border first:border-t-0 transition-colors hover:bg-foreground/[0.015] -mx-4 px-4 rounded-md"
-                  >
-                    <div className="grid grid-cols-12 items-baseline gap-4">
-                      <div className="col-span-2 sm:col-span-1 font-mono text-xs text-foreground/55 pt-1">{s.num}</div>
-                      <div className="col-span-10 sm:col-span-7">
-                        <div className="flex items-baseline gap-3">
-                          <h3 className="font-editorial text-3xl md:text-4xl font-light text-foreground">{s.name}</h3>
-                          {s.anchor && (
-                            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">★ Core</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="col-span-12 sm:col-span-4 text-sm text-foreground/65 group-hover:text-foreground transition-colors">
-                        <div className="flex items-center justify-between gap-3">
-                          <span>{s.desc}</span>
-                          <ArrowUpRight className="w-4 h-4 shrink-0 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
+          <div className="lg:col-span-8">
+            <ul className="divide-y divide-border border-y border-border">
+              {businessQuestions[lang].map((question) => (
+                <li key={question} className="flex gap-4 py-6">
+                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-signal" aria-hidden="true" />
+                  <span className="text-lg leading-relaxed md:text-xl">{question}</span>
                 </li>
               ))}
             </ul>
@@ -524,175 +254,107 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="container-section"><div className="rule-hairline" /></div>
-
-      {/* ========== 07 — Process + Anti-Knebel ========== */}
-      <section id="ablauf" data-neural-zone className="section-padding scroll-mt-24">
+      <section id="methodik" className="scroll-mt-24 border-y border-border bg-card/50 py-16 md:py-24">
         <div className="container-section">
-          <SectionMarker index={7} total={11} label={isEnglish ? 'How we work' : 'Wie wir arbeiten'} />
-          <RevealText>
-            <h2 className="text-balance max-w-3xl">
-              {isEnglish ? (
-                <>Four steps. <em className="font-editorial">No lock-in.</em></>
-              ) : (
-                <>Vier Schritte. <em className="font-editorial">Keine Knebelverträge.</em></>
-              )}
-            </h2>
-          </RevealText>
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                02 · {isEnglish ? 'Methodology' : 'Methodik'}
+              </p>
+              <h2 className="mt-4 max-w-4xl text-balance">
+                {isEnglish
+                  ? 'The Quick Audit scores evidence by rule—not by AI guesswork.'
+                  : 'Der Quick Audit bewertet Evidenz regelbasiert – nicht per KI-Schätzung.'}
+              </h2>
+              <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
+                {isEnglish
+                  ? 'The free result covers static, publicly accessible homepage signals. Business inputs are captured separately; AI and expert interpretation begin only in a deeper, agreed audit.'
+                  : 'Das kostenlose Resultat deckt statische, öffentlich erreichbare Homepage-Signale ab. Geschäftsangaben bleiben separat; KI- und Experteneinordnung beginnt erst in einem vereinbarten vertieften Audit.'}
+              </p>
+            </div>
+            <div className="lg:col-span-4 lg:flex lg:items-end lg:justify-end">
+              <Link
+                to={auditLandingPath}
+                className="inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.16em] text-foreground/75 hover:text-foreground"
+              >
+                {isEnglish ? 'Full audit methodology' : 'Vollständige Audit-Methodik'}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
 
-          <ol className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-px bg-border">
-            {process.map((p) => (
-              <li key={p.num} className="bg-background p-8">
-                <div className="font-mono text-xs text-foreground/55 mb-4">{p.num}</div>
-                <div className="font-editorial text-2xl md:text-3xl font-light text-foreground mb-3">{p.k}</div>
-                <p className="text-sm text-foreground/70 leading-relaxed">{p.v}</p>
+          <ol className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+            {method[lang].map(([title, text], index) => (
+              <li key={title} className="bg-background p-7">
+                <span className="font-mono text-xs text-signal">{String(index + 1).padStart(2, '0')}</span>
+                <h3 className="mt-4 text-2xl">{title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p>
               </li>
             ))}
           </ol>
-
-          <AIAnnotation className="mt-10 max-w-2xl">
-            {isEnglish
-              ? 'Anti-Knebel: your domain, ad accounts and customer data stay yours. We build on your accounts — you keep the keys.'
-              : 'Anti-Knebel: Domain, Ad-Accounts und Kundendaten bleiben bei Ihnen. Wir bauen auf Ihren Accounts — Sie behalten die Schlüssel.'}
-          </AIAnnotation>
         </div>
       </section>
 
-      <div className="container-section"><div className="rule-hairline" /></div>
-
-      {/* ========== 08 — Selected Work ========== */}
-      <section data-neural-zone className="section-padding bg-secondary/40">
-        <div className="container-section">
-          <SectionMarker index={8} total={11} label={isEnglish ? 'Selected Work' : 'Ausgewählte Arbeit'} />
-          <RevealText>
-            <div className="grid grid-cols-12 gap-x-6 gap-y-6 items-end">
-              <h2 className="col-span-12 lg:col-span-8 text-balance">
-                {isEnglish ? (
-                  <>Real Swiss projects — <em className="font-editorial">shown, not promised.</em></>
-                ) : (
-                  <>Echte Schweizer Projekte — <em className="font-editorial">gezeigt, nicht versprochen.</em></>
-                )}
-              </h2>
-              <div className="col-span-12 lg:col-span-4 lg:text-right">
-                <Link
-                  to={casesPath}
-                  className="font-mono text-sm uppercase tracking-[0.18em] text-foreground/70 hover:text-foreground inline-flex items-center gap-2 link-underline"
-                >
-                  {isEnglish ? 'All case studies' : 'Alle Fallstudien'}
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-          </RevealText>
-
-          <ul className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
-            {[
-              { name: 'umzugscheck.ch', tag: isEnglish ? 'Moving services · Switzerland' : 'Umzüge · Schweiz', scope: isEnglish ? 'Website, Lead-System, Local SEO' : 'Website, Lead-System, Local SEO' },
-              { name: 'zuegelhelden.ch', tag: isEnglish ? 'Moving services · Switzerland' : 'Umzüge · Schweiz', scope: isEnglish ? 'Website, Ads, Automation' : 'Website, Ads, Automation' },
-              { name: 'sbpictures.ch', tag: isEnglish ? 'Photography · Switzerland' : 'Fotografie · Schweiz', scope: isEnglish ? 'Website, Booking flow' : 'Website, Buchungsstrecke' },
-              { name: 'velolife.ch', tag: isEnglish ? 'Cycling · Switzerland' : 'Velo · Schweiz', scope: isEnglish ? 'Brand, Website, Shop' : 'Brand, Website, Shop' },
-            ].map((c) => (
-              <li key={c.name} className="bg-background p-8 md:p-10">
-                <div className="font-editorial text-3xl md:text-4xl font-light text-foreground">{c.name}</div>
-                <div className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-foreground/55">{c.tag}</div>
-                <div className="mt-4 text-sm text-foreground/70">{c.scope}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <div className="container-section"><div className="rule-hairline" /></div>
-
-      {/* ========== 09 — Packages & Pricing ========== */}
-      <section data-neural-zone className="section-padding">
-        <div className="container-section">
-          <SectionMarker index={9} total={11} label={t.pricing.sectionTitle} />
-          <RevealText>
-            <div className="grid grid-cols-12 gap-x-6 gap-y-6 items-end">
-              <h2 className="col-span-12 lg:col-span-8 text-balance">
-                {isEnglish ? (
-                  <>Three ways to grow. <em className="font-editorial">Transparent prices.</em></>
-                ) : (
-                  <>Drei Wege zum Wachstum. <em className="font-editorial">Transparente Preise.</em></>
-                )}
-              </h2>
-              <div className="col-span-12 lg:col-span-4 lg:text-right">
-                <Link
-                  to={pricingPath}
-                  className="font-mono text-sm uppercase tracking-[0.18em] text-foreground/70 hover:text-foreground inline-flex items-center gap-2 link-underline"
-                >
-                  {isEnglish ? 'Compare all packages' : 'Alle Pakete vergleichen'}
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-          </RevealText>
-
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricingPackages.map((pkg) => (
-              <div key={pkg.key} className="card-paper p-8 flex flex-col h-full">
-                <div className="section-marker mb-4">{pkg.duration}</div>
-                <h3 className="font-editorial text-2xl md:text-3xl font-light text-foreground">{pkg.name}</h3>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-semibold tracking-tight">{pkg.price}</span>
-                  <span className="text-sm text-foreground/60">{pkg.billing}</span>
-                </div>
-                {'priceNote' in pkg && pkg.priceNote && (
-                  <div className="mt-1 font-mono text-xs text-foreground/55">{pkg.priceNote}</div>
-                )}
-                <ul className="mt-6 space-y-3 flex-1">
-                  {pkg.features.map((feature: string) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm text-foreground/80">
-                      <Check className="w-4 h-4 text-signal shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <CTAButton
-                  variant="ghost"
-                  size="sm"
-                  href={pricingPath}
-                  location="pricing"
-                  className="mt-8 w-full justify-center"
-                >
-                  {isEnglish ? 'See details →' : 'Details ansehen →'}
-                </CTAButton>
-              </div>
-            ))}
+      <section className="py-16 md:py-24">
+        <div className="container-section grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              03 · {isEnglish ? 'Example output' : 'Beispiel-Ausgabe'}
+            </p>
+            <h2 className="mt-4 text-balance">
+              {isEnglish ? 'A result you can act on.' : 'Ein Resultat, mit dem Sie arbeiten können.'}
+            </h2>
+            <p className="mt-5 leading-relaxed text-muted-foreground">
+              {isEnglish
+                ? 'This illustration shows the structure of a report, not findings for a real company.'
+                : 'Diese Darstellung zeigt die Struktur eines Reports – keine Befunde eines realen Unternehmens.'}
+            </p>
           </div>
-        </div>
-      </section>
-
-      <div className="container-section"><div className="rule-hairline" /></div>
-
-      {/* ========== 10 — FAQ ========== */}
-      <section data-neural-zone className="section-padding">
-        <div className="container-section">
-          <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-            <div className="col-span-12 lg:col-span-4">
-              <SectionMarker index={10} total={11} label={isEnglish ? 'Questions' : 'Fragen'} />
-              <RevealText>
-                <h2 className="text-balance">
-                  {isEnglish ? (
-                    <>Honest answers, <em className="font-editorial">up front.</em></>
-                  ) : (
-                    <>Ehrliche Antworten, <em className="font-editorial">gleich vorweg.</em></>
-                  )}
-                </h2>
-              </RevealText>
-            </div>
-            <div className="col-span-12 lg:col-span-8">
-              <ul className="divide-y divide-border border-y border-border">
-                {faq.map((f) => (
-                  <li key={f.q}>
-                    <details className="group">
-                      <summary className="cursor-pointer list-none py-6 flex items-start justify-between gap-6">
-                        <span className="text-lg md:text-xl font-editorial font-light text-foreground pr-4">{f.q}</span>
-                        <Plus className="w-5 h-5 mt-1.5 shrink-0 text-foreground/55 transition-transform duration-200 group-open:rotate-45" />
-                      </summary>
-                      <p className="pb-6 -mt-2 text-base text-foreground/75 max-w-2xl leading-relaxed">{f.a}</p>
-                    </details>
+          <div className="lg:col-span-7">
+            <div className="rounded-md border border-border bg-card p-6 md:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {isEnglish ? 'Report structure' : 'Reportstruktur'}
+                </span>
+                <span className="rounded-full border border-border px-3 py-1 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                  {isEnglish ? 'Illustration · no measured score' : 'Illustration · kein Messwert'}
+                </span>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                {(isEnglish
+                  ? [
+                      ['Strength', 'Clear service pages'],
+                      ['Risk', 'Attribution gap'],
+                      ['Opportunity', 'Faster lead routing'],
+                    ]
+                  : [
+                      ['Stärke', 'Klare Leistungsseiten'],
+                      ['Risiko', 'Lücke in der Attribution'],
+                      ['Chance', 'Schnelleres Lead-Routing'],
+                    ]
+                ).map(([label, text]) => (
+                  <div key={label} className="rounded-sm border border-border bg-background p-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">{label}</p>
+                    <p className="mt-3 text-sm leading-relaxed">{text}</p>
+                  </div>
+                ))}
+              </div>
+              <ul className="mt-6 divide-y divide-border border-y border-border">
+                {(isEnglish
+                  ? [
+                      ['High', 'Fix the measurable conversion break first.'],
+                      ['Medium', 'Connect source, lead status and outcome.'],
+                      ['Review', 'Validate CRM and analytics data with approved access.'],
+                    ]
+                  : [
+                      ['Hoch', 'Zuerst den messbaren Conversion-Bruch beheben.'],
+                      ['Mittel', 'Quelle, Lead-Status und Ergebnis verbinden.'],
+                      ['Prüfen', 'CRM- und Analytics-Daten mit freigegebenem Zugriff validieren.'],
+                    ]
+                ).map(([priority, action]) => (
+                  <li key={action} className="flex gap-4 py-4">
+                    <span className="w-16 shrink-0 font-mono text-[10px] uppercase tracking-wider text-signal">{priority}</span>
+                    <span className="text-sm">{action}</span>
                   </li>
                 ))}
               </ul>
@@ -701,36 +363,183 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="container-section"><div className="rule-hairline" /></div>
-
-      {/* ========== 11 — Final CTA ========== */}
-      <section data-neural-zone className="section-padding">
+      <section className="border-y border-border bg-card/50 py-16 md:py-24">
         <div className="container-section">
-          <SectionMarker index={11} total={11} label={isEnglish ? 'Start' : 'Loslegen'} />
-          <div className="grid grid-cols-12 gap-x-6 gap-y-10 items-end">
-            <RevealText className="col-span-12 lg:col-span-8">
-              <h2 className="text-balance">
-                {isEnglish ? (
-                  <>Want to know where your <em className="font-editorial">biggest lever</em> is?</>
-                ) : (
-                  <>Sie möchten wissen, wo Ihr <em className="font-editorial">grösster Hebel</em> liegt?</>
-                )}
-              </h2>
-              <p className="mt-6 text-lg text-foreground/75 max-w-xl">
-                {isEnglish
-                  ? 'Run the free audit — or talk to a human first. Either way, you leave with a real number and a real next step.'
-                  : 'Starten Sie das Gratis-Audit — oder sprechen Sie zuerst mit einem Menschen. So oder so: Sie gehen mit einer echten Zahl und einem echten nächsten Schritt.'}
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                04 · {isEnglish ? 'Audience' : 'Zielgruppe'}
               </p>
-            </RevealText>
+              <h2 className="mt-4 max-w-4xl text-balance">
+                {isEnglish
+                  ? 'Built for SMEs where one qualified lead matters.'
+                  : 'Für KMU, bei denen eine qualifizierte Anfrage zählt.'}
+              </h2>
+            </div>
+            <div className="lg:col-span-4 lg:flex lg:items-end lg:justify-end">
+              <Link
+                to={isEnglish ? '/en/for-smes' : '/fuer-kmu'}
+                className="inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.16em] text-foreground/75 hover:text-foreground"
+              >
+                {isEnglish ? 'Audience criteria' : 'Zielgruppen-Kriterien'}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {(isEnglish
+              ? [
+                  ['Primary', 'Owner-led Swiss service and B2B SMEs with valuable leads and weak measurement or follow-up.'],
+                  ['Secondary', 'Property, renovation, consulting and practice businesses with local or complex demand.'],
+                  ['Partner', 'Agencies, consultants and IT providers needing an independent diagnostic layer.'],
+                ]
+              : [
+                  ['Primär', 'Inhabergeführte Schweizer Dienstleistungs- und B2B-KMU mit wertvollen Leads und schwacher Messung oder Nachbearbeitung.'],
+                  ['Sekundär', 'Immobilien-, Renovations-, Beratungs- und Praxisbetriebe mit lokaler oder erklärungsbedürftiger Nachfrage.'],
+                  ['Partner', 'Agenturen, Berater und IT-Dienstleister mit Bedarf an einer unabhängigen Diagnoseebene.'],
+                ]
+            ).map(([label, text]) => (
+              <div key={label} className="rounded-md border border-border bg-background p-6">
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-signal">{label}</p>
+                <p className="mt-4 leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-3 lg:items-end">
-              <CTAButton variant="primary" size="lg" href={auditPath} location="final">
-                {isEnglish ? 'Start free audit' : 'Gratis Audit starten'}
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </CTAButton>
-              <CTAButton variant="ghost" size="lg" href={callPath} location="final">
-                {isEnglish ? 'Book a free call →' : 'Gratis-Call buchen →'}
-              </CTAButton>
+      <section className="py-16 md:py-24">
+        <div className="container-section">
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                05 · {isEnglish ? 'Offer ladder' : 'Angebotsleiter'}
+              </p>
+              <h2 className="mt-4 max-w-4xl text-balance">
+                {isEnglish ? 'Start with evidence. Expand only when it makes sense.' : 'Mit Evidenz starten. Nur sinnvoll erweitern.'}
+              </h2>
+            </div>
+            <div className="lg:col-span-4 lg:flex lg:items-end lg:justify-end">
+              <Link
+                to={servicesPath}
+                className="inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.16em] text-foreground/75 hover:text-foreground"
+              >
+                {isEnglish ? 'All services' : 'Alle Leistungen'}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+          <ol className="mt-10 divide-y divide-border border-y border-border">
+            {offerLadder[lang].map(([number, title, text]) => (
+              <li key={number} className="grid gap-3 py-6 sm:grid-cols-12 sm:items-baseline">
+                <span className="font-mono text-xs text-signal sm:col-span-1">{number}</span>
+                <h3 className="text-2xl sm:col-span-4">{title}</h3>
+                <p className="leading-relaxed text-muted-foreground sm:col-span-7">{text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-signal" aria-hidden="true" />
+            {isEnglish
+              ? 'Deep audits, projects and retainers are proposed only after scope is confirmed. No unapproved prices are published.'
+              : 'Vertiefte Audits, Projekte und Betreuung werden erst nach bestätigtem Umfang offeriert. Es werden keine ungeprüften Preise veröffentlicht.'}
+          </p>
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-card/50 py-16 md:py-24">
+        <div className="container-section">
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                06 · {isEnglish ? 'Method in practice' : 'Methodik in der Praxis'}
+              </p>
+              <h2 className="mt-4 max-w-4xl text-balance">
+                {isEnglish ? 'A real product case. No invented performance claims.' : 'Ein reales Produktbeispiel. Keine erfundenen Resultate.'}
+              </h2>
+            </div>
+            <div className="lg:col-span-4 lg:flex lg:items-end lg:justify-end">
+              <Link
+                to={casesPath}
+                className="inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.16em] text-foreground/75 hover:text-foreground"
+              >
+                {isEnglish ? 'View case notes' : 'Projektkontexte ansehen'}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+
+          <article className="mt-10 rounded-md border border-border bg-background p-7">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
+              {isEnglish ? 'Product build' : 'Produktaufbau'}
+            </p>
+            <h3 className="mt-4 text-3xl">itsFeierabend Audit v0</h3>
+            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
+              {isEnglish
+                ? 'The live product demonstrates deterministic scoring, explicit evidence states and a private result flow. Client and connected-project cases remain unpublished until facts, baselines and permission are documented.'
+                : 'Das eigene Produkt zeigt deterministisches Scoring, sichtbare Evidenzzustände und einen privaten Resultat-Flow. Kunden- und verbundene Projekte bleiben unveröffentlicht, bis Fakten, Baseline und Freigabe dokumentiert sind.'}
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24">
+        <div className="container-section grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              07 · FAQ
+            </p>
+            <h2 className="mt-4">{isEnglish ? 'Questions before the audit.' : 'Fragen vor dem Audit.'}</h2>
+          </div>
+          <div className="lg:col-span-8">
+            <ul className="divide-y divide-border border-y border-border">
+              {faqItems.map((item) => (
+                <li key={item.question}>
+                  <details className="group">
+                    <summary className="flex min-h-16 cursor-pointer list-none items-start justify-between gap-4 py-5">
+                      <span className="text-lg">{item.question}</span>
+                      <Plus className="mt-1 h-5 w-5 shrink-0 transition-transform group-open:rotate-45" aria-hidden="true" />
+                    </summary>
+                    <p className="max-w-3xl pb-6 leading-relaxed text-muted-foreground">{item.answer}</p>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border py-16 md:py-24">
+        <div className="container-section">
+          <div className="rounded-md border border-border bg-card p-8 md:p-12">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-8">
+                <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal">
+                  {isEnglish ? 'Start with the current state' : 'Mit der Standortbestimmung starten'}
+                </p>
+                <h2 className="mt-4 max-w-4xl text-balance">
+                  {isEnglish
+                    ? 'Find the strongest digital lever before investing in more activity.'
+                    : 'Den stärksten digitalen Hebel finden, bevor mehr Aktivität bezahlt wird.'}
+                </h2>
+                <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
+                  {isEnglish
+                    ? 'The Quick Audit is free. It produces a preliminary, clearly labelled result and a practical next step.'
+                    : 'Der Quick Audit ist kostenlos. Er liefert ein vorläufiges, klar gekennzeichnetes Ergebnis und einen praktischen nächsten Schritt.'}
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 lg:col-span-4 lg:items-end">
+                <CTAButton variant="primary" size="lg" href={auditPath} location="final" className="min-h-12">
+                  {isEnglish ? 'Start the free Business Audit' : 'Kostenlosen Business Audit starten'}
+                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </CTAButton>
+                <Link
+                  to={partnerPath}
+                  className="inline-flex min-h-12 items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {isEnglish ? 'Partner enquiry' : 'Partneranfrage'}
+                </Link>
+              </div>
             </div>
           </div>
         </div>

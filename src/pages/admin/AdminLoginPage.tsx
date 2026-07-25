@@ -6,8 +6,19 @@ function safeNext(raw: string | null): string {
   if (!raw) return '/admin/leads';
   try {
     // Only allow same-origin relative paths.
-    if (!raw.startsWith('/') || raw.startsWith('//')) return '/admin/leads';
-    return raw;
+    if (
+      !raw.startsWith('/') ||
+      raw.startsWith('//') ||
+      raw.includes('\\') ||
+      Array.from(raw).some((character) => {
+        const code = character.charCodeAt(0);
+        return code < 32 || code === 127;
+      })
+    ) {
+      return '/admin/leads';
+    }
+    const parsed = new URL(raw, 'https://itsfeierabend.invalid');
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
   } catch {
     return '/admin/leads';
   }
