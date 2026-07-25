@@ -86,8 +86,8 @@ Website Audit, SEO-Analyse, AI Visibility, Automation, Partner, Fallstudien, Üb
 | `/en/audit` | englischer Quick-Audit-Flow | indexierbar als Funnel-Einstieg |
 | `/audit/r/:token` | privates deutsches Audit-Ergebnis | `noindex`; Token aus Analytics-URLs entfernen |
 | `/en/audit/r/:token` | privates englisches Audit-Ergebnis | `noindex`; Token aus Analytics-URLs entfernen |
-| `/analyse/progress/:token` und `/en/analysis/progress/:token` | bestehende private Fortschrittsroute während der Migration | `noindex` |
-| `/analyse/:token` und `/en/analysis/:token` | bestehende private Reportroute während der Migration | `noindex` |
+| `/analyse/progress/:token` und `/en/analysis/progress/:token` | stillgelegte Legacy-Fortschrittsroute; HTTP-301 auf den neuen Audit | nicht indexierbar; keine Legacy-Daten werden ausgeliefert |
+| `/analyse/:token` und `/en/analysis/:token` | stillgelegte Legacy-Reportroute; HTTP-301 auf den neuen Audit | nicht indexierbar; keine Legacy-AI-Texte werden ausgeliefert |
 | `/admin/*` | interner Betrieb | Auth erforderlich; `noindex` |
 | `/oauth/consent` | technischer OAuth-Flow | `noindex` |
 
@@ -169,4 +169,3 @@ Jede kommerzielle Hauptseite enthält:
 - Legacy-URLs besitzen ein dokumentiertes Ziel.
 - Kein Service von feierabendservices.ch oder umzugscheck.ch erscheint als Angebot von itsfeierabend.ch.
 - Es gibt keine erfundenen Preise, Kundenlogos, Bewertungen, Zertifikate oder Leistungsresultate.
-
