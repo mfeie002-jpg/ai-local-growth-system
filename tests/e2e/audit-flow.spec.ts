@@ -40,6 +40,7 @@ for (const [index, flow] of flows.entries()) {
   }) => {
     const fakeToken = `00000000-0000-4000-8000-00000000000${index + 1}`;
     let submittedPayload: Record<string, unknown> | null = null;
+    let submitCount = 0;
     const runtimeErrors = captureRuntimeErrors(page);
     await installEssentialConsent(page);
 
@@ -48,7 +49,9 @@ for (const [index, flow] of flows.entries()) {
         await route.fulfill({ status: 204, headers: corsHeaders });
         return;
       }
+      submitCount += 1;
       submittedPayload = route.request().postDataJSON() as Record<string, unknown>;
+      await new Promise((resolve) => setTimeout(resolve, 100));
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -149,9 +152,13 @@ for (const [index, flow] of flows.entries()) {
 
     await assertNoHorizontalOverflow(page);
     await assertAccessibilityBaseline(page);
-    await page.getByRole("button", { name: flow.submitLabel }).click();
+    await page.getByRole("button", { name: flow.submitLabel }).evaluate((button) => {
+      (button as HTMLButtonElement).click();
+      (button as HTMLButtonElement).click();
+    });
 
     await page.waitForURL(new RegExp(`${flow.resultPath}${fakeToken}$`));
+    expect(submitCount).toBe(1);
     await expect(page.locator("main header")).toContainText("72/100");
     await expect(page.getByText("80%", { exact: true })).toBeVisible();
     await expect(page.getByText(/Primären CTA schärfen/)).toBeVisible();

@@ -51,6 +51,7 @@ export function LeadInquiryForm({ type }: LeadInquiryFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const started = useRef(false);
+  const submittingRef = useRef(false);
 
   const copy = useMemo(() => ({
     heading: type === 'partner'
@@ -100,8 +101,10 @@ export function LeadInquiryForm({ type }: LeadInquiryFormProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submittingRef.current) return;
     markStarted();
     if (!validate()) return;
+    submittingRef.current = true;
     setStatus('submitting');
 
     const utm = getUTMParams();
@@ -155,6 +158,7 @@ export function LeadInquiryForm({ type }: LeadInquiryFormProps) {
       });
     } catch (error) {
       console.error('lead enquiry failed', error);
+      submittingRef.current = false;
       setErrors({
         form: isEnglish
           ? `The enquiry could not be saved. Please try again or email ${siteConfig.email}.`

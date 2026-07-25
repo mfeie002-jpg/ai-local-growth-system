@@ -69,11 +69,15 @@
 
 ## Launch order
 
-1. Apply `20260725050000_final_launch_lead_security.sql` and then
+1. Verify and approve the legal entity, postal address, responsible person,
+   Swiss UID/register details, production processor inventory, transfer
+   regions and retention schedule. Until then, imprint and privacy routes stay
+   `noindex` and production launch is blocked.
+2. Apply `20260725050000_final_launch_lead_security.sql` and then
    `20260725060000_atomic_audit_create.sql`.
-2. Deploy Edge Functions only after both migrations succeed.
-3. Configure Turnstile, Resend and the approved frontend GA4 ID.
-4. Publish the app with a documented rollback version.
-5. Run the manual test cases against the production URL.
-6. Enable analytics dashboards / alerting on `audit_events.rate_limited` and
+3. Deploy Edge Functions only after both migrations succeed.
+4. Configure Turnstile, Resend and the approved frontend GA4 ID.
+5. Publish the app with a documented rollback version.
+6. Run the manual test cases against the production URL.
+7. Enable analytics dashboards / alerting on `audit_events.rate_limited` and
    `audit_events.bot_check_failed`.

@@ -147,6 +147,7 @@ export default function AuditV0Page({ lang }: AuditV0PageProps) {
   const location = useLocation();
   const c = copy[lang];
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const submittingRef = useRef(false);
   const [step, setStep] = useState(1);
   const [values, setValues] = useState<AuditValues>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -236,12 +237,14 @@ export default function AuditV0Page({ lang }: AuditV0PageProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submittingRef.current) return;
     if (!validateStep(3) || !preview) return;
     if (TURNSTILE_ENABLED && !turnstileToken) {
       toast.error(lang === 'de' ? 'Bitte schliessen Sie den Bot-Check ab.' : 'Please complete the bot check.');
       return;
     }
 
+    submittingRef.current = true;
     setSubmitting(true);
     const utm = getUTMParams();
     try {
@@ -294,6 +297,7 @@ export default function AuditV0Page({ lang }: AuditV0PageProps) {
       console.error('audit submit failed', error);
       toast.error(error instanceof Error ? error.message : mapServerError(undefined, undefined, lang));
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
@@ -483,12 +487,12 @@ export default function AuditV0Page({ lang }: AuditV0PageProps) {
                   </legend>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {challenges.map((challenge) => (
-                      <label key={challenge} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-4 py-3">
+                      <label key={challenge} className="flex min-h-12 min-w-0 cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-4 py-3">
                         <Checkbox
                           checked={values.challenges.includes(challenge)}
                           onCheckedChange={(checked) => setChallenge(challenge, checked === true)}
                         />
-                        <span className="text-sm">{challenge}</span>
+                        <span className="min-w-0 break-words text-sm">{challenge}</span>
                       </label>
                     ))}
                   </div>

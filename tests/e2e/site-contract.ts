@@ -293,7 +293,14 @@ export async function assertAccessibilityBaseline(page: Page): Promise<void> {
       ),
     );
     for (const element of interactive) {
-      if (!isVisible(element) || element.hasAttribute("disabled")) continue;
+      if (
+        !isVisible(element) ||
+        element.hasAttribute("disabled") ||
+        element.getAttribute("aria-hidden") === "true" ||
+        element.closest('[aria-hidden="true"]')
+      ) {
+        continue;
+      }
       if (!accessibleName(element)) {
         issues.push(`${identify(element)} has no accessible name`);
       }

@@ -11,7 +11,7 @@ export default function CaseStudiesPage() {
 
   const projects = [
     {
-      name: 'itsFeierabend Audit v0',
+      name: 'itsFeierabend Quick Audit',
       url: null,
       relationship: isEnglish ? 'Product build' : 'Produktaufbau',
       context: isEnglish

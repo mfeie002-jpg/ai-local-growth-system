@@ -68,8 +68,8 @@ Website Audit, SEO-Analyse, AI Visibility, Automation, Partner, Fallstudien, Üb
 | `/insights` | `/en/insights` | Fachwissen, Methodik und Glossar nutzen | Quick Audit starten | Content-Hub |
 | `/ueber-uns` | `/en/about` | Entity, Methodik und Verantwortung verstehen | Kostenlosen Business Audit starten | About-/Methodik-Seite |
 | `/kontakt` | `/en/contact` | vertieften Audit, Sprint oder Beratung anfragen | Anfrage senden | Kontakt-Funnel |
-| `/impressum` | `/en/imprint` | Rechtsträger und Kontaktangaben | keiner | Legal |
-| `/datenschutz` | `/en/privacy` | Datenverarbeitung und Rechte | keiner | Legal |
+| `/impressum` | `/en/imprint` | Rechtsträger und Kontaktangaben | keiner | Legal; erst nach Faktenprüfung indexierbar |
+| `/datenschutz` | `/en/privacy` | Datenverarbeitung und Rechte | keiner | Legal; erst nach Prozessoren- und Fristenprüfung indexierbar |
 
 ### Seiten, die bewusst nicht separat gestartet werden
 
@@ -82,8 +82,8 @@ Website Audit, SEO-Analyse, AI Visibility, Automation, Partner, Fallstudien, Üb
 
 | Route | Zweck | Indexierung |
 |---|---|---|
-| `/audit` | deutscher Quick-Audit-Flow | indexierbar als Funnel-Einstieg |
-| `/en/audit` | englischer Quick-Audit-Flow | indexierbar als Funnel-Einstieg |
+| `/audit` | deutscher Quick-Audit-Flow | `noindex`; Canonical auf `/ai-business-audit` |
+| `/en/audit` | englischer Quick-Audit-Flow | `noindex`; Canonical auf `/en/ai-business-audit` |
 | `/audit/r/:token` | privates deutsches Audit-Ergebnis | `noindex`; Token aus Analytics-URLs entfernen |
 | `/en/audit/r/:token` | privates englisches Audit-Ergebnis | `noindex`; Token aus Analytics-URLs entfernen |
 | `/analyse/progress/:token` und `/en/analysis/progress/:token` | stillgelegte Legacy-Fortschrittsroute; HTTP-301 auf den neuen Audit | nicht indexierbar; keine Legacy-Daten werden ausgeliefert |
@@ -92,6 +92,16 @@ Website Audit, SEO-Analyse, AI Visibility, Automation, Partner, Fallstudien, Üb
 | `/oauth/consent` | technischer OAuth-Flow | `noindex` |
 
 Ein manuelles Öffnen einer Ergebnis- oder Danke-URL darf keine Conversion erzeugen. Conversion-Events setzen einen zuvor erfolgreich serverseitig gespeicherten Audit oder Lead voraus.
+
+Die transaktionalen Audit-Routen bleiben bewusst ausserhalb des Suchindex. Ihre
+jeweilige Produktseite übernimmt den organischen Suchintent, während der
+mehrstufige Flow auf Conversion und Datenerfassung fokussiert bleibt.
+
+Die Legal-Routen bleiben bis zur Verifikation von Rechtsträger, Adresse,
+verantwortlicher Person, UID/Registerangaben, Prozessoren, Transfers und
+Aufbewahrungsfristen ebenfalls `noindex`. Nach fachlicher Freigabe werden
+Robots-Metadaten, Sitemap, Tests und dieses Dokument gemeinsam auf
+`index, follow` umgestellt.
 
 ## 6. Legacy-Konsolidierung
 

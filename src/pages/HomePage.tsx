@@ -473,7 +473,7 @@ export default function HomePage() {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
               {isEnglish ? 'Product build' : 'Produktaufbau'}
             </p>
-            <h3 className="mt-4 text-3xl">itsFeierabend Audit v0</h3>
+            <h3 className="mt-4 text-3xl">itsFeierabend Quick Audit</h3>
             <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
               {isEnglish
                 ? 'The live product demonstrates deterministic scoring, explicit evidence states and a private result flow. Client and connected-project cases remain unpublished until facts, baselines and permission are documented.'
