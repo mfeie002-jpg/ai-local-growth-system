@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useLanguage } from '@/i18n/LanguageContext';
+import { useEffect, useState } from 'react';
+import { AlertTriangle, Check, Clock, Cookie, Database, Mail, Settings, Shield, UserCheck } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { SEOHead } from '@/components/SEOHead';
 import { SectionContainer } from '@/components/SectionContainer';
-import { Settings, Check, Shield, Database, Cookie, Phone, UserCheck, Clock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { siteConfig } from '@/config/site';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { getConsent, setConsent, type ConsentPreferences } from '@/lib/consent';
 import { toast } from 'sonner';
-import { siteConfig } from '@/config/site';
 
 export default function PrivacyPage() {
   const { isEnglish } = useLanguage();
@@ -22,13 +22,13 @@ export default function PrivacyPage() {
 
   useEffect(() => {
     const consent = getConsent();
-    if (consent) {
-      setPreferences({
-        analytics: consent.analytics,
-        marketing: consent.marketing,
-      });
-      setHasConsent(true);
-    }
+    if (!consent) return;
+
+    setPreferences({
+      analytics: consent.analytics,
+      marketing: consent.marketing,
+    });
+    setHasConsent(true);
   }, []);
 
   const handleSavePreferences = () => {
@@ -37,17 +37,66 @@ export default function PrivacyPage() {
     toast.success(isEnglish ? 'Preferences saved' : 'Einstellungen gespeichert');
   };
 
+  const blockerItems = isEnglish
+    ? [
+        'The approved legal entity, postal address and responsible person are not stored in the repository.',
+        'The active production vendors, processing regions, data-transfer safeguards and processor agreements have not been verified end to end.',
+        'A binding retention and deletion schedule has not been approved.',
+        'The final policy must be reviewed against the production configuration and the countries in which the service is offered.',
+      ]
+    : [
+        'Freigegebene juristische Firmierung, Postanschrift und verantwortliche Person sind im Repository nicht hinterlegt.',
+        'Aktive Produktionsanbieter, Verarbeitungsregionen, Garantien für Datenübermittlungen und Auftragsbearbeitungsverträge sind nicht vollständig verifiziert.',
+        'Ein verbindliches Aufbewahrungs- und Löschkonzept ist noch nicht freigegeben.',
+        'Die finale Erklärung muss gegen die Produktionskonfiguration und die tatsächlich bedienten Länder geprüft werden.',
+      ];
+
+  const dataCategories = isEnglish
+    ? [
+        'Contact details supplied in a form, such as name, business email and optional telephone number.',
+        'Business context supplied for an audit or enquiry, such as company, website, industry, region, goals and current tools.',
+        'Audit answers, report identifiers and workflow status needed to create and deliver a requested result.',
+        'Attribution and technical metadata needed for security, diagnostics and source measurement, such as landing page, referrer, campaign parameters, device/browser information and timestamps.',
+        'Consent choices and communication preferences.',
+      ]
+    : [
+        'In Formularen angegebene Kontaktdaten wie Name, geschäftliche E-Mail-Adresse und optionale Telefonnummer.',
+        'Für Audit oder Anfrage angegebener Geschäftskontext wie Firma, Website, Branche, Region, Ziele und bestehende Systeme.',
+        'Audit-Antworten, Report-Kennungen und Bearbeitungsstatus, die zur Erstellung und Zustellung eines angeforderten Ergebnisses benötigt werden.',
+        'Attributions- und technische Metadaten für Sicherheit, Diagnose und Quellenmessung, etwa Landingpage, Referrer, Kampagnenparameter, Geräte-/Browserinformationen und Zeitstempel.',
+        'Consent-Entscheidungen und Kommunikationspräferenzen.',
+      ];
+
+  const serviceCategories = isEnglish
+    ? [
+        'hosting, database and server-side processing;',
+        'anti-abuse and form protection;',
+        'email delivery and operational notifications;',
+        'website and SEO data enrichment requested for an audit;',
+        'optional analytics or advertising measurement after the required consent;',
+        'optional AI interpretation or voice functions, only when configured and disclosed.',
+      ]
+    : [
+        'Hosting, Datenbank und serverseitige Verarbeitung;',
+        'Missbrauchs- und Formularschutz;',
+        'E-Mail-Zustellung und operative Benachrichtigungen;',
+        'für einen Audit angeforderte Website- und SEO-Datenanreicherung;',
+        'optionale Analyse- oder Werbemessung nach erforderlicher Zustimmung;',
+        'optionale KI-Interpretation oder Sprachfunktionen, nur wenn konfiguriert und offengelegt.',
+      ];
+
   return (
     <Layout>
       <SEOHead
-        title={isEnglish ? 'Privacy Policy | Data Protection' : 'Datenschutzerklärung | Datenschutz'}
-        description={isEnglish 
-          ? 'Privacy policy and data protection information for itsFeierabend.ch. Learn how we protect your data under Swiss law (nFADP).' 
-          : 'Datenschutzerklärung und Datenschutzinformationen für itsFeierabend.ch. Erfahren Sie, wie wir Ihre Daten gemäss Schweizer Recht (nDSG) schützen.'}
+        title={isEnglish ? 'Privacy policy | Working status' : 'Datenschutzerklärung | Arbeitsstand'}
+        description={
+          isEnglish
+            ? 'Transparent working status for data processing on itsFeierabend.ch, including unresolved launch requirements.'
+            : 'Transparenter Arbeitsstand zur Datenbearbeitung auf itsFeierabend.ch mit klar ausgewiesenen offenen Launch-Anforderungen.'
+        }
         noIndex
       />
 
-      {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 py-20 sm:py-28">
         <div className="absolute inset-0 grid-pattern opacity-[0.05]" />
         <div className="absolute -top-40 left-1/4 h-[400px] w-[400px] rounded-full bg-primary/10 blur-[120px]" />
@@ -57,19 +106,19 @@ export default function PrivacyPage() {
             <aside className="col-span-12 lg:col-span-3">
               <div className="flex items-center gap-3">
                 <span className="h-px w-8 bg-foreground/40" />
-                <span className="font-editorial text-xs font-semibold tracking-[0.3em] text-muted-foreground uppercase">
-                  {isEnglish ? 'Legal / 02' : 'Rechtlich / 02'}
+                <span className="font-editorial text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  {isEnglish ? 'Privacy / working status' : 'Datenschutz / Arbeitsstand'}
                 </span>
               </div>
             </aside>
             <div className="col-span-12 lg:col-span-9">
-              <h1 className="font-editorial text-5xl sm:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight">
-                {isEnglish ? <>Privacy, <em className="italic text-aurora">respected.</em></> : <>Datenschutz, <em className="italic text-aurora">gelebt.</em></>}
+              <h1 className="font-editorial text-5xl font-bold leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
+                {isEnglish ? 'Privacy policy.' : 'Datenschutzerklärung.'}
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                 {isEnglish
-                  ? 'How we collect, use, and protect your data — under Swiss law (nFADP).'
-                  : 'Wie wir deine Daten erheben, verwenden und schützen — gemäss Schweizer Recht (nDSG).'}
+                  ? 'This page describes the intended data flows without presenting unverified vendors, regions or retention periods as established facts.'
+                  : 'Diese Seite beschreibt die vorgesehenen Datenflüsse, ohne unbestätigte Anbieter, Regionen oder Aufbewahrungsfristen als gesicherte Fakten darzustellen.'}
               </p>
             </div>
           </div>
@@ -77,388 +126,266 @@ export default function PrivacyPage() {
       </section>
 
       <SectionContainer padding="large">
-        <div className="max-w-3xl mx-auto">
+        <div className="mx-auto max-w-3xl">
+          <Card className="mb-10 border-destructive/40 bg-destructive/5">
+            <CardHeader>
+              <h2 className="flex items-center gap-3 text-2xl font-semibold leading-none tracking-tight">
+                <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden="true" />
+                {isEnglish ? 'Launch blocker: legal and production facts incomplete' : 'Launch-Blocker: Rechts- und Produktionsfakten unvollständig'}
+              </h2>
+              <CardDescription>
+                {isEnglish
+                  ? 'This policy is an operational working document, not legal advice or a final compliance confirmation.'
+                  : 'Diese Erklärung ist ein operativer Arbeitsstand, keine Rechtsberatung und keine abschliessende Compliance-Bestätigung.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                {blockerItems.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
 
-          {/* Cookie & Analytics Consent Settings */}
           <Card className="mb-10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                {isEnglish ? 'Cookie & Analytics Settings' : 'Cookie- & Analytics-Einstellungen'}
-              </CardTitle>
+              <h2 className="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">
+                <Settings className="h-5 w-5" aria-hidden="true" />
+                {isEnglish ? 'Cookie and measurement settings' : 'Cookie- und Mess-Einstellungen'}
+              </h2>
               <CardDescription>
-                {isEnglish 
-                  ? 'Manage your privacy preferences. Changes take effect immediately.'
-                  : 'Verwalte deine Datenschutz-Einstellungen. Änderungen werden sofort wirksam.'}
+                {isEnglish
+                  ? 'These choices permit optional categories if a corresponding service is configured. Enabling a category does not prove that a particular vendor is active.'
+                  : 'Diese Auswahl erlaubt optionale Kategorien, falls ein entsprechender Dienst konfiguriert ist. Das Aktivieren einer Kategorie bestätigt nicht, dass ein bestimmter Anbieter aktiv ist.'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Necessary - Always on */}
-              <div className="flex items-center justify-between py-3 border-b border-border">
+              <div className="flex items-center justify-between border-b border-border py-3">
                 <div className="pr-4">
                   <Label className="font-medium text-foreground">
-                    {isEnglish ? 'Necessary Cookies' : 'Notwendige Cookies'}
+                    {isEnglish ? 'Necessary storage' : 'Notwendige Speicherung'}
                   </Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {isEnglish 
-                      ? 'Required for basic website functionality (session, language preference, consent storage).'
-                      : 'Für die Grundfunktionen der Website erforderlich (Sitzung, Spracheinstellung, Consent-Speicherung).'}
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isEnglish
+                      ? 'Used for essential functions such as consent state and basic session or language behaviour.'
+                      : 'Für wesentliche Funktionen wie Consent-Status sowie grundlegendes Sitzungs- oder Sprachverhalten.'}
                   </p>
                 </div>
-                <Switch checked disabled className="flex-shrink-0" />
+                <Switch checked disabled className="flex-shrink-0" aria-label={isEnglish ? 'Necessary storage enabled' : 'Notwendige Speicherung aktiviert'} />
               </div>
 
-              {/* Analytics */}
-              <div className="flex items-center justify-between py-3 border-b border-border">
+              <div className="flex items-center justify-between border-b border-border py-3">
                 <div className="pr-4">
-                  <Label className="font-medium text-foreground">
-                    {isEnglish ? 'Analytics Cookies' : 'Analyse-Cookies'}
+                  <Label htmlFor="privacy-analytics" className="font-medium text-foreground">
+                    {isEnglish ? 'Analytics' : 'Analyse'}
                   </Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {isEnglish 
-                      ? 'Help us understand how visitors use our website (Google Analytics 4). Data is anonymized.'
-                      : 'Helfen uns zu verstehen, wie Besucher unsere Website nutzen (Google Analytics 4). Daten werden anonymisiert.'}
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isEnglish
+                      ? 'Allows optional usage measurement after a measurement service has been verified and configured.'
+                      : 'Erlaubt optionale Nutzungsmessung, nachdem ein Messdienst verifiziert und konfiguriert wurde.'}
                   </p>
                 </div>
                 <Switch
+                  id="privacy-analytics"
                   checked={preferences.analytics}
-                  onCheckedChange={(checked) => 
-                    setPreferences(prev => ({ ...prev, analytics: checked }))
-                  }
+                  onCheckedChange={(checked) => setPreferences((previous) => ({ ...previous, analytics: checked }))}
                   className="flex-shrink-0"
                 />
               </div>
 
-              {/* Marketing */}
-              <div className="flex items-center justify-between py-3 border-b border-border">
+              <div className="flex items-center justify-between border-b border-border py-3">
                 <div className="pr-4">
-                  <Label className="font-medium text-foreground">
-                    {isEnglish ? 'Marketing Cookies' : 'Marketing-Cookies'}
+                  <Label htmlFor="privacy-marketing" className="font-medium text-foreground">
+                    {isEnglish ? 'Marketing measurement' : 'Marketing-Messung'}
                   </Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {isEnglish 
-                      ? 'Used for remarketing and measuring ad campaign effectiveness (Google Ads conversion tracking).'
-                      : 'Für Remarketing und Messung der Werbekampagnen-Effektivität (Google Ads Conversion Tracking).'}
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isEnglish
+                      ? 'Allows optional campaign or conversion measurement after the production setup has been verified.'
+                      : 'Erlaubt optionale Kampagnen- oder Conversion-Messung nach Verifikation des Produktions-Setups.'}
                   </p>
                 </div>
                 <Switch
+                  id="privacy-marketing"
                   checked={preferences.marketing}
-                  onCheckedChange={(checked) => 
-                    setPreferences(prev => ({ ...prev, marketing: checked }))
-                  }
+                  onCheckedChange={(checked) => setPreferences((previous) => ({ ...previous, marketing: checked }))}
                   className="flex-shrink-0"
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-2">
-                <p className="text-sm text-muted-foreground">
+              <div className="flex items-center justify-between gap-4 pt-2">
+                <p className="text-sm text-muted-foreground" aria-live="polite">
                   {hasConsent && (
                     <span className="flex items-center gap-1 text-primary">
-                      <Check className="w-4 h-4" />
+                      <Check className="h-4 w-4" aria-hidden="true" />
                       {isEnglish ? 'Preferences saved' : 'Einstellungen gespeichert'}
                     </span>
                   )}
                 </p>
                 <Button onClick={handleSavePreferences}>
-                  {isEnglish ? 'Save Preferences' : 'Einstellungen speichern'}
+                  {isEnglish ? 'Save preferences' : 'Einstellungen speichern'}
                 </Button>
               </div>
             </CardContent>
           </Card>
 
           <div className="prose prose-neutral max-w-none space-y-10">
-            {/* Responsible Party */}
             <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Shield className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+              <div className="mb-4 flex items-start gap-3">
+                <Shield className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
                 <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'Data Controller' : 'Verantwortliche Stelle'}
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Controller' : 'Verantwortliche Stelle'}
                   </h2>
                   <p className="text-muted-foreground">
                     {isEnglish
-                      ? 'The data controller for this website is itsFeierabend.ch, located in Switzerland. This website is subject to Swiss data protection law (nFADP/nDSG). We are committed to protecting your personal data and will only use it in accordance with applicable laws.'
-                      : 'Verantwortlich für diese Website ist itsFeierabend.ch mit Sitz in der Schweiz. Diese Website unterliegt dem Schweizer Datenschutzgesetz (nDSG). Wir verpflichten uns, deine persönlichen Daten zu schützen und verwenden sie nur in Übereinstimmung mit den geltenden Gesetzen.'}
+                      ? 'The approved legal entity and postal address are not yet available. Until those facts are supplied, itsFeierabend.ch and the contact address below are the only verified public identifiers in this repository.'
+                      : 'Freigegebene juristische Firmierung und Postanschrift liegen noch nicht vor. Bis diese Fakten ergänzt sind, sind itsFeierabend.ch und die unten genannte Kontaktadresse die einzigen in diesem Repository verifizierten öffentlichen Identifikatoren.'}
                   </p>
                 </div>
               </div>
             </section>
 
-            {/* Data Collection */}
             <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+              <div className="mb-4 flex items-start gap-3">
+                <Database className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
                 <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'What Data We Collect' : 'Welche Daten wir erheben'}
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Data categories' : 'Datenkategorien'}
                   </h2>
-                  <p className="text-muted-foreground mb-4">
+                  <p className="mb-4 text-muted-foreground">
                     {isEnglish
-                      ? 'When you use our services, we may collect the following types of data:'
-                      : 'Wenn du unsere Dienste nutzt, können wir folgende Arten von Daten erheben:'}
+                      ? 'Depending on the feature you use and the information you provide, the service may process:'
+                      : 'Abhängig von der verwendeten Funktion und den von Ihnen angegebenen Informationen können verarbeitet werden:'}
                   </p>
-                  <ul className="text-muted-foreground space-y-3">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span>
-                        <strong>{isEnglish ? 'Contact Data:' : 'Kontaktdaten:'}</strong>{' '}
-                        {isEnglish
-                          ? 'Name, email, phone number when you submit a form or request a callback'
-                          : 'Name, E-Mail, Telefonnummer bei Formular-Einsendungen oder Rückrufanfragen'}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span>
-                        <strong>{isEnglish ? 'Business Data:' : 'Geschäftsdaten:'}</strong>{' '}
-                        {isEnglish
-                          ? 'Industry, location, website URL, budget information for audit and service requests'
-                          : 'Branche, Standort, Website-URL, Budget-Informationen für Audit- und Serviceanfragen'}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span>
-                        <strong>{isEnglish ? 'Usage Data:' : 'Nutzungsdaten:'}</strong>{' '}
-                        {isEnglish
-                          ? 'Pages visited, time spent, interactions via analytics cookies (only with your consent)'
-                          : 'Besuchte Seiten, Verweildauer, Interaktionen über Analytics-Cookies (nur mit Zustimmung)'}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span>
-                        <strong>{isEnglish ? 'Technical Data:' : 'Technische Daten:'}</strong>{' '}
-                        {isEnglish
-                          ? 'Anonymized IP address, browser type, device information, referrer URL'
-                          : 'Anonymisierte IP-Adresse, Browser-Typ, Geräteinformationen, Referrer-URL'}
-                      </span>
-                    </li>
+                  <ul className="space-y-3 text-muted-foreground">
+                    {dataCategories.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check className="mt-1 h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
             </section>
 
-            {/* Purpose of Data Processing */}
             <section>
-              <h2 className="text-xl font-semibold mb-4">
-                {isEnglish ? 'Purpose of Data Processing' : 'Zweck der Datenverarbeitung'}
+              <h2 className="mb-4 text-xl font-semibold">
+                {isEnglish ? 'Purposes' : 'Zwecke'}
               </h2>
-              <p className="text-muted-foreground mb-4">
-                {isEnglish
-                  ? 'We process your personal data for the following purposes:'
-                  : 'Wir verarbeiten deine personenbezogenen Daten zu folgenden Zwecken:'}
-              </p>
-              <ul className="text-muted-foreground space-y-2">
-                <li>{isEnglish ? 'To provide our services and respond to your inquiries' : 'Zur Erbringung unserer Dienstleistungen und Beantwortung deiner Anfragen'}</li>
-                <li>{isEnglish ? 'To create and deliver audit reports and marketing analyses' : 'Zur Erstellung und Lieferung von Audit-Berichten und Marketing-Analysen'}</li>
-                <li>{isEnglish ? 'To improve our website and services through analytics' : 'Zur Verbesserung unserer Website und Dienste durch Analysen'}</li>
-                <li>{isEnglish ? 'To send relevant marketing communications (only with consent)' : 'Zum Versand relevanter Marketing-Kommunikation (nur mit Zustimmung)'}</li>
-                <li>{isEnglish ? 'To comply with legal obligations' : 'Zur Erfüllung gesetzlicher Verpflichtungen'}</li>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>{isEnglish ? 'Respond to an enquiry and deliver a requested audit or report.' : 'Anfragen beantworten und einen angeforderten Audit oder Report bereitstellen.'}</li>
+                <li>{isEnglish ? 'Operate, secure and troubleshoot the service.' : 'Den Dienst betreiben, absichern und Fehler untersuchen.'}</li>
+                <li>{isEnglish ? 'Measure sources and improve the funnel where the required consent exists.' : 'Quellen messen und den Funnel verbessern, soweit die erforderliche Zustimmung vorliegt.'}</li>
+                <li>{isEnglish ? 'Send optional follow-up or marketing communication only where separately permitted.' : 'Optionale Folge- oder Marketing-Kommunikation nur versenden, wenn sie separat erlaubt wurde.'}</li>
+                <li>{isEnglish ? 'Meet documented legal or contractual obligations after those obligations are verified.' : 'Dokumentierte rechtliche oder vertragliche Pflichten erfüllen, nachdem diese geprüft wurden.'}</li>
               </ul>
             </section>
 
-            {/* Cookies */}
             <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Cookie className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+              <div className="mb-4 flex items-start gap-3">
+                <Cookie className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
                 <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'Cookies & Analytics' : 'Cookies & Analytics'}
-                  </h2>
-                  <p className="text-muted-foreground mb-4">
-                    {isEnglish
-                      ? 'We use cookies and similar technologies to improve your experience. You can manage your cookie preferences using the settings panel above.'
-                      : 'Wir verwenden Cookies und ähnliche Technologien, um deine Erfahrung zu verbessern. Du kannst deine Cookie-Einstellungen über das Panel oben verwalten.'}
-                  </p>
-                  <div className="bg-muted rounded-lg p-4 space-y-4">
-                    <div>
-                      <p className="font-medium text-foreground">{isEnglish ? 'Necessary Cookies' : 'Notwendige Cookies'}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {isEnglish
-                          ? 'Essential for website function. These cannot be disabled. Includes session management, language preferences, and consent storage.'
-                          : 'Essentiell für Website-Funktion. Diese können nicht deaktiviert werden. Beinhaltet Sitzungsverwaltung, Sprachpräferenzen und Consent-Speicherung.'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{isEnglish ? 'Analytics (Google Analytics 4)' : 'Analytics (Google Analytics 4)'}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {isEnglish
-                          ? 'Used with IP anonymization to understand website usage patterns. Data is not shared with third parties for advertising.'
-                          : 'Verwendet mit IP-Anonymisierung, um Nutzungsmuster zu verstehen. Daten werden nicht mit Dritten für Werbezwecke geteilt.'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{isEnglish ? 'Marketing (Google Ads)' : 'Marketing (Google Ads)'}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {isEnglish
-                          ? 'Conversion tracking to measure the effectiveness of our advertising campaigns. Used for remarketing to website visitors.'
-                          : 'Conversion-Tracking zur Messung der Effektivität unserer Werbekampagnen. Verwendet für Remarketing an Website-Besucher.'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* AI Voice Agent */}
-            <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Phone className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'AI Voice Agent & Calls' : 'KI-Sprachassistent & Anrufe'}
-                  </h2>
-                  <p className="text-muted-foreground mb-4">
-                    {isEnglish
-                      ? 'If you interact with our AI voice assistant, please note the following:'
-                      : 'Wenn du mit unserem KI-Sprachassistenten interagierst, beachte bitte Folgendes:'}
-                  </p>
-                  <ul className="text-muted-foreground space-y-2">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      {isEnglish
-                        ? 'The AI clearly identifies itself as a digital assistant at the start of each call'
-                        : 'Die KI identifiziert sich zu Beginn jedes Anrufs klar als digitaler Assistent'}
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      {isEnglish
-                        ? 'Call recording only happens with your explicit prior consent'
-                        : 'Anrufaufzeichnung erfolgt nur mit deiner ausdrücklichen vorherigen Zustimmung'}
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      {isEnglish
-                        ? 'Transcripts are stored securely and used only for service improvement'
-                        : 'Transkripte werden sicher gespeichert und nur zur Serviceverbesserung verwendet'}
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      {isEnglish
-                        ? 'You can request removal from our call list at any time'
-                        : 'Du kannst jederzeit die Entfernung von unserer Anrufliste beantragen'}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            {/* Your Rights */}
-            <section>
-              <div className="flex items-start gap-3 mb-4">
-                <UserCheck className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'Your Rights' : 'Deine Rechte'}
-                  </h2>
-                  <p className="text-muted-foreground mb-4">
-                    {isEnglish
-                      ? 'Under Swiss data protection law (nFADP), you have the following rights:'
-                      : 'Nach dem Schweizer Datenschutzgesetz (nDSG) hast du folgende Rechte:'}
-                  </p>
-                  <ul className="text-muted-foreground space-y-2">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right of Access:' : 'Auskunftsrecht:'}</strong> {isEnglish ? 'Request information about your stored data' : 'Auskunft über deine gespeicherten Daten verlangen'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right to Rectification:' : 'Berichtigungsrecht:'}</strong> {isEnglish ? 'Correct inaccurate personal data' : 'Unrichtige personenbezogene Daten berichtigen'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right to Erasure:' : 'Löschungsrecht:'}</strong> {isEnglish ? 'Request deletion of your data (right to be forgotten)' : 'Löschung deiner Daten verlangen (Recht auf Vergessenwerden)'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right to Restriction:' : 'Einschränkungsrecht:'}</strong> {isEnglish ? 'Restrict processing of your data' : 'Verarbeitung deiner Daten einschränken'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right to Object:' : 'Widerspruchsrecht:'}</strong> {isEnglish ? 'Object to data processing for specific purposes' : 'Widerspruch gegen die Verarbeitung für bestimmte Zwecke'}</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <span><strong>{isEnglish ? 'Right to Data Portability:' : 'Datenübertragbarkeit:'}</strong> {isEnglish ? 'Receive your data in a portable format' : 'Deine Daten in einem portablen Format erhalten'}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            {/* Data Retention */}
-            <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Clock className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'Data Retention' : 'Datenspeicherung'}
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Cookies and similar storage' : 'Cookies und ähnliche Speicherung'}
                   </h2>
                   <p className="text-muted-foreground">
                     {isEnglish
-                      ? 'We retain your data only as long as necessary for the purposes for which it was collected, or as required by law. Specifically:'
-                      : 'Wir speichern deine Daten nur so lange, wie es für die Zwecke der Erhebung erforderlich ist oder gesetzlich vorgeschrieben ist. Im Einzelnen:'}
+                      ? 'Necessary storage can retain consent and essential interface state. Optional analytics or marketing storage must remain disabled until the user permits the relevant category and the production service is correctly configured. The final cookie inventory is a launch requirement.'
+                      : 'Notwendige Speicherung kann Consent- und wesentliche Oberflächenzustände sichern. Optionale Analyse- oder Marketing-Speicherung muss deaktiviert bleiben, bis die relevante Kategorie erlaubt und der Produktionsdienst korrekt konfiguriert ist. Das finale Cookie-Inventar ist eine Launch-Anforderung.'}
                   </p>
-                  <ul className="text-muted-foreground space-y-2 mt-4">
-                    <li>{isEnglish ? 'Lead and inquiry data: 2 years after last contact' : 'Lead- und Anfragedaten: 2 Jahre nach letztem Kontakt'}</li>
-                    <li>{isEnglish ? 'Analytics data: 26 months (Google Analytics default)' : 'Analytics-Daten: 26 Monate (Google Analytics Standard)'}</li>
-                    <li>{isEnglish ? 'Call recordings: 1 year (if consent given)' : 'Anrufaufzeichnungen: 1 Jahr (bei Zustimmung)'}</li>
-                    <li>{isEnglish ? 'Accounting data: 10 years (legal requirement)' : 'Buchhaltungsdaten: 10 Jahre (gesetzliche Aufbewahrungspflicht)'}</li>
-                  </ul>
                 </div>
               </div>
             </section>
 
-            {/* Data Security */}
             <section>
-              <h2 className="text-xl font-semibold mb-4">
-                {isEnglish ? 'Data Security' : 'Datensicherheit'}
+              <h2 className="mb-4 text-xl font-semibold">
+                {isEnglish ? 'Service providers and external enrichment' : 'Dienstleister und externe Datenanreicherung'}
+              </h2>
+              <p className="mb-4 text-muted-foreground">
+                {isEnglish
+                  ? 'The codebase contains optional integration points, but that does not establish which vendors are active in production. Before launch, the operator must publish the verified provider, purpose, processing region and relevant transfer information for each active category:'
+                  : 'Der Code enthält optionale Integrationspunkte; daraus folgt nicht, welche Anbieter in Produktion aktiv sind. Vor dem Launch müssen für jede aktive Kategorie Anbieter, Zweck, Verarbeitungsregion und relevante Angaben zu Datenübermittlungen verifiziert veröffentlicht werden:'}
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                {serviceCategories.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-xl font-semibold">
+                {isEnglish ? 'Audit results and AI assistance' : 'Audit-Ergebnisse und KI-Unterstützung'}
               </h2>
               <p className="text-muted-foreground">
                 {isEnglish
-                  ? 'We implement appropriate technical and organizational security measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. This includes encrypted data transmission (TLS/SSL), secure hosting infrastructure, access controls, and regular security audits.'
-                  : 'Wir implementieren angemessene technische und organisatorische Sicherheitsmassnahmen, um deine personenbezogenen Daten vor unbefugtem Zugriff, Änderung, Offenlegung oder Zerstörung zu schützen. Dies umfasst verschlüsselte Datenübertragung (TLS/SSL), sichere Hosting-Infrastruktur, Zugriffskontrollen und regelmässige Sicherheitsaudits.'}
+                  ? 'An audit may combine automatically observed signals, information supplied by the user, rule-based scoring, external enrichment and optional AI-assisted wording. The result must identify these evidence levels and should be treated as a preliminary business diagnostic, not as legal, tax, credit, employment or statutory audit advice.'
+                  : 'Ein Audit kann automatisch beobachtete Signale, Nutzerangaben, regelbasiertes Scoring, externe Datenanreicherung und optionale KI-unterstützte Formulierung kombinieren. Das Ergebnis muss diese Evidenzstufen ausweisen und ist als vorläufige digitale Unternehmensdiagnose zu verstehen, nicht als Rechts-, Steuer-, Kredit-, Personal- oder gesetzliche Revisionsberatung.'}
               </p>
             </section>
 
-            {/* Third-Party Services */}
             <section>
-              <h2 className="text-xl font-semibold mb-4">
-                {isEnglish ? 'Third-Party Services' : 'Drittanbieter-Dienste'}
-              </h2>
-              <p className="text-muted-foreground mb-4">
-                {isEnglish
-                  ? 'We use the following third-party services that may process your data:'
-                  : 'Wir nutzen folgende Drittanbieter-Dienste, die deine Daten verarbeiten können:'}
-              </p>
-              <ul className="text-muted-foreground space-y-2">
-                <li><strong>Google Analytics 4:</strong> {isEnglish ? 'Website analytics (with IP anonymization)' : 'Website-Analytics (mit IP-Anonymisierung)'}</li>
-                <li><strong>Google Ads:</strong> {isEnglish ? 'Advertising and conversion tracking' : 'Werbung und Conversion-Tracking'}</li>
-                <li><strong>Supabase:</strong> {isEnglish ? 'Database and authentication services (EU region)' : 'Datenbank- und Authentifizierungsdienste (EU-Region)'}</li>
-                <li><strong>Retell AI:</strong> {isEnglish ? 'AI voice agent services' : 'KI-Sprachassistent-Dienste'}</li>
-              </ul>
-            </section>
-
-            {/* Contact */}
-            <section>
-              <div className="flex items-start gap-3 mb-4">
-                <Mail className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+              <div className="mb-4 flex items-start gap-3">
+                <UserCheck className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
                 <div>
-                  <h2 className="text-xl font-semibold mb-3 mt-0">
-                    {isEnglish ? 'Contact for Data Protection' : 'Kontakt für Datenschutz'}
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Requests concerning personal data' : 'Anfragen zu Personendaten'}
                   </h2>
-                  <p className="text-muted-foreground mb-4">
+                  <p className="text-muted-foreground">
                     {isEnglish
-                      ? 'For any questions, requests, or concerns regarding data protection, please contact us:'
-                      : 'Bei Fragen, Anfragen oder Anliegen zum Datenschutz kontaktiere uns bitte:'}
+                      ? 'Depending on the applicable law and its exceptions, a person may be entitled to request information, correction, deletion or delivery of their personal data. Requests can be sent to the contact address below. Identity may need to be verified before data is disclosed or changed.'
+                      : 'Je nach anwendbarem Recht und dessen Ausnahmen kann eine Person Auskunft, Berichtigung, Löschung oder Herausgabe ihrer Personendaten verlangen. Anfragen können an die unten genannte Adresse gesendet werden. Vor einer Offenlegung oder Änderung kann eine Identitätsprüfung erforderlich sein.'}
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <div className="mb-4 flex items-start gap-3">
+                <Clock className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
+                <div>
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Retention and deletion' : 'Aufbewahrung und Löschung'}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {isEnglish
+                      ? 'No fixed retention periods are published here because the production data inventory and approved retention schedule are not complete. Defining justified periods for leads, audits, operational logs, communications and any optional recordings or transcripts is a launch blocker.'
+                      : 'Hier werden keine festen Fristen veröffentlicht, weil Produktions-Dateninventar und freigegebenes Aufbewahrungskonzept noch nicht vollständig sind. Begründete Fristen für Leads, Audits, Betriebsprotokolle, Kommunikation und optionale Aufzeichnungen oder Transkripte festzulegen, ist ein Launch-Blocker.'}
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-xl font-semibold">
+                {isEnglish ? 'Security' : 'Sicherheit'}
+              </h2>
+              <p className="text-muted-foreground">
+                {isEnglish
+                  ? 'HTTPS is enabled on the public website. Access controls, database policies, rate limits, secret handling, backups, incident response and vendor configuration must still be verified against production. No internet service can promise absolute security.'
+                  : 'HTTPS ist auf der öffentlichen Website aktiviert. Zugriffskontrollen, Datenbankrichtlinien, Rate Limits, Secret-Verwaltung, Backups, Incident Response und Anbieterkonfiguration müssen weiterhin gegen Produktion verifiziert werden. Kein Internetdienst kann absolute Sicherheit versprechen.'}
+              </p>
+            </section>
+
+            <section>
+              <div className="mb-4 flex items-start gap-3">
+                <Mail className="mt-1 h-6 w-6 flex-shrink-0 text-primary" aria-hidden="true" />
+                <div>
+                  <h2 className="mt-0 mb-3 text-xl font-semibold">
+                    {isEnglish ? 'Privacy contact' : 'Datenschutz-Kontakt'}
+                  </h2>
+                  <p className="mb-4 text-muted-foreground">
+                    {isEnglish
+                      ? 'Questions and requests can be sent to:'
+                      : 'Fragen und Anfragen können gesendet werden an:'}
                   </p>
                   <p>
-                    E-Mail:{' '}
-                    <a 
-                      href={`mailto:${siteConfig.email}`} 
-                      className="text-primary hover:underline"
-                    >
+                    <a href={`mailto:${siteConfig.email}`} className="text-primary hover:underline">
                       {siteConfig.email}
                     </a>
                   </p>
@@ -466,12 +393,9 @@ export default function PrivacyPage() {
               </div>
             </section>
 
-            {/* Last Updated */}
-            <section className="pt-6 border-t border-border">
+            <section className="border-t border-border pt-6">
               <p className="text-sm text-muted-foreground">
-                {isEnglish 
-                  ? 'Last updated: December 2024' 
-                  : 'Zuletzt aktualisiert: Dezember 2024'}
+                {isEnglish ? 'Working status reviewed: 25 July 2026' : 'Arbeitsstand geprüft: 25. Juli 2026'}
               </p>
             </section>
           </div>

@@ -11,14 +11,14 @@ export function LanguageSwitch() {
     
     setLanguage(newLang);
     const newPath = getAlternateLanguagePath(location.pathname, language);
-    navigate(newPath);
+    navigate(`${newPath}${location.search}${location.hash}`);
   };
 
   return (
-    <div className="flex items-center gap-1 text-sm font-medium">
+    <div className="flex items-center gap-1 text-sm font-medium" aria-label={language === 'de' ? 'Sprache wählen' : 'Choose language'}>
       <button
         onClick={() => handleLanguageChange('de')}
-        className={`px-2 py-1 rounded transition-colors ${
+        className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded px-2 py-1 transition-colors ${
           language === 'de'
             ? 'text-foreground font-semibold'
             : 'text-muted-foreground hover:text-foreground'
@@ -30,7 +30,7 @@ export function LanguageSwitch() {
       <span className="text-muted-foreground/50">|</span>
       <button
         onClick={() => handleLanguageChange('en')}
-        className={`px-2 py-1 rounded transition-colors ${
+        className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded px-2 py-1 transition-colors ${
           language === 'en'
             ? 'text-foreground font-semibold'
             : 'text-muted-foreground hover:text-foreground'

@@ -1,550 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
-  <!-- Homepage DE -->
   <url>
     <loc>https://itsfeierabend.ch/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/"/>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <changefreq>weekly</changefreq><priority>1.0</priority>
   </url>
-
-  <!-- Homepage EN -->
   <url>
     <loc>https://itsfeierabend.ch/en</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/"/>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <changefreq>weekly</changefreq><priority>0.9</priority>
   </url>
-
-  <!-- Sprint 2 SEO landings DE/EN -->
+  <url>
+    <loc>https://itsfeierabend.ch/ai-business-audit</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ai-business-audit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ai-business-audit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ai-business-audit"/>
+    <changefreq>monthly</changefreq><priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://itsfeierabend.ch/en/ai-business-audit</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ai-business-audit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ai-business-audit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ai-business-audit"/>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
+  </url>
   <url>
     <loc>https://itsfeierabend.ch/website-audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/website-audit"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/website-audit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/website-audit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/website-audit"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <changefreq>monthly</changefreq><priority>0.9</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/en/website-audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/website-audit"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/website-audit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/website-audit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/website-audit"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/seo-analyse</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/seo-analyse"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/seo-analyse"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/seo-analysis"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/seo-analyse"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <changefreq>monthly</changefreq><priority>0.9</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/en/seo-analysis</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/seo-analyse"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/seo-analyse"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/seo-analysis"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/seo-analyse"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/ai-visibility</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/ai-visibility"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ai-visibility"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ai-visibility"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ai-visibility"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/en/ai-visibility</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/ai-visibility"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ai-visibility"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ai-visibility"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ai-visibility"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>monthly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://itsfeierabend.ch/automation</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/automation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/automation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/automation"/>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://itsfeierabend.ch/en/automation</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/automation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/automation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/automation"/>
+    <changefreq>monthly</changefreq><priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://itsfeierabend.ch/leistungen</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/leistungen"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/leistungen"/>
+    <changefreq>monthly</changefreq><priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://itsfeierabend.ch/en/services</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/leistungen"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/leistungen"/>
+    <changefreq>monthly</changefreq><priority>0.7</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/fuer-kmu</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/fuer-kmu"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/for-smb"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/fuer-kmu"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/for-smes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/fuer-kmu"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <changefreq>monthly</changefreq><priority>0.7</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/en/for-smb</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/fuer-kmu"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/for-smb"/>
+    <loc>https://itsfeierabend.ch/en/for-smes</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/fuer-kmu"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/for-smes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/fuer-kmu"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/partner</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/partner"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/partner"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/partner"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/partners"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/partner"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>monthly</changefreq><priority>0.7</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/en/partner</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/partner"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/partner"/>
+    <loc>https://itsfeierabend.ch/en/partners</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/partner"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/partners"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/partner"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-
-
-  <!-- Services DE -->
-  <url>
-    <loc>https://itsfeierabend.ch/services/ki-implementierung</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/ki-implementierung"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/ai-implementation"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/ki-implementierung"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/seo</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/seo"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/seo"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/seo"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/sea</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/sea"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/sea"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/sea"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/reputation</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/reputation"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/reputation"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/reputation"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/design-entwicklung</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/design-entwicklung"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/design-development"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/design-entwicklung"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/brand-deployment</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/brand-deployment"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/brand-deployment"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/brand-deployment"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/services/social-media</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/social-media"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/social-media"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/social-media"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Services EN -->
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/ai-implementation</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/ki-implementierung"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/ai-implementation"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/ki-implementierung"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/seo</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/seo"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/seo"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/seo"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/sea</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/sea"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/sea"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/sea"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/reputation</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/reputation"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/reputation"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/reputation"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/design-development</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/design-entwicklung"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/design-development"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/design-entwicklung"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/brand-deployment</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/brand-deployment"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/brand-deployment"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/brand-deployment"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/services/social-media</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/services/social-media"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/services/social-media"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/services/social-media"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Core DE -->
-  <url>
-    <loc>https://itsfeierabend.ch/audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/audit"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/audit"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/audit"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/gratis-audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/gratis-audit"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/free-audit"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/gratis-audit"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/gratis-call</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/gratis-call"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/free-call"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/gratis-call"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/system</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/system"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/system"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/system"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/pakete</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/pakete"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/pricing"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/pakete"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/ultimate-package</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/ultimate-package"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ultimate-package"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ultimate-package"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/scan</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/scan"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/scan"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/scan"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/demo</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/demo"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/demo"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/demo"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/fallstudien</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/fallstudien"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/fallstudien"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/case-studies"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/fallstudien"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/faq</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/faq"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/faq"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/faq"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Core EN -->
-  <url>
-    <loc>https://itsfeierabend.ch/en/audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/audit"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/audit"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/audit"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/free-audit</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/gratis-audit"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/free-audit"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/gratis-audit"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/free-call</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/gratis-call"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/free-call"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/gratis-call"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/system</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/system"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/system"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/system"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/pakete"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/pricing"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/pakete"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/ultimate-package</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/ultimate-package"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/ultimate-package"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ultimate-package"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/scan</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/scan"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/scan"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/scan"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/demo</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/demo"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/demo"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/demo"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
     <loc>https://itsfeierabend.ch/en/case-studies</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/fallstudien"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/fallstudien"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/case-studies"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/fallstudien"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <changefreq>monthly</changefreq><priority>0.5</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/en/faq</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/faq"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/faq"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/faq"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Investor DE -->
-  <url>
-    <loc>https://itsfeierabend.ch/investoren</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/investoren"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/investoren"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Blog DE -->
-  <url>
-    <loc>https://itsfeierabend.ch/blog</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/insights</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/insights"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/insights"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/insights"/>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/blog/local-seo-grundlagen-schweiz</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/local-seo-grundlagen-schweiz"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/local-seo-basics-switzerland"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/local-seo-grundlagen-schweiz"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/en/insights</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/insights"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/insights"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/insights"/>
+    <changefreq>monthly</changefreq><priority>0.5</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/blog/google-ads-fuer-handwerker</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/google-ads-fuer-handwerker"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/google-ads-for-tradespeople"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/google-ads-fuer-handwerker"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/ueber-uns</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ueber-uns"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ueber-uns"/>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/blog/ki-automatisierung-lokale-unternehmen</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/ki-automatisierung-lokale-unternehmen"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/ai-automation-local-businesses"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/ki-automatisierung-lokale-unternehmen"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/en/about</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/ueber-uns"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/ueber-uns"/>
+    <changefreq>monthly</changefreq><priority>0.5</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/blog/conversion-rate-optimierung-landingpages</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/conversion-rate-optimierung-landingpages"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/conversion-rate-optimization-landing-pages"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/conversion-rate-optimierung-landingpages"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/kontakt</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/kontakt"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/kontakt"/>
+    <changefreq>monthly</changefreq><priority>0.6</priority>
   </url>
   <url>
-    <loc>https://itsfeierabend.ch/blog/bewertungen-sammeln-strategie</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/bewertungen-sammeln-strategie"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/collecting-reviews-strategy"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/bewertungen-sammeln-strategie"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://itsfeierabend.ch/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://itsfeierabend.ch/kontakt"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/kontakt"/>
+    <changefreq>monthly</changefreq><priority>0.5</priority>
   </url>
-  <url>
-    <loc>https://itsfeierabend.ch/blog/social-media-fuer-handwerker</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/social-media-fuer-handwerker"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/social-media-for-tradespeople"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/social-media-fuer-handwerker"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Blog EN -->
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog"/>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/local-seo-basics-switzerland</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/local-seo-grundlagen-schweiz"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/local-seo-basics-switzerland"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/local-seo-grundlagen-schweiz"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/google-ads-for-tradespeople</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/google-ads-fuer-handwerker"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/google-ads-for-tradespeople"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/google-ads-fuer-handwerker"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/ai-automation-local-businesses</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/ki-automatisierung-lokale-unternehmen"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/ai-automation-local-businesses"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/ki-automatisierung-lokale-unternehmen"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/conversion-rate-optimization-landing-pages</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/conversion-rate-optimierung-landingpages"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/conversion-rate-optimization-landing-pages"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/conversion-rate-optimierung-landingpages"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/collecting-reviews-strategy</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/bewertungen-sammeln-strategie"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/collecting-reviews-strategy"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/bewertungen-sammeln-strategie"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/blog/social-media-for-tradespeople</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/blog/social-media-fuer-handwerker"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/blog/social-media-for-tradespeople"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/blog/social-media-fuer-handwerker"/>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Legal DE -->
-  <url>
-    <loc>https://itsfeierabend.ch/impressum</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/impressum"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/imprint"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/impressum"/>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/datenschutz</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/datenschutz"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/privacy"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/datenschutz"/>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Legal EN -->
-  <url>
-    <loc>https://itsfeierabend.ch/en/imprint</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/impressum"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/imprint"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/impressum"/>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://itsfeierabend.ch/en/privacy</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://itsfeierabend.ch/datenschutz"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://itsfeierabend.ch/en/privacy"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://itsfeierabend.ch/datenschutz"/>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
 </urlset>

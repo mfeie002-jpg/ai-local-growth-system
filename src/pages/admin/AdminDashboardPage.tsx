@@ -11,7 +11,9 @@ import {
   Eye,
   Target,
   ArrowUpRight,
-  Clock
+  Clock,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,10 +31,10 @@ interface DashboardStats {
   recentLeads: number;
   totalCalls: number;
   recentCalls: number;
-  totalReports: number;
-  viewedReports: number;
+  totalAudits: number;
+  viewedAudits: number;
   viewRate: number;
-  callbacksFromReports: number;
+  auditCtaClicks: number;
   conversionRate: number;
 }
 
@@ -61,6 +63,7 @@ export default function AdminDashboardPage() {
   const [recentCalls, setRecentCalls] = useState<RecentCall[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAdmin) {
@@ -70,41 +73,42 @@ export default function AdminDashboardPage() {
 
   const fetchDashboardData = async () => {
     setIsLoading(true);
+    setLoadError(null);
     try {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
 
-      const [leadsRes, callsRes, reportsRes, callbacksRes] = await Promise.all([
+      const [leadsRes, callsRes, auditsRes] = await Promise.all([
         supabase.from('leads').select('id, name, email, lead_type, status, created_at').order('created_at', { ascending: false }),
         supabase.from('calls').select('id, direction, from_number, status, duration_ms, created_at').order('created_at', { ascending: false }),
-        supabase.from('analysis_reports').select('id, token, viewed_at, created_at'),
-        supabase.from('callback_requests').select('id, report_token')
+        supabase.from('audit_requests').select('id, report_viewed_at, cta_clicked_at, created_at')
       ]);
+      const queryError = leadsRes.error ?? callsRes.error ?? auditsRes.error;
+      if (queryError) throw queryError;
 
       const leads = leadsRes.data || [];
       const calls = callsRes.data || [];
-      const reports = reportsRes.data || [];
-      const callbacks = callbacksRes.data || [];
+      const audits = auditsRes.data || [];
 
       // Calculate stats
       const recentLeadsCount = leads.filter(l => new Date(l.created_at) > weekAgo).length;
       const recentCallsCount = calls.filter(c => new Date(c.created_at) > weekAgo).length;
-      const viewedReports = reports.filter(r => r.viewed_at).length;
-      const viewRate = reports.length > 0 ? Math.round((viewedReports / reports.length) * 100) : 0;
-      
-      const reportTokens = new Set(reports.map(r => r.token));
-      const callbacksFromReports = callbacks.filter(c => c.report_token && reportTokens.has(c.report_token)).length;
-      const conversionRate = viewedReports > 0 ? Math.round((callbacksFromReports / viewedReports) * 100) : 0;
+      const viewedAudits = audits.filter(audit => audit.report_viewed_at).length;
+      const viewRate = audits.length > 0 ? Math.round((viewedAudits / audits.length) * 100) : 0;
+      const auditCtaClicks = audits.filter(
+        audit => audit.cta_clicked_at && audit.report_viewed_at,
+      ).length;
+      const conversionRate = viewedAudits > 0 ? Math.round((auditCtaClicks / viewedAudits) * 100) : 0;
 
       setStats({
         totalLeads: leads.length,
         recentLeads: recentLeadsCount,
         totalCalls: calls.length,
         recentCalls: recentCallsCount,
-        totalReports: reports.length,
-        viewedReports,
+        totalAudits: audits.length,
+        viewedAudits,
         viewRate,
-        callbacksFromReports,
+        auditCtaClicks,
         conversionRate
       });
 
@@ -131,8 +135,8 @@ export default function AdminDashboardPage() {
           return date >= dayStart && date < dayEnd;
         }).length;
 
-        const dayReports = reports.filter(r => {
-          const date = new Date(r.created_at);
+        const dayAudits = audits.filter(audit => {
+          const date = new Date(audit.created_at);
           return date >= dayStart && date < dayEnd;
         }).length;
 
@@ -140,13 +144,14 @@ export default function AdminDashboardPage() {
           date: format(day, 'dd.MM', { locale: de }),
           leads: dayLeads,
           calls: dayCalls,
-          reports: dayReports
+          audits: dayAudits
         };
       });
 
       setChartData(chartDataArr);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      setLoadError('Dashboard-Daten konnten nicht geladen werden.');
     } finally {
       setIsLoading(false);
     }
@@ -178,6 +183,27 @@ export default function AdminDashboardPage() {
 
   if (!isAdmin) {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  if (!isLoading && loadError) {
+    return (
+      <AdminLayout title="Dashboard">
+        <NoIndex />
+        <Card className="border-destructive/40">
+          <CardContent className="flex flex-col items-start gap-4 p-8">
+            <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden="true" />
+            <div>
+              <h2 className="text-lg font-semibold">Daten nicht verfügbar</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{loadError}</p>
+            </div>
+            <Button variant="outline" onClick={() => void fetchDashboardData()}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Erneut versuchen
+            </Button>
+          </CardContent>
+        </Card>
+      </AdminLayout>
+    );
   }
 
   if (isLoading || !stats) {
@@ -240,10 +266,10 @@ export default function AdminDashboardPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Reports</p>
-                <p className="text-3xl font-bold text-foreground">{stats.totalReports}</p>
+                <p className="text-sm text-muted-foreground">Audits</p>
+                <p className="text-3xl font-bold text-foreground">{stats.totalAudits}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  <span className="text-primary">{stats.viewedReports}</span> angesehen
+                  <span className="text-primary">{stats.viewedAudits}</span> angesehen
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
@@ -260,7 +286,7 @@ export default function AdminDashboardPage() {
                 <p className="text-sm text-muted-foreground">View-Rate</p>
                 <p className="text-3xl font-bold text-foreground">{stats.viewRate}%</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Report Views
+                  Audit-Resultate
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -277,7 +303,7 @@ export default function AdminDashboardPage() {
                 <p className="text-sm text-muted-foreground">Conversion</p>
                 <p className="text-3xl font-bold text-foreground">{stats.conversionRate}%</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  View → Callback
+                  Resultat → CTA
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center">
@@ -327,7 +353,7 @@ export default function AdminDashboardPage() {
                 />
                 <Area type="monotone" dataKey="leads" name="Leads" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorLeads)" />
                 <Area type="monotone" dataKey="calls" name="Calls" stroke="hsl(221, 83%, 53%)" fillOpacity={1} fill="url(#colorCalls)" />
-                <Area type="monotone" dataKey="reports" name="Reports" stroke="hsl(271, 91%, 65%)" fillOpacity={1} fill="url(#colorReports)" />
+                <Area type="monotone" dataKey="audits" name="Audits" stroke="hsl(271, 91%, 65%)" fillOpacity={1} fill="url(#colorReports)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -11,7 +12,6 @@ import {
   setConsent,
   type ConsentPreferences 
 } from '@/lib/consent';
-import { initGA4 } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
 export function CookieBanner() {
@@ -22,6 +22,7 @@ export function CookieBanner() {
     analytics: false,
     marketing: false,
   });
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   const isDE = !isEnglish;
 
@@ -30,17 +31,53 @@ export function CookieBanner() {
     const consent = getConsent();
     if (!consent) {
       setIsVisible(true);
-    } else {
-      // Initialize GA4 if analytics consent was given
-      if (consent.analytics) {
-        initGA4();
-      }
     }
   }, []);
 
+  useEffect(() => {
+    if (!isVisible || !dialogRef.current) return;
+    const previousFocus = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const dialog = dialogRef.current;
+    const focusableSelector = [
+      'button:not([disabled])',
+      'a[href]',
+      'input:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+    const focusables = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector))
+        .filter((element) => !element.hasAttribute('disabled'));
+
+    focusables()[0]?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showSettings) {
+        setShowSettings(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus();
+    };
+  }, [isVisible, showSettings]);
+
   const handleAcceptAll = () => {
     acceptAll();
-    initGA4();
     setIsVisible(false);
   };
 
@@ -51,9 +88,6 @@ export function CookieBanner() {
 
   const handleSavePreferences = () => {
     setConsent(preferences);
-    if (preferences.analytics) {
-      initGA4();
-    }
     setIsVisible(false);
   };
 
@@ -62,27 +96,35 @@ export function CookieBanner() {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
       {/* Backdrop */}
-      <div 
+      <div
+        aria-hidden="true"
         className="fixed inset-0 bg-background/80 backdrop-blur-sm"
         onClick={() => {}}
       />
 
       {/* Banner */}
-      <div className={cn(
+      <div ref={dialogRef} className={cn(
         'relative w-full max-w-lg bg-card border border-border rounded-xl shadow-xl p-6 animate-in fade-in slide-in-from-bottom-4',
         showSettings && 'max-w-md'
-      )}>
+      )}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cookie-dialog-title"
+        aria-describedby={showSettings ? undefined : 'cookie-dialog-description'}
+      >
         {showSettings ? (
           // Settings View
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 id="cookie-dialog-title" className="text-lg font-semibold text-foreground">
                 {isDE ? 'Cookie-Einstellungen' : 'Cookie Settings'}
               </h3>
               <Button 
                 variant="ghost" 
                 size="icon"
+                className="min-h-11 min-w-11"
                 onClick={() => setShowSettings(false)}
+                aria-label={isDE ? 'Cookie-Einstellungen schliessen' : 'Close cookie settings'}
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -92,31 +134,33 @@ export function CookieBanner() {
               {/* Necessary - Always on */}
               <div className="flex items-center justify-between py-3 border-b border-border">
                 <div>
-                  <Label className="font-medium">
+                  <Label htmlFor="consent-necessary" className="font-medium">
                     {isDE ? 'Notwendig' : 'Necessary'}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p id="consent-necessary-description" className="text-sm text-muted-foreground">
                     {isDE 
                       ? 'Für die Grundfunktionen der Website erforderlich.'
                       : 'Required for basic website functionality.'}
                   </p>
                 </div>
-                <Switch checked disabled />
+                <Switch id="consent-necessary" checked disabled aria-describedby="consent-necessary-description" />
               </div>
 
               {/* Analytics */}
               <div className="flex items-center justify-between py-3 border-b border-border">
                 <div>
-                  <Label className="font-medium">
+                  <Label htmlFor="consent-analytics" className="font-medium">
                     {isDE ? 'Analyse' : 'Analytics'}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p id="consent-analytics-description" className="text-sm text-muted-foreground">
                     {isDE 
                       ? 'Hilft uns, die Website zu verbessern.'
                       : 'Helps us improve the website.'}
                   </p>
                 </div>
                 <Switch
+                  id="consent-analytics"
+                  aria-describedby="consent-analytics-description"
                   checked={preferences.analytics}
                   onCheckedChange={(checked) => 
                     setPreferences(prev => ({ ...prev, analytics: checked }))
@@ -127,16 +171,18 @@ export function CookieBanner() {
               {/* Marketing */}
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <Label className="font-medium">
+                  <Label htmlFor="consent-marketing" className="font-medium">
                     {isDE ? 'Marketing' : 'Marketing'}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p id="consent-marketing-description" className="text-sm text-muted-foreground">
                     {isDE 
                       ? 'Für personalisierte Werbung.'
                       : 'For personalized advertising.'}
                   </p>
                 </div>
                 <Switch
+                  id="consent-marketing"
+                  aria-describedby="consent-marketing-description"
                   checked={preferences.marketing}
                   onCheckedChange={(checked) => 
                     setPreferences(prev => ({ ...prev, marketing: checked }))
@@ -165,12 +211,12 @@ export function CookieBanner() {
           // Main Banner View
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+              <h3 id="cookie-dialog-title" className="text-lg font-semibold text-foreground mb-2">
                 {isDE ? 'Cookies & Datenschutz' : 'Cookies & Privacy'}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p id="cookie-dialog-description" className="text-sm text-muted-foreground">
                 {isDE 
-                  ? 'Wir nutzen Cookies für Analyse und Marketing. Du kannst selbst entscheiden, welche du zulassen möchtest.'
+                  ? 'Wir verwenden optionale Cookies für Analyse und Marketing. Sie entscheiden, welche Sie zulassen.'
                   : 'We use cookies for analytics and marketing. You can choose which ones you want to allow.'}
               </p>
             </div>
@@ -192,17 +238,26 @@ export function CookieBanner() {
               <Button
                 variant="ghost"
                 size="icon"
+                className="min-h-11 min-w-11"
                 onClick={() => setShowSettings(true)}
                 title={isDE ? 'Einstellungen' : 'Settings'}
+                aria-label={isDE ? 'Cookie-Einstellungen öffnen' : 'Open cookie settings'}
               >
                 <Settings className="w-5 h-5" />
               </Button>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {isDE 
-                ? 'Details in unserer Datenschutzerklärung.'
-                : 'Details in our privacy policy.'}
+              <Link
+                to={isDE ? '/datenschutz' : '/en/privacy'}
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {isDE
+                  ? 'Details finden Sie in unserer Datenschutzerklärung.'
+                  : 'Details are available in our privacy policy.'}
+              </Link>
             </p>
           </div>
         )}

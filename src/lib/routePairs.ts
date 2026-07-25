@@ -8,39 +8,31 @@ export interface RoutePair {
 
 const PAIRS: RoutePair[] = [
   { de: '/', en: '/en' },
-  { de: '/audit', en: '/en/audit' },
-  // Sprint 2 SEO landings
+  { de: '/ai-business-audit', en: '/en/ai-business-audit' },
   { de: '/website-audit', en: '/en/website-audit' },
   { de: '/seo-analyse', en: '/en/seo-analysis' },
   { de: '/ai-visibility', en: '/en/ai-visibility' },
-  { de: '/fuer-kmu', en: '/en/for-smb' },
-  { de: '/partner', en: '/en/partner' },
-  // Existing
-  { de: '/gratis-call', en: '/en/free-call' },
-  { de: '/system', en: '/en/system' },
-  { de: '/pakete', en: '/en/pricing' },
-  { de: '/faq', en: '/en/faq' },
+  { de: '/automation', en: '/en/automation' },
+  { de: '/leistungen', en: '/en/services' },
+  { de: '/fuer-kmu', en: '/en/for-smes' },
+  { de: '/partner', en: '/en/partners' },
+  { de: '/fallstudien', en: '/en/case-studies' },
+  { de: '/insights', en: '/en/insights' },
+  { de: '/ueber-uns', en: '/en/about' },
+  { de: '/kontakt', en: '/en/contact' },
+  { de: '/audit', en: '/en/audit' },
   { de: '/impressum', en: '/en/imprint' },
   { de: '/datenschutz', en: '/en/privacy' },
-  { de: '/demo', en: '/en/demo' },
-  { de: '/fallstudien', en: '/en/case-studies' },
-  { de: '/ultimate-package', en: '/en/ultimate-package' },
-  { de: '/scan', en: '/en/scan' },
-  { de: '/blog', en: '/en/blog' },
-  { de: '/services/ki-implementierung', en: '/en/services/ai-implementation' },
-  { de: '/services/seo', en: '/en/services/seo' },
-  { de: '/services/sea', en: '/en/services/sea' },
-  { de: '/services/reputation', en: '/en/services/reputation' },
-  { de: '/services/design-entwicklung', en: '/en/services/design-development' },
-  { de: '/services/brand-deployment', en: '/en/services/brand-deployment' },
-  { de: '/services/social-media', en: '/en/services/social-media' },
 ];
 
 export const BASE_URL = 'https://itsfeierabend.ch';
 
 /** Returns the DE/EN pair for a given pathname, or null if none. */
 export function findRoutePair(pathname: string): RoutePair | null {
+  // Normalize trailing slashes (except root)
   const normalized =
     pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  return PAIRS.find((p) => p.de === normalized || p.en === normalized) ?? null;
+  return (
+    PAIRS.find((p) => p.de === normalized || p.en === normalized) ?? null
+  );
 }

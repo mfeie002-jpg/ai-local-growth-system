@@ -438,6 +438,9 @@ export interface VisibilitySignal {
   recommendation: string;
   passed: boolean;
   unavailable: boolean;
+  state: "estimated" | "unavailable";
+  source: "semrush";
+  confidence: "medium" | "low";
 }
 
 /**
@@ -445,19 +448,29 @@ export interface VisibilitySignal {
  * When unavailable, the signal is marked `unavailable: true` and does
  * not contribute zero to the deterministic score.
  */
-export function buildVisibilitySignal(enrichment: EnrichmentResult | null): VisibilitySignal {
+export function buildVisibilitySignal(
+  enrichment: EnrichmentResult | null,
+  language: "de" | "en" = "de",
+): VisibilitySignal {
   if (!enrichment || !enrichment.data || enrichment.data.parts.domain_overview !== "ok") {
     return {
       id: "search_visibility",
       category: "content",
-      name: "Sichtbarkeit in Google (Semrush)",
+      name: language === "en" ? "Google visibility (Semrush)" : "Sichtbarkeit in Google (Semrush)",
       value: null,
-      evidence: "Sichtbarkeitsdaten aktuell nicht verfügbar.",
+      evidence: language === "en"
+        ? "Visibility data is currently unavailable."
+        : "Sichtbarkeitsdaten aktuell nicht verfügbar.",
       score: 0,
       max_score: 0,
-      recommendation: "Sichtbarkeitsdaten werden ergänzt, sobald verfügbar.",
+      recommendation: language === "en"
+        ? "Visibility evidence can be added when a verified source is available."
+        : "Sichtbarkeitsdaten werden ergänzt, sobald verfügbar.",
       passed: false,
       unavailable: true,
+      state: "unavailable",
+      source: "semrush",
+      confidence: "low",
     };
   }
   const ov = enrichment.data.overview!;
@@ -466,15 +479,24 @@ export function buildVisibilitySignal(enrichment: EnrichmentResult | null): Visi
   return {
     id: "search_visibility",
     category: "content",
-    name: "Sichtbarkeit in Google (Semrush)",
+    name: language === "en" ? "Google visibility (Semrush)" : "Sichtbarkeit in Google (Semrush)",
     value: traffic ?? kws ?? null,
-    evidence: `Ø ${traffic ?? "?"} organische Besuche/Monat auf ${kws ?? "?"} rankenden Keywords`,
+    evidence: language === "en"
+      ? `Semrush estimate: ${traffic ?? "?"} monthly organic visits and ${kws ?? "?"} ranking keywords`
+      : `Semrush-Schätzung: ${traffic ?? "?"} organische Besuche/Monat und ${kws ?? "?"} rankende Keywords`,
     score: 0,
     max_score: 0,
-    recommendation: (traffic ?? 0) > 100
-      ? "Solide Basis — mehr Themen mit klarer Suchintention veröffentlichen."
-      : "Ranking-Sichtbarkeit ausbauen: Themen-Cluster und Meta-Optimierung.",
+    recommendation: language === "en"
+      ? ((traffic ?? 0) > 100
+        ? "Build on the existing base with more content tied to clear search intent."
+        : "Improve organic visibility with focused topic clusters and metadata.")
+      : ((traffic ?? 0) > 100
+        ? "Solide Basis — mehr Themen mit klarer Suchintention veröffentlichen."
+        : "Ranking-Sichtbarkeit ausbauen: Themen-Cluster und Meta-Optimierung."),
     passed: (traffic ?? 0) > 100,
     unavailable: false,
+    state: "estimated",
+    source: "semrush",
+    confidence: "medium",
   };
 }

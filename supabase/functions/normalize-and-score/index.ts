@@ -447,8 +447,6 @@ Deno.serve(async (req) => {
           title: s.label,
           description: s.details || `Score: ${s.score}/100`,
           severity: s.score < 30 ? 'critical' : s.score < 70 ? 'warning' : 'info',
-          hoursToFix: s.score < 30 ? 4 : 2,
-          costIfIgnored: s.score < 30 ? 800 : 300,
         })),
     }))
 

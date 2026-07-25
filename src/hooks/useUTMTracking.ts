@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { track } from '@/lib/analytics';
+import { getConsent, type ConsentPreferences } from '@/lib/consent';
 
-const UTM_STORAGE_KEY = 'feierabend_utm_params';
+const UTM_STORAGE_KEY = 'itsfeierabend_utm_params';
 const UTM_EXPIRY_DAYS = 30;
 
 export interface UTMParams {
@@ -17,14 +18,26 @@ export interface UTMParams {
   landing_timestamp?: number;
 }
 
-// Save UTM params to localStorage with expiry
+function canPersistAttribution(): boolean {
+  const consent = getConsent();
+  return consent?.analytics === true || consent?.marketing === true;
+}
+
+// Attribution is always available for the active form session. A 30-day
+// browser-persistent copy is created only after analytics or marketing consent.
 function saveUTMParams(params: UTMParams): void {
   const data = {
     ...params,
     expires: Date.now() + UTM_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
   };
   try {
-    localStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(data));
+    const serialized = JSON.stringify(data);
+    sessionStorage.setItem(UTM_STORAGE_KEY, serialized);
+    if (canPersistAttribution()) {
+      localStorage.setItem(UTM_STORAGE_KEY, serialized);
+    } else {
+      localStorage.removeItem(UTM_STORAGE_KEY);
+    }
   } catch (e) {
     console.warn('Could not save UTM params', e);
   }
@@ -33,16 +46,22 @@ function saveUTMParams(params: UTMParams): void {
 // Get stored UTM params (returns null if expired)
 export function getStoredUTMParams(): UTMParams | null {
   try {
-    const stored = localStorage.getItem(UTM_STORAGE_KEY);
+    if (!canPersistAttribution()) {
+      localStorage.removeItem(UTM_STORAGE_KEY);
+    }
+    const stored =
+      sessionStorage.getItem(UTM_STORAGE_KEY) ??
+      (canPersistAttribution() ? localStorage.getItem(UTM_STORAGE_KEY) : null);
     if (!stored) return null;
     
     const data = JSON.parse(stored);
     if (data.expires && data.expires < Date.now()) {
+      sessionStorage.removeItem(UTM_STORAGE_KEY);
       localStorage.removeItem(UTM_STORAGE_KEY);
       return null;
     }
     
-    const { expires, ...params } = data;
+    const { expires: _expires, ...params } = data;
     return params;
   } catch (e) {
     return null;
@@ -98,8 +117,16 @@ export function useUTMTracking(): void {
       });
     } else if (!getStoredUTMParams()) {
       // No UTM in URL and nothing stored - save organic visit info
+      let referralSource = 'direct';
+      if (document.referrer) {
+        try {
+          referralSource = new URL(document.referrer).hostname;
+        } catch {
+          referralSource = 'referral';
+        }
+      }
       const params: UTMParams = {
-        utm_source: 'direct',
+        utm_source: referralSource,
         utm_medium: document.referrer ? 'referral' : 'none',
         referrer: document.referrer || undefined,
         landing_page: location.pathname,
@@ -108,6 +135,20 @@ export function useUTMTracking(): void {
       saveUTMParams(params);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleConsent = (event: Event) => {
+      const preferences = (event as CustomEvent<ConsentPreferences>).detail;
+      if (!preferences.analytics && !preferences.marketing) {
+        localStorage.removeItem(UTM_STORAGE_KEY);
+        return;
+      }
+      const current = getStoredUTMParams();
+      if (current) saveUTMParams(current);
+    };
+    window.addEventListener('consentUpdate', handleConsent);
+    return () => window.removeEventListener('consentUpdate', handleConsent);
+  }, []);
 }
 
 // Get all UTM params (from URL first, then storage)

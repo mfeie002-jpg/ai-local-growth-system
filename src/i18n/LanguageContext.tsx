@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { translations, Language } from './translations';
+import { findRoutePair } from '@/lib/routePairs';
 
 // Define a loose type for translations
 type TranslationsType = typeof translations.de | typeof translations.en;
@@ -16,15 +18,12 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const LANGUAGE_STORAGE_KEY = 'itsfeierabend-language';
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
+  const location = useLocation();
   const [language, setLanguageState] = useState<Language>(() => {
-    // Check localStorage first
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (stored === 'en' || stored === 'de') {
-        return stored;
-      }
-    }
-    return 'de';
+    if (typeof window === 'undefined') return 'de';
+    return window.location.pathname === '/en' || window.location.pathname.startsWith('/en/')
+      ? 'en'
+      : 'de';
   });
 
   const setLanguage = (lang: Language) => {
@@ -32,19 +31,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
   };
 
-  // Sync with URL on mount
+  // The URL is authoritative. Persisted preferences must never change the
+  // language of a canonical DE/EN route.
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path.startsWith('/en')) {
-      setLanguageState('en');
-      localStorage.setItem(LANGUAGE_STORAGE_KEY, 'en');
-    } else {
-      const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (stored === 'en') {
-        setLanguageState('en');
-      }
-    }
-  }, []);
+    const next: Language =
+      location.pathname === '/en' || location.pathname.startsWith('/en/')
+        ? 'en'
+        : 'de';
+    setLanguageState(next);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, next);
+    document.documentElement.lang = next === 'en' ? 'en' : 'de-CH';
+  }, [location.pathname]);
 
   const t = translations[language];
   const isEnglish = language === 'en';
@@ -66,27 +63,23 @@ export function useLanguage() {
 
 // Helper to get localized path
 export function getLocalizedPath(path: string, language: Language): string {
-  const pathMap: Record<string, Record<Language, string>> = {
-    '/': { de: '/', en: '/en' },
-    '/gratis-audit': { de: '/gratis-audit', en: '/en/free-audit' },
-    '/gratis-call': { de: '/gratis-call', en: '/en/free-call' },
-    '/pakete': { de: '/pakete', en: '/en/pricing' },
-    '/system': { de: '/system', en: '/en/system' },
-    '/faq': { de: '/faq', en: '/en/faq' },
-    '/datenschutz': { de: '/datenschutz', en: '/en/privacy' },
-    '/impressum': { de: '/impressum', en: '/en/imprint' },
-    // EN to DE mapping
-    '/en': { de: '/', en: '/en' },
-    '/en/free-audit': { de: '/gratis-audit', en: '/en/free-audit' },
-    '/en/free-call': { de: '/gratis-call', en: '/en/free-call' },
-    '/en/pricing': { de: '/pakete', en: '/en/pricing' },
-    '/en/system': { de: '/system', en: '/en/system' },
-    '/en/faq': { de: '/faq', en: '/en/faq' },
-    '/en/privacy': { de: '/datenschutz', en: '/en/privacy' },
-    '/en/imprint': { de: '/impressum', en: '/en/imprint' },
-  };
+  const pair = findRoutePair(path);
+  if (pair) return language === 'en' ? pair.en : pair.de;
 
-  return pathMap[path]?.[language] || (language === 'en' ? `/en${path}` : path);
+  if (path.startsWith('/audit/r/')) {
+    return language === 'en'
+      ? path.replace('/audit/r/', '/en/audit/r/')
+      : path;
+  }
+  if (path.startsWith('/en/audit/r/')) {
+    return language === 'de'
+      ? path.replace('/en/audit/r/', '/audit/r/')
+      : path;
+  }
+
+  return language === 'en'
+    ? (path.startsWith('/en') ? path : `/en${path}`)
+    : path.replace(/^\/en(?=\/|$)/, '') || '/';
 }
 
 // Get current page in other language

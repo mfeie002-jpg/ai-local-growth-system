@@ -77,15 +77,22 @@ export function normalizeDomain(
   if (u.protocol !== "http:" && u.protocol !== "https:") {
     return { error: "unsupported_protocol" };
   }
-  const host = u.hostname.replace(/^www\./, "").toLowerCase();
-  if (!host) return { error: "invalid_host" };
-  if (BLOCKED_HOSTS.has(host)) return { error: "blocked_host" };
-  const ipKind = isIpLiteral(host);
+  const requestHost = u.hostname.toLowerCase();
+  const domain = requestHost.replace(/^www\./, "");
+  if (!requestHost || !domain) return { error: "invalid_host" };
+  if (BLOCKED_HOSTS.has(requestHost) || BLOCKED_HOSTS.has(domain)) {
+    return { error: "blocked_host" };
+  }
+  const ipKind = isIpLiteral(requestHost);
   if (ipKind) return { error: "ip_literal" };
-  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(host)) return { error: "invalid_host" };
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(requestHost)) {
+    return { error: "invalid_host" };
+  }
   return {
-    url: `${u.protocol}//${host}${u.pathname === "/" ? "" : u.pathname}`,
-    domain: host,
+    // Preserve the requested host. A working www host must not silently turn
+    // into the apex host before the audit follows the site's own redirects.
+    url: `${u.protocol}//${requestHost}${u.pathname === "/" ? "" : u.pathname}`,
+    domain,
   };
 }
 
@@ -99,8 +106,7 @@ export async function resolvePublicIps(host: string): Promise<
   // deno-lint-ignore no-explicit-any
   const dns = (Deno as any).resolveDns;
   if (typeof dns !== "function") {
-    // Fallback: allow only if not an IP literal; the caller already blocked those.
-    return { ok: true, ips: [] };
+    return { ok: false, reason: "dns_resolver_unavailable" };
   }
   const ips: string[] = [];
   for (const rt of ["A", "AAAA"] as const) {
@@ -132,7 +138,7 @@ export async function verifyTurnstile(
   remoteIp: string | null,
 ): Promise<TurnstileVerdict> {
   const secret = Deno.env.get("TURNSTILE_SECRET_KEY");
-  if (!secret) return { ok: true, reason: "not_configured" }; // fail-open only when unset
+  if (!secret) return { ok: false, reason: "not_configured" };
   if (!token || typeof token !== "string") return { ok: false, reason: "missing_token" };
   const body = new URLSearchParams();
   body.set("secret", secret);

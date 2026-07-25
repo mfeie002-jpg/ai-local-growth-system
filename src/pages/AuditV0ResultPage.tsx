@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Loader2, AlertTriangle, CheckCircle2, XCircle, ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { track, trackAuditScoreDelivered } from "@/lib/analytics";
+import { track } from "@/lib/analytics";
 import { NoIndex } from "@/components/NoIndex";
 
 type Lang = "de" | "en";
@@ -18,6 +18,10 @@ interface Signal {
   max_score: number;
   recommendation: string;
   passed: boolean;
+  state?: "measured" | "user_provided" | "inferred" | "estimated" | "unavailable";
+  source?: string;
+  confidence?: "high" | "medium" | "low";
+  unavailable?: boolean;
 }
 interface TopAction {
   rank: number;
@@ -32,8 +36,8 @@ interface Report {
   token: string;
   website_url: string;
   normalized_domain: string;
-  first_name: string;
   language: Lang;
+  audit_type: "business" | "website" | "seo" | "ai-visibility" | "automation";
   status: "pending" | "fetching" | "scoring" | "ready" | "partial" | "failed";
   overall_score: number | null;
   category_scores: Record<string, CategoryScore> | null;
@@ -51,7 +55,7 @@ const CATEGORIES: Array<{ key: string; de: string; en: string }> = [
   { key: "content", de: "Inhalt & Suchintention", en: "Content & search intent" },
   { key: "trust", de: "Vertrauen", en: "Trust" },
   { key: "conversion", de: "Conversion", en: "Conversion" },
-  { key: "automation", de: "Automatisierung", en: "Automation readiness" },
+  { key: "automation", de: "Technische Auffindbarkeit", en: "Machine-readable discovery" },
 ];
 
 const TIMEOUT_MS = 90_000;
@@ -65,6 +69,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
   const [timedOut, setTimedOut] = useState(false);
   const viewTracked = useRef(false);
   const startedAt = useRef(Date.now());
+  const consecutiveFailures = useRef(0);
 
   const isPending = report && ["pending", "fetching", "scoring"].includes(report.status);
 
@@ -76,18 +81,24 @@ export default function AuditV0ResultPage({ lang }: Props) {
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
+      consecutiveFailures.current = 0;
+      setError(null);
       setReport(data as Report);
       return data as Report;
-    } catch (e) {
-      setError((e as Error).message);
+    } catch {
+      consecutiveFailures.current += 1;
+      if (consecutiveFailures.current >= 3) {
+        setError(lang === "de"
+          ? "Der Report ist vorübergehend nicht erreichbar. Bitte laden Sie die Seite in einigen Minuten erneut."
+          : "The report is temporarily unavailable. Please reload this page in a few minutes.");
+      }
       return null;
     }
-  }, [token]);
+  }, [lang, token]);
 
   useEffect(() => {
     if (!token) return;
     let cancelled = false;
-    let interval: number | undefined;
 
     const tick = async () => {
       const r = await fetchReport();
@@ -99,8 +110,12 @@ export default function AuditV0ResultPage({ lang }: Props) {
         if ((r.status === "ready" || r.status === "partial") && !viewTracked.current) {
           viewTracked.current = true;
           fetchReport("view");
-          track("audit_report_viewed", { score: r.overall_score, status: r.status });
-          trackAuditScoreDelivered({ score: r.overall_score ?? 0, status: r.status, language: lang });
+          track("audit_result_view", {
+            lead_score: r.overall_score ?? undefined,
+            audit_type: r.audit_type,
+            result_status: r.status,
+            page_type: "audit_result",
+          });
         }
       }
       if (Date.now() - startedAt.current > TIMEOUT_MS && pending) {
@@ -109,70 +124,60 @@ export default function AuditV0ResultPage({ lang }: Props) {
       }
     };
 
-    tick();
-    interval = window.setInterval(tick, 3000);
+    const interval = window.setInterval(tick, 3000);
+    void tick();
     return () => { cancelled = true; if (interval) clearInterval(interval); };
   }, [token, fetchReport]);
 
   const handleCta = useCallback(() => {
-    track("audit_cta_click", { token });
+    track("consultation_cta_click", {
+      audit_type: report?.audit_type ?? "business",
+      cta_location: "audit_result",
+      page_type: "audit_result",
+    });
     fetchReport("cta_click");
-  }, [fetchReport, token]);
+  }, [fetchReport, report?.audit_type]);
 
   const strings = {
     de: {
-      loading: "Wir analysieren deine Seite. Das dauert 30–60 Sekunden…",
-      timeout: "Das dauert länger als erwartet. Wir arbeiten im Hintergrund weiter — lade die Seite in ein paar Minuten neu.",
+      loading: "Die öffentlich erreichbaren Signale werden geprüft…",
+      timeout: "Die Analyse dauert länger als erwartet. Sie läuft im Hintergrund weiter; laden Sie diese Seite später erneut.",
       failed: "Der Audit konnte nicht abgeschlossen werden.",
       partial: "Wir konnten die Seite nur teilweise analysieren.",
+      scope: "Der Quick Score basiert ausschliesslich auf automatisch messbaren, öffentlich erreichbaren Signalen der eingegebenen Startseite. Branche, Region, Ziel und Systeme werden nicht in den Score eingerechnet; sie dienen nur der Einordnung einer vertieften Analyse.",
       score: "Gesamt-Score",
       version: "Score-Version",
-      top: "Top 3 Handlungen",
+      strengths: "Belegte Stärken",
+      top: "Grösste Risiken und priorisierte Massnahmen",
       allSignals: "Alle Signale",
       pass: "OK",
       fail: "Handlung nötig",
-      cta: "Kostenloses Beratungsgespräch buchen",
-      ctaSub: "20 Minuten. Kein Sales-Pitch. Konkret zu diesen drei Punkten.",
+      cta: "Vertiefte Analyse anfragen",
+      ctaSub: "Befunde einordnen, fehlende Daten klären und den nächsten sinnvollen Umfang definieren.",
       openSite: "Analysierte URL öffnen",
       evidence: "Evidenz",
       recommendation: "Empfehlung",
       backHome: "Zur Startseite",
-      explainerTitle: "Was bedeutet dieser Score?",
-      explainer: "Der Score kombiniert 25+ deterministische Signale in fünf Kategorien. Jedes Signal wird mit fester Regel bewertet — kein AI-Rateversuch. 75+ ist solide, 50–74 hat Hebel, unter 50 verliert aktiv Leads. Der Score-Zahlwert selbst ist nicht das Ziel; entscheidend sind die Top-3-Handlungen.",
-      sourcesTitle: "Datenquellen",
-      sources: [
-        { name: "HTML-Parser", desc: "Meta-Tags, strukturierte Daten, Heading-Struktur, Impressum-Check" },
-        { name: "PageSpeed / Lighthouse", desc: "Core Web Vitals, Ladezeit, Mobile-Fitness" },
-        { name: "Semrush", desc: "Organische Sichtbarkeit, Keyword-Rankings (wenn Domain indexiert)" },
-        { name: "AI-Interpretation", desc: "Übersetzt Messwerte in verständliche Empfehlungen — erfindet keine Zahlen" },
-      ],
     },
     en: {
-      loading: "We're analyzing your site. This takes 30–60 seconds…",
+      loading: "We are checking the publicly available signals…",
       timeout: "This is taking longer than expected. We're still working — reload in a few minutes.",
       failed: "The audit could not be completed.",
       partial: "We were only able to analyze the site partially.",
+      scope: "The Quick Score uses only automatically measurable, publicly accessible signals from the submitted homepage. Industry, region, goals and systems are not included in the score; they are used only to scope a deeper analysis.",
       score: "Overall score",
       version: "Score version",
-      top: "Top 3 actions",
+      strengths: "Evidence-backed strengths",
+      top: "Largest risks and prioritized actions",
       allSignals: "All signals",
       pass: "OK",
       fail: "Action needed",
-      cta: "Book a free consultation",
-      ctaSub: "20 minutes. No sales pitch. Focused on these three points.",
+      cta: "Request a deeper analysis",
+      ctaSub: "Review the findings, identify missing data and define the next sensible scope.",
       openSite: "Open analyzed URL",
       evidence: "Evidence",
       recommendation: "Recommendation",
       backHome: "Back to home",
-      explainerTitle: "What does this score mean?",
-      explainer: "The score combines 25+ deterministic signals across five categories. Every signal is graded by a fixed rule — no AI guessing. 75+ is solid, 50–74 has leverage, below 50 is actively losing leads. The number itself isn't the point; the top-3 actions are.",
-      sourcesTitle: "Data sources",
-      sources: [
-        { name: "HTML parser", desc: "Meta tags, structured data, heading structure, imprint check" },
-        { name: "PageSpeed / Lighthouse", desc: "Core Web Vitals, load time, mobile fitness" },
-        { name: "Semrush", desc: "Organic visibility, keyword rankings (when domain is indexed)" },
-        { name: "AI interpretation", desc: "Translates measurements into human recommendations — invents no numbers" },
-      ],
     },
   }[lang];
 
@@ -195,19 +200,36 @@ export default function AuditV0ResultPage({ lang }: Props) {
       <FullState
         icon={<XCircle className="w-8 h-8 text-destructive" />}
         title={strings.failed}
-        detail={report.error ?? undefined}
       />
     );
   }
 
   const scoreColor =
-    (report.overall_score ?? 0) >= 75 ? "text-green-600" :
+    report.overall_score == null ? "text-muted-foreground" :
+    report.overall_score >= 75 ? "text-green-600" :
     (report.overall_score ?? 0) >= 50 ? "text-amber-600" : "text-destructive";
+  const strengths = (report.signals ?? [])
+    .filter((signal) =>
+      signal.passed &&
+      signal.score > 0 &&
+      signal.state !== "unavailable" &&
+      !signal.unavailable
+    )
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    .slice(0, 3);
+  const auditLabels: Record<Report["audit_type"], { de: string; en: string }> = {
+    business: { de: "AI Business Quick Audit", en: "AI Business Quick Audit" },
+    website: { de: "Website Quick Audit", en: "Website Quick Audit" },
+    seo: { de: "SEO Quick Audit", en: "SEO Quick Audit" },
+    "ai-visibility": { de: "AI Visibility Quick Audit", en: "AI Visibility Quick Audit" },
+    automation: { de: "Automation Quick Audit", en: "Automation Quick Audit" },
+  };
+  const auditLabel = auditLabels[report.audit_type]?.[lang] ?? auditLabels.business[lang];
 
   return (
     <>
       <NoIndex />
-      <main className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-12">
           {/* Hero */}
           <header className="border-b border-border pb-10">
@@ -218,9 +240,11 @@ export default function AuditV0ResultPage({ lang }: Props) {
               </div>
             )}
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
-              {lang === "de" ? "Website-Audit" : "Website audit"} · {report.score_version}
+              {report.status === "partial"
+                ? (lang === "de" ? "Vorläufiger Audit" : "Preliminary audit")
+                : auditLabel} · {report.score_version ?? "pending"}
             </p>
-            <h1 className="text-3xl md:text-5xl font-serif leading-tight text-foreground">
+            <h1 className="break-all text-3xl md:text-5xl font-serif leading-tight text-foreground">
               {report.normalized_domain}
             </h1>
             <a
@@ -248,13 +272,35 @@ export default function AuditV0ResultPage({ lang }: Props) {
                       <p className="text-xs uppercase tracking-wider text-muted-foreground truncate">
                         {lang === "de" ? cat.de : cat.en}
                       </p>
-                      <p className="text-2xl font-serif mt-1">{cs?.percent ?? 0}%</p>
+                      <p className="text-2xl font-serif mt-1">{cs ? `${cs.percent}%` : "—"}</p>
                     </div>
                   );
                 })}
               </div>
             </div>
+            <p className="mt-6 max-w-4xl rounded-lg border border-border bg-muted/40 p-4 text-sm leading-relaxed text-muted-foreground">
+              {strings.scope}
+            </p>
           </header>
+
+          {/* Evidence-backed strengths */}
+          {strengths.length > 0 && (
+            <section>
+              <h2 className="text-2xl md:text-3xl font-serif mb-6">{strings.strengths}</h2>
+              <ul className="grid gap-4 md:grid-cols-3">
+                {strengths.map((signal) => (
+                  <li key={signal.id} className="p-5 border border-border rounded-xl bg-card">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" aria-hidden="true" />
+                    <p className="mt-3 font-semibold text-foreground">{signal.name}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{signal.evidence}</p>
+                    <p className="mt-3 font-mono text-xs text-muted-foreground">
+                      {signal.score}/{signal.max_score}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* Top actions */}
           {report.top_actions && report.top_actions.length > 0 && (
@@ -268,7 +314,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
                       <p className="font-semibold text-lg text-foreground">{a.title}</p>
                       <p className="text-muted-foreground mt-1">{a.recommendation}</p>
                       <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mt-2">
-                        {a.category}
+                        {CATEGORIES.find((category) => category.key === a.category)?.[lang] ?? a.category}
                       </p>
                     </div>
                   </li>
@@ -284,31 +330,10 @@ export default function AuditV0ResultPage({ lang }: Props) {
             </h2>
             <p className="text-muted-foreground mb-6 max-w-xl mx-auto">{strings.ctaSub}</p>
             <Button asChild size="lg" onClick={handleCta}>
-              <Link to={lang === "en" ? "/en/gratis-call" : "/gratis-call"}>
+              <Link to={lang === "en" ? "/en/contact?topic=deep-audit" : "/kontakt?topic=deep-audit"}>
                 {strings.cta} <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-          </section>
-
-          {/* Explainer + Sources */}
-          <section className="grid gap-6 md:grid-cols-2">
-            <div className="p-6 border border-border rounded-xl bg-card">
-              <h3 className="text-lg font-semibold mb-2 text-foreground">{strings.explainerTitle}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{strings.explainer}</p>
-            </div>
-            <div className="p-6 border border-border rounded-xl bg-card">
-              <h3 className="text-lg font-semibold mb-3 text-foreground">{strings.sourcesTitle}</h3>
-              <ul className="space-y-2">
-                {strings.sources.map((s) => (
-                  <li key={s.name} className="flex gap-3 text-sm">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-signal shrink-0 mt-1 w-32">
-                      {s.name}
-                    </span>
-                    <span className="text-muted-foreground leading-relaxed">{s.desc}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </section>
 
           {/* All signals */}
@@ -326,18 +351,35 @@ export default function AuditV0ResultPage({ lang }: Props) {
                     <div className="border border-border rounded-xl divide-y divide-border overflow-hidden bg-card">
                       {catSignals.map((s) => (
                         <div key={s.id} className="p-4 md:p-5 grid gap-3 md:grid-cols-[auto_1fr_auto] md:items-start">
-                          {s.passed ? (
+                          {s.state === "unavailable" || s.unavailable ? (
+                            <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                          ) : s.passed ? (
                             <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
                           ) : (
                             <XCircle className="w-5 h-5 text-destructive mt-0.5" />
                           )}
                           <div>
                             <p className="font-semibold text-foreground">{s.name}</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                                {s.state ?? "measured"}
+                              </span>
+                              {s.source && (
+                                <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                                  {s.source}
+                                </span>
+                              )}
+                              {s.confidence && (
+                                <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                                  {lang === "de" ? "Konfidenz" : "Confidence"}: {s.confidence}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-sm text-muted-foreground mt-1">
                               <span className="font-mono text-xs uppercase tracking-widest mr-2">{strings.evidence}:</span>
                               {s.evidence}
                             </p>
-                            {!s.passed && (
+                            {!s.passed && s.state !== "unavailable" && !s.unavailable && (
                               <p className="text-sm mt-1">
                                 <span className="font-mono text-xs uppercase tracking-widest mr-2 text-muted-foreground">{strings.recommendation}:</span>
                                 {s.recommendation}
@@ -345,7 +387,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
                             )}
                           </div>
                           <div className="text-right text-sm font-mono text-muted-foreground whitespace-nowrap">
-                            {s.score}/{s.max_score}
+                            {s.state === "unavailable" || s.unavailable ? "—" : `${s.score}/${s.max_score}`}
                           </div>
                         </div>
                       ))}
@@ -362,7 +404,7 @@ export default function AuditV0ResultPage({ lang }: Props) {
             </Link>
           </footer>
         </div>
-      </main>
+      </div>
     </>
   );
 }
@@ -371,13 +413,13 @@ function FullState({ icon, title, detail }: { icon: React.ReactNode; title: stri
   return (
     <>
       <NoIndex />
-      <main className="min-h-screen flex items-center justify-center bg-background p-6">
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-md text-center space-y-4">
           <div className="flex justify-center">{icon}</div>
           <h1 className="text-xl font-semibold">{title}</h1>
           {detail && <p className="text-sm text-muted-foreground break-all">{detail}</p>}
         </div>
-      </main>
+      </div>
     </>
   );
 }
@@ -394,25 +436,25 @@ function PendingState({
   const copy = lang === "de"
     ? {
         kicker: "Audit läuft",
-        title: "Wir bauen deinen Report.",
-        sub: "Das dauert 30–60 Sekunden. Der Report öffnet sich automatisch.",
+        title: "Wir erstellen Ihren vorläufigen Report.",
+        sub: "Der Report öffnet sich automatisch. Die Dauer hängt davon ab, wie die Website erreichbar ist.",
         steps: [
           { key: "fetch", label: "Website laden & Signale sammeln" },
           { key: "score", label: "Deterministisches Scoring (25+ Signale)" },
           { key: "render", label: "Report zusammenstellen" },
         ],
-        note: "Du erhältst zusätzlich einen privaten Link per E-Mail.",
+        note: "Diese Adresse ist bereits Ihr privater Report-Link. Falls der E-Mail-Versand konfiguriert ist, wird er zusätzlich zugestellt.",
       }
     : {
         kicker: "Audit running",
-        title: "We're building your report.",
-        sub: "This takes 30–60 seconds. Your report opens automatically.",
+        title: "We're building your preliminary report.",
+        sub: "The report opens automatically. Timing depends on how the website responds.",
         steps: [
           { key: "fetch", label: "Load site & collect signals" },
           { key: "score", label: "Deterministic scoring (25+ signals)" },
           { key: "render", label: "Assemble report" },
         ],
-        note: "You'll also receive a private link by email.",
+        note: "This address is already your private report link. If email delivery is configured, it will also be sent to you.",
       };
 
   const activeIdx = phase === "scoring" ? 1 : phase === "pending" ? 0 : 0;
@@ -420,7 +462,7 @@ function PendingState({
   return (
     <>
       <NoIndex />
-      <main className="min-h-screen bg-background" data-neural-zone>
+      <div className="min-h-screen bg-background" data-neural-zone>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <p className="font-mono text-xs uppercase tracking-widest text-signal mb-4">{copy.kicker}</p>
           <h1 className="text-3xl md:text-5xl font-serif leading-tight mb-4 text-foreground">{copy.title}</h1>
@@ -456,7 +498,7 @@ function PendingState({
 
           <p className="text-sm text-muted-foreground">{copy.note}</p>
         </div>
-      </main>
+      </div>
     </>
   );
 }

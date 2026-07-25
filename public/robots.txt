@@ -3,39 +3,7 @@
 
 User-agent: *
 Allow: /
-
-User-agent: Googlebot
-Allow: /
-
-User-agent: Googlebot-Image
-Allow: /
-
-User-agent: Googlebot-News
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-# Block admin pages
 Disallow: /admin/
-Disallow: /admin/*
-
-# Block private user-data pages (token-scoped)
 Disallow: /gratis-audit/report/
 Disallow: /en/free-audit/report/
 Disallow: /analyse/
@@ -43,10 +11,6 @@ Disallow: /en/analysis/
 Disallow: /audit/r/
 Disallow: /en/audit/r/
 Disallow: /.lovable/
-
-# Block API endpoints
 Disallow: /api/
-
-Crawl-delay: 1
 
 Sitemap: https://itsfeierabend.ch/sitemap.xml

@@ -1,178 +1,166 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { LanguageProvider } from "@/i18n/LanguageContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { UTMTracker } from "@/components/UTMTracker";
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { LanguageProvider } from '@/i18n/LanguageContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { UTMTracker } from '@/components/UTMTracker';
+import { AnalyticsTracker } from '@/components/AnalyticsTracker';
+import { Layout } from '@/components/Layout';
 
-// Pages
-import HomePage from "./pages/HomePage";
-import AuditPage from "./pages/AuditPage";
-import CallPage from "./pages/CallPage";
-import SystemPage from "./pages/SystemPage";
-import PricingPage from "./pages/PricingPage";
-import FAQPage from "./pages/FAQPage";
-import ImprintPage from "./pages/ImprintPage";
-import PrivacyPage from "./pages/PrivacyPage";
-import DemoPage from "./pages/DemoPage";
-import AuditReportPage from "./pages/AuditReportPage";
-import CaseStudiesPage from "./pages/CaseStudiesPage";
-import UltimatePackagePage from "./pages/UltimatePackagePage";
+const HomePage = lazy(() => import('@/pages/HomePage'));
+const PlatformPage = lazy(() => import('@/pages/PlatformPage'));
+const AuditV0Page = lazy(() => import('@/pages/AuditV0Page'));
+const AuditV0ResultPage = lazy(() => import('@/pages/AuditV0ResultPage'));
+const CaseStudiesPage = lazy(() => import('@/pages/CaseStudiesPage'));
+const ImprintPage = lazy(() => import('@/pages/ImprintPage'));
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+const OAuthConsent = lazy(() => import('@/pages/OAuthConsent'));
 
-import AnalysisReportPage from "./pages/AnalysisReportPage";
-import InvestorPage from "./pages/InvestorPage";
-import BlogPage from "./pages/BlogPage";
-import BlogPostPage from "./pages/BlogPostPage";
-import ScanProgressPage from "./pages/ScanProgressPage";
-import ScanPage from "./pages/ScanPage";
-import NotFound from "./pages/NotFound";
-import AuditV0Page from "./pages/AuditV0Page";
-import AuditV0ResultPage from "./pages/AuditV0ResultPage";
-
-// Sprint 2 SEO landings
-import WebsiteAuditPage from "./pages/landings/WebsiteAuditPage";
-import SeoAnalysePage from "./pages/landings/SeoAnalysePage";
-import AIVisibilityPage from "./pages/landings/AIVisibilityPage";
-import ForSmbPage from "./pages/landings/ForSmbPage";
-import PartnerPage from "./pages/landings/PartnerPage";
-
-// Service Pages
-import AIImplementationPage from "./pages/services/AIImplementationPage";
-import SEOPage from "./pages/services/SEOPage";
-import SEAPage from "./pages/services/SEAPage";
-import ReputationPage from "./pages/services/ReputationPage";
-import DesignDevelopmentPage from "./pages/services/DesignDevelopmentPage";
-import BrandDeploymentPage from "./pages/services/BrandDeploymentPage";
-import SocialMediaPage from "./pages/services/SocialMediaPage";
-
-// Admin Pages
-import AdminLoginPage from "./pages/admin/AdminLoginPage";
-import AdminLeadsPage from "./pages/admin/AdminLeadsPage";
-import AdminLeadDetailPage from "./pages/admin/AdminLeadDetailPage";
-import AdminCallsPage from "./pages/admin/AdminCallsPage";
-import AdminCallDetailPage from "./pages/admin/AdminCallDetailPage";
-import AdminVoiceSetupPage from "./pages/admin/AdminVoiceSetupPage";
-import AdminReportsPage from "./pages/admin/AdminReportsPage";
-import AdminReportDetailPage from "./pages/admin/AdminReportDetailPage";
-import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import OAuthConsent from "./pages/OAuthConsent";
+const AdminLoginPage = lazy(() => import('@/pages/admin/AdminLoginPage'));
+const AdminLeadsPage = lazy(() => import('@/pages/admin/AdminLeadsPage'));
+const AdminLeadDetailPage = lazy(() => import('@/pages/admin/AdminLeadDetailPage'));
+const AdminCallsPage = lazy(() => import('@/pages/admin/AdminCallsPage'));
+const AdminCallDetailPage = lazy(() => import('@/pages/admin/AdminCallDetailPage'));
+const AdminVoiceSetupPage = lazy(() => import('@/pages/admin/AdminVoiceSetupPage'));
+const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReportsPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'));
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <UTMTracker />
-            <Routes>
-              {/* DE Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/gratis-audit" element={<Navigate to="/audit" replace />} />
-              <Route path="/gratis-audit/report/:token" element={<AuditReportPage />} />
-              <Route path="/gratis-call" element={<CallPage />} />
-              <Route path="/system" element={<SystemPage />} />
-              <Route path="/pakete" element={<PricingPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/impressum" element={<ImprintPage />} />
-              <Route path="/datenschutz" element={<PrivacyPage />} />
-              <Route path="/demo" element={<DemoPage />} />
-              <Route path="/fallstudien" element={<CaseStudiesPage />} />
-              <Route path="/ultimate-package" element={<UltimatePackagePage />} />
-              
-              <Route path="/analyse/progress/:token" element={<ScanProgressPage />} />
-              <Route path="/analyse/:token" element={<AnalysisReportPage />} />
-              <Route path="/scan" element={<ScanPage />} />
-              <Route path="/investoren" element={<InvestorPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:slug" element={<BlogPostPage />} />
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center bg-background" role="status">
+      <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        Loading
+      </span>
+    </div>
+  );
+}
 
-              {/* Sprint 2 SEO landings (DE) */}
-              <Route path="/website-audit" element={<WebsiteAuditPage />} />
-              <Route path="/seo-analyse" element={<SeoAnalysePage />} />
-              <Route path="/ai-visibility" element={<AIVisibilityPage />} />
-              <Route path="/fuer-kmu" element={<ForSmbPage />} />
-              <Route path="/partner" element={<PartnerPage />} />
-              
-              {/* DE Service Routes */}
-              <Route path="/services/ki-implementierung" element={<AIImplementationPage />} />
-              <Route path="/services/seo" element={<SEOPage />} />
-              <Route path="/services/sea" element={<SEAPage />} />
-              <Route path="/services/reputation" element={<ReputationPage />} />
-              <Route path="/services/design-entwicklung" element={<DesignDevelopmentPage />} />
-              <Route path="/services/brand-deployment" element={<BrandDeploymentPage />} />
-              <Route path="/services/social-media" element={<SocialMediaPage />} />
-              
-              {/* EN Routes */}
-              <Route path="/en" element={<HomePage />} />
-              <Route path="/en/free-audit" element={<Navigate to="/en/audit" replace />} />
-              <Route path="/en/free-audit/report/:token" element={<AuditReportPage />} />
-              <Route path="/en/free-call" element={<CallPage />} />
-              <Route path="/en/system" element={<SystemPage />} />
-              <Route path="/en/pricing" element={<PricingPage />} />
-              <Route path="/en/faq" element={<FAQPage />} />
-              <Route path="/en/imprint" element={<ImprintPage />} />
-              <Route path="/en/privacy" element={<PrivacyPage />} />
-              <Route path="/en/demo" element={<DemoPage />} />
-              <Route path="/en/case-studies" element={<CaseStudiesPage />} />
-              <Route path="/en/ultimate-package" element={<UltimatePackagePage />} />
-              
-              <Route path="/en/analysis/progress/:token" element={<ScanProgressPage />} />
-              <Route path="/en/analysis/:token" element={<AnalysisReportPage />} />
-              <Route path="/en/scan" element={<ScanPage />} />
-              <Route path="/en/blog" element={<BlogPage />} />
-              <Route path="/en/blog/:slug" element={<BlogPostPage />} />
+function PublicRoutes() {
+  return (
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/en" element={<HomePage />} />
 
-              {/* Sprint 2 SEO landings (EN) */}
-              <Route path="/en/website-audit" element={<WebsiteAuditPage />} />
-              <Route path="/en/seo-analysis" element={<SeoAnalysePage />} />
-              <Route path="/en/ai-visibility" element={<AIVisibilityPage />} />
-              <Route path="/en/for-smb" element={<ForSmbPage />} />
-              <Route path="/en/partner" element={<PartnerPage />} />
-              
-              {/* EN Service Routes */}
-              <Route path="/en/services/ai-implementation" element={<AIImplementationPage />} />
-              <Route path="/en/services/seo" element={<SEOPage />} />
-              <Route path="/en/services/sea" element={<SEAPage />} />
-              <Route path="/en/services/reputation" element={<ReputationPage />} />
-              <Route path="/en/services/design-development" element={<DesignDevelopmentPage />} />
-              <Route path="/en/services/brand-deployment" element={<BrandDeploymentPage />} />
-              <Route path="/en/services/social-media" element={<SocialMediaPage />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminDashboardPage />} />
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route path="/admin/leads" element={<AdminLeadsPage />} />
-              <Route path="/admin/leads/:id" element={<AdminLeadDetailPage />} />
-              <Route path="/admin/calls" element={<AdminCallsPage />} />
-              <Route path="/admin/calls/:id" element={<AdminCallDetailPage />} />
-              <Route path="/admin/voice/setup" element={<AdminVoiceSetupPage />} />
-              <Route path="/admin/reports" element={<AdminReportsPage />} />
-              <Route path="/admin/reports/:id" element={<AdminReportDetailPage />} />
+        <Route path="/ai-business-audit" element={<PlatformPage page="ai-business-audit" />} />
+        <Route path="/en/ai-business-audit" element={<PlatformPage page="ai-business-audit" />} />
+        <Route path="/website-audit" element={<PlatformPage page="website-audit" />} />
+        <Route path="/en/website-audit" element={<PlatformPage page="website-audit" />} />
+        <Route path="/seo-analyse" element={<PlatformPage page="seo-analyse" />} />
+        <Route path="/en/seo-analysis" element={<PlatformPage page="seo-analyse" />} />
+        <Route path="/ai-visibility" element={<PlatformPage page="ai-visibility" />} />
+        <Route path="/en/ai-visibility" element={<PlatformPage page="ai-visibility" />} />
+        <Route path="/automation" element={<PlatformPage page="automation" />} />
+        <Route path="/en/automation" element={<PlatformPage page="automation" />} />
+        <Route path="/leistungen" element={<PlatformPage page="leistungen" />} />
+        <Route path="/en/services" element={<PlatformPage page="leistungen" />} />
+        <Route path="/fuer-kmu" element={<PlatformPage page="fuer-kmu" />} />
+        <Route path="/en/for-smes" element={<PlatformPage page="fuer-kmu" />} />
+        <Route path="/partner" element={<PlatformPage page="partner" />} />
+        <Route path="/en/partners" element={<PlatformPage page="partner" />} />
+        <Route path="/ueber-uns" element={<PlatformPage page="ueber-uns" />} />
+        <Route path="/en/about" element={<PlatformPage page="ueber-uns" />} />
+        <Route path="/kontakt" element={<PlatformPage page="kontakt" />} />
+        <Route path="/en/contact" element={<PlatformPage page="kontakt" />} />
+        <Route path="/insights" element={<PlatformPage page="insights" />} />
+        <Route path="/en/insights" element={<PlatformPage page="insights" />} />
 
-              {/* OAuth consent (MCP) */}
-              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+        <Route path="/audit" element={<Layout><AuditV0Page lang="de" /></Layout>} />
+        <Route path="/audit/r/:token" element={<Layout><AuditV0ResultPage lang="de" /></Layout>} />
+        <Route path="/en/audit" element={<Layout><AuditV0Page lang="en" /></Layout>} />
+        <Route path="/en/audit/r/:token" element={<Layout><AuditV0ResultPage lang="en" /></Layout>} />
 
-              {/* Audit v0 (prototype) */}
-              <Route path="/audit" element={<AuditV0Page lang="de" />} />
-              <Route path="/audit/r/:token" element={<AuditV0ResultPage lang="de" />} />
-              <Route path="/en/audit" element={<AuditV0Page lang="en" />} />
-              <Route path="/en/audit/r/:token" element={<AuditV0ResultPage lang="en" />} />
-              
-              
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </LanguageProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+        <Route path="/fallstudien" element={<CaseStudiesPage />} />
+        <Route path="/en/case-studies" element={<CaseStudiesPage />} />
+        <Route path="/impressum" element={<ImprintPage />} />
+        <Route path="/en/imprint" element={<ImprintPage />} />
+        <Route path="/datenschutz" element={<PrivacyPage />} />
+        <Route path="/en/privacy" element={<PrivacyPage />} />
 
-export default App;
+        {/* Retire the unaudited legacy scanner without deleting historical data. */}
+        <Route path="/analyse/progress/:token" element={<Navigate to="/audit" replace />} />
+        <Route path="/en/analysis/progress/:token" element={<Navigate to="/en/audit" replace />} />
+        <Route path="/analyse/:token" element={<Navigate to="/audit" replace />} />
+        <Route path="/en/analysis/:token" element={<Navigate to="/en/audit" replace />} />
+
+        {/* Canonicalize legacy public routes into the focused launch architecture. */}
+        <Route path="/gratis-audit" element={<Navigate to="/audit" replace />} />
+        <Route path="/en/free-audit" element={<Navigate to="/en/audit" replace />} />
+        <Route path="/gratis-call" element={<Navigate to="/kontakt" replace />} />
+        <Route path="/en/free-call" element={<Navigate to="/en/contact" replace />} />
+        <Route path="/pakete" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/preise" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/en/pricing" element={<Navigate to="/en/services" replace />} />
+        <Route path="/system" element={<Navigate to="/ueber-uns" replace />} />
+        <Route path="/en/system" element={<Navigate to="/en/about" replace />} />
+        <Route path="/faq" element={<Navigate to="/ai-business-audit" replace />} />
+        <Route path="/en/faq" element={<Navigate to="/en/ai-business-audit" replace />} />
+        <Route path="/ultimate-package" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/en/ultimate-package" element={<Navigate to="/en/services" replace />} />
+        <Route path="/demo" element={<Navigate to="/audit" replace />} />
+        <Route path="/en/demo" element={<Navigate to="/en/audit" replace />} />
+        <Route path="/scan" element={<Navigate to="/audit" replace />} />
+        <Route path="/en/scan" element={<Navigate to="/en/audit" replace />} />
+        <Route path="/investoren" element={<Navigate to="/" replace />} />
+        <Route path="/en/investors" element={<Navigate to="/en" replace />} />
+        <Route path="/blog" element={<Navigate to="/insights" replace />} />
+        <Route path="/blog/:slug" element={<Navigate to="/insights" replace />} />
+        <Route path="/en/blog" element={<Navigate to="/en/insights" replace />} />
+        <Route path="/en/blog/:slug" element={<Navigate to="/en/insights" replace />} />
+        <Route path="/services/ki-implementierung" element={<Navigate to="/automation" replace />} />
+        <Route path="/en/services/ai-implementation" element={<Navigate to="/en/automation" replace />} />
+        <Route path="/services/seo" element={<Navigate to="/seo-analyse" replace />} />
+        <Route path="/en/services/seo" element={<Navigate to="/en/seo-analysis" replace />} />
+        <Route path="/services/sea" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/en/services/sea" element={<Navigate to="/en/services" replace />} />
+        <Route path="/services/reputation" element={<Navigate to="/website-audit" replace />} />
+        <Route path="/en/services/reputation" element={<Navigate to="/en/website-audit" replace />} />
+        <Route path="/services/design-entwicklung" element={<Navigate to="/website-audit" replace />} />
+        <Route path="/en/services/design-development" element={<Navigate to="/en/website-audit" replace />} />
+        <Route path="/services/brand-deployment" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/en/services/brand-deployment" element={<Navigate to="/en/services" replace />} />
+        <Route path="/services/social-media" element={<Navigate to="/leistungen" replace />} />
+        <Route path="/en/services/social-media" element={<Navigate to="/en/services" replace />} />
+
+        <Route path="/admin" element={<AdminDashboardPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/leads" element={<AdminLeadsPage />} />
+        <Route path="/admin/leads/:id" element={<AdminLeadDetailPage />} />
+        <Route path="/admin/calls" element={<AdminCallsPage />} />
+        <Route path="/admin/calls/:id" element={<AdminCallDetailPage />} />
+        <Route path="/admin/voice/setup" element={<AdminVoiceSetupPage />} />
+        <Route path="/admin/reports" element={<AdminReportsPage />} />
+        <Route path="/admin/reports/:id" element={<Navigate to="/admin/reports" replace />} />
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <LanguageProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <UTMTracker />
+              <AnalyticsTracker />
+              <PublicRoutes />
+            </TooltipProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+}

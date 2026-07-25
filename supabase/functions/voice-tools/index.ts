@@ -2,241 +2,174 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-voice-tool-secret",
+  "Access-Control-Allow-Origin": "https://itsfeierabend.ch",
+  "Access-Control-Allow-Headers": "content-type, x-voice-tool-secret",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-// Verify tool secret
-function verifyToolSecret(req: Request): boolean {
-  const secret = Deno.env.get("VOICE_TOOL_SECRET");
-  if (!secret) {
-    console.log("VOICE_TOOL_SECRET not configured - allowing request");
-    return true;
-  }
-  return req.headers.get("x-voice-tool-secret") === secret;
+function response(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
-serve(async (req: Request): Promise<Response> => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+function normalizePhone(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const normalized = value.replace(/[\s\-().]/g, "");
+  return /^\+[1-9]\d{7,14}$/.test(normalized) ? normalized : null;
+}
+
+function safeText(value: unknown, max: number): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > max) return null;
+  return trimmed;
+}
+
+function isUuid(value: unknown): value is string {
+  return typeof value === "string"
+    && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function approvedLink(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  try {
+    const url = new URL(value);
+    if (url.origin !== "https://itsfeierabend.ch") return null;
+    const allowed = ["/audit", "/en/audit", "/kontakt", "/en/contact"];
+    return allowed.includes(url.pathname) ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return response({ error: "method_not_allowed" }, 405);
+  if (!req.headers.get("content-type")?.toLowerCase().includes("application/json")) {
+    return response({ error: "json_required" }, 415);
   }
 
-  // Verify secret
-  if (!verifyToolSecret(req)) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized", code: "unauthorized" }),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  const secret = Deno.env.get("VOICE_TOOL_SECRET");
+  if (!secret) {
+    console.error("voice-tools misconfigured: secret missing");
+    return response({ error: "service_misconfigured" }, 503);
   }
+  if (req.headers.get("x-voice-tool-secret") !== secret) {
+    return response({ error: "unauthorized" }, 401);
+  }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceKey) return response({ error: "service_misconfigured" }, 503);
+  const supabase = createClient(supabaseUrl, serviceKey);
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split("/");
-    const toolName = pathParts[pathParts.length - 1];
-
-    console.log("Voice tool called:", toolName);
-
+    const toolName = new URL(req.url).pathname.split("/").filter(Boolean).at(-1);
     const body = await req.json();
 
-    switch (toolName) {
-      case "send_sms_link": {
-        const twilioAccountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
-        const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
-        const twilioFrom = Deno.env.get("TWILIO_SMS_FROM") || Deno.env.get("TWILIO_MESSAGING_SERVICE_SID");
+    if (toolName === "send_sms_link") {
+      const phone = normalizePhone(body?.phone);
+      if (!phone) return response({ error: "invalid_phone" }, 400);
 
-        if (!twilioAccountSid || !twilioAuthToken || !twilioFrom) {
-          console.log("SMS disabled - Twilio not configured");
-          return new Response(
-            JSON.stringify({ success: false, error: "sms_disabled" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+      const language = body?.language === "en" ? "en" : "de";
+      const type = body?.type === "audit" ? "audit" : "contact";
+      let link = body?.url ? approvedLink(body.url) : null;
+      if (body?.url && !link) return response({ error: "unapproved_url" }, 400);
+      if (!link) {
+        link = type === "audit"
+          ? (language === "en" ? "https://itsfeierabend.ch/en/audit" : "https://itsfeierabend.ch/audit")
+          : (language === "en" ? "https://itsfeierabend.ch/en/contact" : "https://itsfeierabend.ch/kontakt");
+      }
 
-        const { phone, language, type, url: customUrl } = body;
+      const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
+      const authToken = Deno.env.get("TWILIO_AUTH_TOKEN");
+      const sender = Deno.env.get("TWILIO_SMS_FROM") || Deno.env.get("TWILIO_MESSAGING_SERVICE_SID");
+      if (!accountSid || !authToken || !sender) {
+        return response({ error: "sms_provider_unavailable" }, 503);
+      }
 
-        if (!phone) {
-          return new Response(
-            JSON.stringify({ error: "Phone number required", code: "missing_phone" }),
-            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+      const form = new URLSearchParams();
+      form.set("To", phone);
+      form.set("Body", language === "en" ? `Your link: ${link}` : `Ihr Link: ${link}`);
+      if (sender.startsWith("MG")) form.set("MessagingServiceSid", sender);
+      else form.set("From", sender);
 
-        // Determine URL to send
-        let linkUrl = customUrl;
-        if (!linkUrl) {
-          if (type === "audit") {
-            linkUrl = language === "en"
-              ? "https://itsfeierabend.ch/en/free-audit"
-              : "https://itsfeierabend.ch/gratis-audit";
-          } else {
-            const bookingUrlDE = Deno.env.get("BOOKING_URL_DE");
-            const bookingUrlEN = Deno.env.get("BOOKING_URL_EN");
-            linkUrl = language === "en"
-              ? (bookingUrlEN || "https://itsfeierabend.ch/en/free-call")
-              : (bookingUrlDE || "https://itsfeierabend.ch/gratis-call");
-          }
-        }
-
-        const messageBody = language === "en"
-          ? `Here's the link: ${linkUrl}`
-          : `Hier ist der Link: ${linkUrl}`;
-
-        // Send SMS via Twilio
-        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-        const auth = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
-
-        const formData = new URLSearchParams();
-        formData.append("To", phone);
-        formData.append("Body", messageBody);
-
-        if (twilioFrom.startsWith("MG")) {
-          formData.append("MessagingServiceSid", twilioFrom);
-        } else {
-          formData.append("From", twilioFrom);
-        }
-
-        const twilioResponse = await fetch(twilioUrl, {
+      const twilioResponse = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
           method: "POST",
           headers: {
-            "Authorization": `Basic ${auth}`,
+            Authorization: `Basic ${btoa(`${accountSid}:${authToken}`)}`,
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: formData.toString(),
-        });
-
-        const twilioData = await twilioResponse.json();
-
-        if (!twilioResponse.ok) {
-          console.error("Twilio error:", twilioData);
-          return new Response(
-            JSON.stringify({ success: false, error: twilioData.message || "SMS failed" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        console.log("SMS sent successfully:", twilioData.sid);
-        return new Response(
-          JSON.stringify({ success: true, message_sid: twilioData.sid }),
-          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+          body: form,
+        },
+      );
+      const payload = await twilioResponse.json().catch(() => ({})) as { sid?: string };
+      if (!twilioResponse.ok || !payload.sid) {
+        console.error("voice-tools sms provider error", twilioResponse.status);
+        return response({ error: "sms_provider_error" }, 502);
       }
-
-      case "create_lead_note": {
-        const { lead_id, phone, note, fields } = body;
-
-        if (!note) {
-          return new Response(
-            JSON.stringify({ error: "Note content required", code: "missing_note" }),
-            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        let targetLeadId = lead_id;
-
-        // If no lead_id, try to find by phone
-        if (!targetLeadId && phone) {
-          const phoneNormalized = phone.replace(/[\s\-\(\)]/g, "");
-          const { data: matchedLead } = await supabase
-            .from("leads")
-            .select("id")
-            .or(`phone.ilike.%${phoneNormalized}%,phone.ilike.%${phone}%`)
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-          if (matchedLead) {
-            targetLeadId = matchedLead.id;
-          }
-        }
-
-        if (!targetLeadId) {
-          return new Response(
-            JSON.stringify({ success: false, error: "Lead not found" }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        // Append note to existing notes
-        const { data: existingLead } = await supabase
-          .from("leads")
-          .select("notes_internal")
-          .eq("id", targetLeadId)
-          .single();
-
-        const timestamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-        const newNote = `[${timestamp} via Voice] ${note}`;
-        const updatedNotes = existingLead?.notes_internal
-          ? `${existingLead.notes_internal}\n\n${newNote}`
-          : newNote;
-
-        const updateData: Record<string, any> = { notes_internal: updatedNotes };
-
-        // Add any additional fields if provided
-        if (fields) {
-          Object.assign(updateData, fields);
-        }
-
-        await supabase
-          .from("leads")
-          .update(updateData)
-          .eq("id", targetLeadId);
-
-        console.log("Lead note added:", targetLeadId);
-        return new Response(
-          JSON.stringify({ success: true, lead_id: targetLeadId }),
-          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      case "set_do_not_call": {
-        const { phone, reason } = body;
-
-        if (!phone) {
-          return new Response(
-            JSON.stringify({ error: "Phone number required", code: "missing_phone" }),
-            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        const { error } = await supabase
-          .from("do_not_call")
-          .upsert({
-            phone: phone.replace(/[\s\-\(\)]/g, ""),
-            reason: reason || "User requested during call",
-          }, { onConflict: "phone" });
-
-        if (error) {
-          console.error("Error adding to do_not_call:", error);
-          return new Response(
-            JSON.stringify({ success: false, error: error.message }),
-            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        console.log("Added to do_not_call list:", phone);
-        return new Response(
-          JSON.stringify({ success: true }),
-          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      default:
-        return new Response(
-          JSON.stringify({ error: "Unknown tool", code: "unknown_tool" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      return response({ success: true, message_sid: payload.sid });
     }
 
+    if (toolName === "create_lead_note") {
+      const note = safeText(body?.note, 2000);
+      if (!note) return response({ error: "invalid_note" }, 400);
+
+      let leadId = isUuid(body?.lead_id) ? body.lead_id : null;
+      if (!leadId && body?.phone) {
+        const phone = normalizePhone(body.phone);
+        if (!phone) return response({ error: "invalid_phone" }, 400);
+        const { data, error } = await supabase
+          .from("leads")
+          .select("id")
+          .eq("phone", phone)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (error) return response({ error: "lead_lookup_failed" }, 500);
+        leadId = data?.id || null;
+      }
+      if (!leadId) return response({ error: "lead_not_found" }, 404);
+
+      const { data: existing, error: fetchError } = await supabase
+        .from("leads")
+        .select("notes_internal")
+        .eq("id", leadId)
+        .maybeSingle();
+      if (fetchError || !existing) return response({ error: "lead_not_found" }, 404);
+
+      const timestamp = new Date().toISOString();
+      const newNote = `[${timestamp} via Voice] ${note}`;
+      const notes = existing.notes_internal
+        ? `${existing.notes_internal}\n\n${newNote}`
+        : newNote;
+      const { error: updateError } = await supabase
+        .from("leads")
+        .update({ notes_internal: notes.slice(-20_000) })
+        .eq("id", leadId);
+      if (updateError) return response({ error: "lead_update_failed" }, 500);
+
+      return response({ success: true, lead_id: leadId });
+    }
+
+    if (toolName === "set_do_not_call") {
+      const phone = normalizePhone(body?.phone);
+      if (!phone) return response({ error: "invalid_phone" }, 400);
+      const reason = safeText(body?.reason, 500) || "User requested during call";
+      const { error } = await supabase
+        .from("do_not_call")
+        .upsert({ phone, reason }, { onConflict: "phone" });
+      if (error) return response({ error: "do_not_call_update_failed" }, 500);
+      return response({ success: true });
+    }
+
+    return response({ error: "unknown_tool" }, 400);
   } catch (error) {
-    console.error("Voice tool error:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error", code: "server_error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    console.error("voice-tools error", error instanceof Error ? error.message : "unknown");
+    return response({ error: "internal_error" }, 500);
   }
 });

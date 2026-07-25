@@ -251,4 +251,6 @@ Deno.test("visibility signal reports traffic when overview succeeded", () => {
   assertEquals(sig.unavailable, false);
   assertEquals(sig.value, 2000);
   assertEquals(sig.passed, true);
+  assertEquals(sig.state, "estimated");
+  assertEquals(sig.confidence, "medium");
 });

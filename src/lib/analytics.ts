@@ -13,9 +13,26 @@ interface TrackingParams {
 // GA4 Measurement ID from env
 const GA4_MEASUREMENT_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID || '';
 
+declare global {
+  interface Window {
+    dataLayer?: unknown[][];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+export function sanitizeAnalyticsPath(path: string): string {
+  return path
+    .replace(/^\/audit\/r\/[^/]+/, '/audit/r/:token')
+    .replace(/^\/en\/audit\/r\/[^/]+/, '/en/audit/r/:token')
+    .replace(/^\/analyse\/progress\/[^/]+/, '/analyse/progress/:token')
+    .replace(/^\/en\/analysis\/progress\/[^/]+/, '/en/analysis/progress/:token')
+    .replace(/^\/analyse\/[^/]+/, '/analyse/:token')
+    .replace(/^\/en\/analysis\/[^/]+/, '/en/analysis/:token');
+}
+
 // Check if gtag is available
 function isGtagAvailable(): boolean {
-  return typeof window !== 'undefined' && typeof (window as any).gtag === 'function';
+  return typeof window !== 'undefined' && typeof window.gtag === 'function';
 }
 
 // Check if analytics consent is granted
@@ -31,20 +48,29 @@ export function initGA4(): void {
   // Check if already loaded
   if (isGtagAvailable()) return;
 
-  // Load gtag script
+  // Define consent defaults before loading the remote library.
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = (...args: unknown[]) => {
+    window.dataLayer?.push(args);
+  };
+  const consent = getConsent();
+  window.gtag('consent', 'default', {
+    analytics_storage: consent?.analytics ? 'granted' : 'denied',
+    ad_storage: consent?.marketing ? 'granted' : 'denied',
+    ad_user_data: consent?.marketing ? 'granted' : 'denied',
+    ad_personalization: consent?.marketing ? 'granted' : 'denied',
+    wait_for_update: 500,
+  });
+
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
   document.head.appendChild(script);
 
-  // Initialize gtag
-  (window as any).dataLayer = (window as any).dataLayer || [];
-  (window as any).gtag = function gtag() {
-    (window as any).dataLayer.push(arguments);
-  };
-  (window as any).gtag('js', new Date());
-  (window as any).gtag('config', GA4_MEASUREMENT_ID, {
-    send_page_view: true,
+  window.gtag('js', new Date());
+  window.gtag('config', GA4_MEASUREMENT_ID, {
+    send_page_view: false,
+    allow_google_signals: getConsent()?.marketing === true,
   });
 }
 
@@ -65,8 +91,13 @@ export function track(eventName: string, params: Record<string, string | number 
 
   // Send to GA4 if available
   if (isGtagAvailable() && GA4_MEASUREMENT_ID) {
-    (window as any).gtag('event', eventName, {
+    const safePath = sanitizeAnalyticsPath(window.location.pathname);
+    window.gtag?.('event', eventName, {
       ...params,
+      page_path: typeof params.page_path === 'string'
+        ? sanitizeAnalyticsPath(params.page_path)
+        : safePath,
+      page_location: `${window.location.origin}${safePath}`,
       send_to: GA4_MEASUREMENT_ID,
     });
   }
@@ -76,18 +107,6 @@ export function track(eventName: string, params: Record<string, string | number 
 export function trackAuditSubmit(params: TrackingParams): void {
   track('audit_submit', { ...params });
 }
-
-// Audit funnel: user opened the audit page (funnel entry)
-export function trackAuditStarted(params: { language: 'de' | 'en'; page_path: string; utm_source?: string; utm_medium?: string; utm_campaign?: string }): void {
-  track('audit_started', params);
-}
-
-// Audit funnel: score was rendered to the user
-export function trackAuditScoreDelivered(params: { score: number; status: string; language: 'de' | 'en' }): void {
-  const bucket = params.score >= 75 ? 'strong' : params.score >= 50 ? 'medium' : 'weak';
-  track('audit_score_delivered', { ...params, score_bucket: bucket });
-}
-
 
 export function trackCallBook(params: TrackingParams): void {
   track('call_book', { ...params });
@@ -108,8 +127,10 @@ export function trackCTAClick(params: TrackingParams): void {
 
 // Page view tracking
 export function trackPageView(pagePath: string, pageTitle: string, language: 'de' | 'en'): void {
+  const safePath = sanitizeAnalyticsPath(pagePath);
   track('page_view', {
-    page_path: pagePath,
+    page_path: safePath,
+    page_location: `${window.location.origin}${safePath}`,
     page_title: pageTitle,
     language,
   });
@@ -134,6 +155,6 @@ export function trackFormComplete(formName: string, params: Partial<TrackingPara
 export function trackScrollDepth(depth: number, pagePath: string): void {
   track('scroll_depth', {
     depth_percentage: depth,
-    page_path: pagePath,
+    page_path: sanitizeAnalyticsPath(pagePath),
   });
 }

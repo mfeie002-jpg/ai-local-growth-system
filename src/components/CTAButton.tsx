@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { trackCTAClick } from '@/lib/analytics';
+import { track } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
 interface CTAButtonProps {
@@ -42,11 +43,28 @@ export function CTAButton({
       cta_text: typeof children === 'string' ? children : 'CTA',
       cta_location: ctaLocation,
     });
+    if (href?.includes('/kontakt') || href?.includes('/contact')) {
+      track('consultation_cta_click', {
+        page_path: pageLocation.pathname,
+        cta_location: ctaLocation,
+      });
+    }
+    if (
+      ctaLocation.includes('pricing') ||
+      ctaLocation.includes('offer') ||
+      href?.includes('/preise') ||
+      href?.includes('/pricing')
+    ) {
+      track('pricing_cta_click', {
+        page_path: pageLocation.pathname,
+        cta_location: ctaLocation,
+      });
+    }
     onClick?.();
   };
 
   const baseStyles = cn(
-    'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 rounded-full',
+    'inline-flex min-h-11 items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 rounded-full',
     {
       'px-4 py-2 text-xs tracking-wide': size === 'sm',
       'px-6 py-3 text-sm tracking-wide': size === 'default',

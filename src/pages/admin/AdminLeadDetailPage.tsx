@@ -30,8 +30,18 @@ interface LeadDetail {
   created_at: string;
   language: string;
   lead_type: string;
+  company_name: string | null;
   industry: string;
   service_area: string;
+  region: string | null;
+  primary_goal: string | null;
+  primary_lead_source: string | null;
+  challenges: string[];
+  systems: string | null;
+  landing_page: string | null;
+  audit_type: string | null;
+  keyword: string | null;
+  lead_score: number | null;
   website_url: string | null;
   budget_range: string | null;
   capacity_range: string | null;
@@ -45,12 +55,18 @@ interface LeadDetail {
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  gclid: string | null;
   referrer: string | null;
-  public_token: string | null;
   pre_score_total: number | null;
   pre_score_bucket: string | null;
   is_duplicate: boolean | null;
   duplicate_of: string | null;
+  consent_processing: boolean;
+  consent_marketing: boolean;
+  consent_at: string | null;
+  consent_version: string | null;
 }
 
 export default function AdminLeadDetailPage() {
@@ -62,6 +78,7 @@ export default function AdminLeadDetailPage() {
   const [notes, setNotes] = useState('');
   const [status, setStatus] = useState('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [auditToken, setAuditToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAdmin && id) {
@@ -72,11 +89,20 @@ export default function AdminLeadDetailPage() {
   const fetchLead = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+      const [{ data, error }, { data: audit }] = await Promise.all([
+        supabase
+          .from('leads')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle(),
+        supabase
+          .from('audit_requests')
+          .select('token')
+          .eq('lead_id', id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
 
       if (error) {
         console.error('Error fetching lead:', error);
@@ -85,6 +111,7 @@ export default function AdminLeadDetailPage() {
         setLead(data);
         setNotes(data.notes_internal || '');
         setStatus(data.status);
+        setAuditToken(audit?.token || null);
       }
     } finally {
       setIsLoading(false);
@@ -128,8 +155,9 @@ export default function AdminLeadDetailPage() {
   };
 
   const getReportUrl = () => {
-    if (!lead?.public_token) return null;
-    return `https://itsfeierabend.ch/gratis-audit/report/${lead.public_token}`;
+    if (!lead || !auditToken) return null;
+    const route = lead.language === 'en' ? '/en/audit/r/' : '/audit/r/';
+    return `https://itsfeierabend.ch${route}${auditToken}`;
   };
 
   if (authLoading || isLoading) {
@@ -174,7 +202,7 @@ export default function AdminLeadDetailPage() {
   return (
     <AdminLayout 
       title={lead.name} 
-      subtitle={`${lead.lead_type === 'free_audit' ? 'Gratis Audit' : 'Gratis Call'} • ${format(new Date(lead.created_at), "dd. MMMM yyyy", { locale: de })}`}
+      subtitle={`${lead.lead_type === 'free_audit' ? 'Business Audit' : lead.lead_type === 'partner' ? 'Partneranfrage' : lead.lead_type === 'contact' ? 'Kontaktanfrage' : 'Call'} • ${format(new Date(lead.created_at), "dd. MMMM yyyy", { locale: de })}`}
       breadcrumbs={[
         { label: 'Leads', href: '/admin/leads' },
         { label: lead.name }
@@ -199,7 +227,7 @@ export default function AdminLeadDetailPage() {
                   )}
                 </div>
                 <p className="text-muted-foreground">
-                  {lead.lead_type === 'free_audit' ? 'Gratis Audit' : 'Gratis Call'} • {' '}
+                  {lead.lead_type === 'free_audit' ? 'Business Audit' : lead.lead_type === 'partner' ? 'Partneranfrage' : lead.lead_type === 'contact' ? 'Kontaktanfrage' : 'Call'} • {' '}
                   {format(new Date(lead.created_at), "dd. MMMM yyyy 'um' HH:mm 'Uhr'", { locale: de })}
                 </p>
               </div>
@@ -223,19 +251,14 @@ export default function AdminLeadDetailPage() {
             </div>
           </div>
 
-          {/* Pre-Score Card (for audits) */}
-          {lead.lead_type === 'free_audit' && lead.pre_score_bucket && (
+          {/* Deterministic audit score */}
+          {lead.lead_type === 'free_audit' && (lead.lead_score != null || reportUrl) && (
             <div className="bg-background border border-border rounded-lg p-6">
-              <h2 className="font-semibold text-foreground mb-4">Vorab-Score</h2>
+              <h2 className="font-semibold text-foreground mb-4">Audit-Ergebnis</h2>
               
-              <div className="flex items-center gap-4 mb-4">
-                <div className="text-4xl font-bold text-foreground">{lead.pre_score_total}</div>
-                <div>
-                  <Badge className={cn('font-normal', bucketColors[lead.pre_score_bucket])}>
-                    {bucketLabels[lead.pre_score_bucket]}
-                  </Badge>
-                </div>
-              </div>
+              {lead.lead_score != null && (
+                <div className="mb-4 text-4xl font-bold text-foreground">{lead.lead_score}/100</div>
+              )}
 
               {reportUrl && (
                 <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
@@ -327,24 +350,38 @@ export default function AdminLeadDetailPage() {
             
             <dl>
               <InfoRow label="Branche" value={lead.industry} />
-              <InfoRow label="Ort / Einsatzgebiet" value={lead.service_area} />
+              <InfoRow label="Firma" value={lead.company_name} />
+              <InfoRow label="Region" value={lead.region} />
+              <InfoRow label="Audit-Typ" value={lead.audit_type || lead.service_area} />
+              <InfoRow label="Geschäftsziel" value={lead.primary_goal} />
+              <InfoRow label="Wichtigste Lead-Quelle" value={lead.primary_lead_source} />
+              <InfoRow label="Herausforderungen" value={lead.challenges?.join(', ') || null} />
+              <InfoRow label="Systeme / Tools" value={lead.systems} />
               <InfoRow label="Monatsbudget" value={lead.budget_range} />
               <InfoRow label="Kapazität (Jobs/Woche)" value={lead.capacity_range} />
               <InfoRow label="Nachricht" value={lead.message} />
               <InfoRow label="Bevorzugte Zeiten" value={lead.preferred_times} />
               <InfoRow label="Sprache" value={lead.language === 'de' ? 'Deutsch' : 'English'} />
+              <InfoRow label="Verarbeitungs-Consent" value={lead.consent_processing ? `Ja${lead.consent_at ? ` · ${format(new Date(lead.consent_at), 'dd.MM.yyyy HH:mm')}` : ''}` : 'Nein'} />
+              <InfoRow label="Marketing-Consent" value={lead.consent_marketing ? 'Ja' : 'Nein'} />
+              <InfoRow label="Consent-Version" value={lead.consent_version} />
             </dl>
           </div>
 
           {/* Tracking Info */}
-          {(lead.utm_source || lead.utm_medium || lead.utm_campaign || lead.referrer) && (
+          {(lead.landing_page || lead.utm_source || lead.utm_medium || lead.utm_campaign || lead.referrer) && (
             <div className="bg-background border border-border rounded-lg p-6">
               <h2 className="font-semibold text-foreground mb-4">Tracking</h2>
               
               <dl>
+                <InfoRow label="Landingpage" value={lead.landing_page} />
                 <InfoRow label="UTM Source" value={lead.utm_source} />
                 <InfoRow label="UTM Medium" value={lead.utm_medium} />
                 <InfoRow label="UTM Campaign" value={lead.utm_campaign} />
+                <InfoRow label="UTM Content" value={lead.utm_content} />
+                <InfoRow label="UTM Term" value={lead.utm_term} />
+                <InfoRow label="Keyword" value={lead.keyword} />
+                <InfoRow label="GCLID" value={lead.gclid} />
                 <InfoRow label="Referrer" value={lead.referrer} />
               </dl>
             </div>
