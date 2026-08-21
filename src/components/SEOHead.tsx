@@ -10,10 +10,18 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
+const DEFAULT_OG_IMAGE = `${BASE_URL}/apple-touch-icon.png`;
+
 export function SEOHead({ title, description, canonical, ogImage, noIndex = false }: SEOHeadProps) {
   const location = useLocation();
   const fullCanonical = canonical || `${BASE_URL}${location.pathname}`;
   const fullTitle = `${title} | itsFeierabend.ch`;
+  // Social crawlers need absolute URLs — resolve relative image paths against the site origin.
+  const fullOgImage = !ogImage
+    ? DEFAULT_OG_IMAGE
+    : /^https?:\/\//.test(ogImage)
+      ? ogImage
+      : `${BASE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
 
   useEffect(() => {
     document.title = fullTitle;
@@ -39,13 +47,13 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
     updateMeta('og:url', fullCanonical, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:site_name', 'itsFeierabend.ch', true);
-    if (ogImage) updateMeta('og:image', ogImage, true);
+    updateMeta('og:image', fullOgImage, true);
 
     // Twitter
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', description);
-    if (ogImage) updateMeta('twitter:image', ogImage);
+    updateMeta('twitter:image', fullOgImage);
 
     // Canonical
     let link = document.querySelector('link[rel="canonical"]');
@@ -75,7 +83,7 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
       addAlternate('en', `${BASE_URL}${pair.en}`);
       addAlternate('x-default', `${BASE_URL}${pair.de}`);
     }
-  }, [fullTitle, description, fullCanonical, ogImage, noIndex, location.pathname]);
+  }, [fullTitle, description, fullCanonical, fullOgImage, noIndex, location.pathname]);
 
   return null;
 }

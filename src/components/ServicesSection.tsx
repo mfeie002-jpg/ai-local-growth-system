@@ -111,7 +111,7 @@ function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0
           ? "text-base text-aurora opacity-100"
           : "text-sm text-primary opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
       )}>
-        <span>{learnMoreText}</span>
+        <span>{`${learnMoreText}: ${title}`}</span>
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>
@@ -121,7 +121,7 @@ function ServiceCard({ icon: Icon, title, description, features, isAI, delay = 0
 export function ServicesSection() {
   const { isEnglish } = useLanguage();
 
-  const learnMoreText = isEnglish ? 'Learn More' : 'Mehr erfahren';
+  const learnMoreText = isEnglish ? 'Explore' : 'Leistung entdecken';
 
   const services = isEnglish ? [
     {
