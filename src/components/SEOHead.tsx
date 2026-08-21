@@ -47,13 +47,13 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
     updateMeta('og:url', fullCanonical, true);
     updateMeta('og:type', 'website', true);
     updateMeta('og:site_name', 'itsFeierabend.ch', true);
-    if (ogImage) updateMeta('og:image', ogImage, true);
+    updateMeta('og:image', fullOgImage, true);
 
     // Twitter
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', description);
-    if (ogImage) updateMeta('twitter:image', ogImage);
+    updateMeta('twitter:image', fullOgImage);
 
     // Canonical
     let link = document.querySelector('link[rel="canonical"]');
