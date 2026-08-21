@@ -83,7 +83,7 @@ export function SEOHead({ title, description, canonical, ogImage, noIndex = fals
       addAlternate('en', `${BASE_URL}${pair.en}`);
       addAlternate('x-default', `${BASE_URL}${pair.de}`);
     }
-  }, [fullTitle, description, fullCanonical, ogImage, noIndex, location.pathname]);
+  }, [fullTitle, description, fullCanonical, fullOgImage, noIndex, location.pathname]);
 
   return null;
 }
