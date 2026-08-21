@@ -10,10 +10,18 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
+const DEFAULT_OG_IMAGE = `${BASE_URL}/apple-touch-icon.png`;
+
 export function SEOHead({ title, description, canonical, ogImage, noIndex = false }: SEOHeadProps) {
   const location = useLocation();
   const fullCanonical = canonical || `${BASE_URL}${location.pathname}`;
   const fullTitle = `${title} | itsFeierabend.ch`;
+  // Social crawlers need absolute URLs — resolve relative image paths against the site origin.
+  const fullOgImage = !ogImage
+    ? DEFAULT_OG_IMAGE
+    : /^https?:\/\//.test(ogImage)
+      ? ogImage
+      : `${BASE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
 
   useEffect(() => {
     document.title = fullTitle;
